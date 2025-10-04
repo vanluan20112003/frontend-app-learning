@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "@edx/brand": "npm:@openedx/brand-openedx@^1.2.2",
+    "@edx/frontend-component-footer": "^14.9.2",
     "@edx/frontend-component-header": "^5.0.2",
     "@edx/frontend-lib-learning-assistant": "^2.0.0",
     "@edx/frontend-lib-special-exams": "^3.0.1",
@@ -78,6 +79,7 @@
     "@testing-library/react-hooks": "^8.0.1",
     "@testing-library/user-event": "13.5.0",
     "axios-mock-adapter": "1.20.0",
+    "babel-loader": "^10.0.0",
     "copy-webpack-plugin": "^11.0.0",
     "es-check": "6.2.1",
     "eslint-import-resolver-webpack": "^0.13.8",
@@ -91,6 +93,7 @@
     "sass": "^1.72.0",
     "sass-loader": "^14.1.1",
     "source-map-loader": "^5.0.0",
-    "style-loader": "^3.3.4"
+    "style-loader": "^3.3.4",
+    "webpack-merge": "^6.0.1"
   }
 }

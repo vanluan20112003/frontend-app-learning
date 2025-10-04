@@ -18,6 +18,7 @@ import { CelebrationModal, shouldCelebrateOnSectionLoad, WeeklyGoalCelebrationMo
 import CourseBreadcrumbs from './CourseBreadcrumbs';
 import ContentTools from './content-tools';
 import Sequence from './sequence';
+import { CourseLayout } from './navigation-sidebar';
 
 const Course = ({
   courseId,
@@ -75,57 +76,64 @@ const Course = ({
       <Helmet>
         <title>{`${pageTitleBreadCrumbs.join(' | ')} | ${getConfig().SITE_NAME}`}</title>
       </Helmet>
-      <div className="position-relative d-flex align-items-xl-center mb-4 mt-1 flex-column flex-xl-row">
-        {navigationDisabled || (
-        <>
-          <CourseBreadcrumbs
-            courseId={courseId}
-            sectionId={section ? section.id : null}
-            sequenceId={sequenceId}
-            isStaff={isStaff}
-            unitId={unitId}
-          />
-        </>
-        )}
-        {shouldDisplayChat && (
+
+      <CourseLayout
+        courseId={courseId}
+        currentSequenceId={sequenceId}
+        currentSectionId={section ? section.id : null}
+      >
+        <div className="position-relative d-flex align-items-xl-center mb-4 mt-1 flex-column flex-xl-row">
+          {navigationDisabled || (
           <>
-            <Chat
-              enabled={course.learningAssistantEnabled}
-              enrollmentMode={course.enrollmentMode}
-              isStaff={isStaff}
+            <CourseBreadcrumbs
               courseId={courseId}
-              contentToolsEnabled={course.showCalculator || course.notes.enabled}
+              sectionId={section ? section.id : null}
+              sequenceId={sequenceId}
+              isStaff={isStaff}
               unitId={unitId}
             />
           </>
-        )}
-        <div className="w-100 d-flex align-items-center">
-          <CourseOutlineTrigger isMobileView />
-          {isNewDiscussionSidebarViewEnabled ? <NewSidebarTriggers /> : <SidebarTriggers /> }
+          )}
+          {shouldDisplayChat && (
+            <>
+              <Chat
+                enabled={course.learningAssistantEnabled}
+                enrollmentMode={course.enrollmentMode}
+                isStaff={isStaff}
+                courseId={courseId}
+                contentToolsEnabled={course.showCalculator || course.notes.enabled}
+                unitId={unitId}
+              />
+            </>
+          )}
+          <div className="w-100 d-flex align-items-center">
+            <CourseOutlineTrigger isMobileView />
+            {isNewDiscussionSidebarViewEnabled ? <NewSidebarTriggers /> : <SidebarTriggers /> }
+          </div>
         </div>
-      </div>
 
-      <AlertList topic="sequence" />
-      <Sequence
-        unitId={unitId}
-        sequenceId={sequenceId}
-        courseId={courseId}
-        unitNavigationHandler={unitNavigationHandler}
-        nextSequenceHandler={nextSequenceHandler}
-        previousSequenceHandler={previousSequenceHandler}
-      />
-      <CelebrationModal
-        courseId={courseId}
-        isOpen={firstSectionCelebrationOpen}
-        onClose={() => setFirstSectionCelebrationOpen(false)}
-      />
-      <WeeklyGoalCelebrationModal
-        courseId={courseId}
-        daysPerWeek={daysPerWeek}
-        isOpen={weeklyGoalCelebrationOpen}
-        onClose={() => setWeeklyGoalCelebrationOpen(false)}
-      />
-      <ContentTools course={course} />
+        <AlertList topic="sequence" />
+        <Sequence
+          unitId={unitId}
+          sequenceId={sequenceId}
+          courseId={courseId}
+          unitNavigationHandler={unitNavigationHandler}
+          nextSequenceHandler={nextSequenceHandler}
+          previousSequenceHandler={previousSequenceHandler}
+        />
+        <CelebrationModal
+          courseId={courseId}
+          isOpen={firstSectionCelebrationOpen}
+          onClose={() => setFirstSectionCelebrationOpen(false)}
+        />
+        <WeeklyGoalCelebrationModal
+          courseId={courseId}
+          daysPerWeek={daysPerWeek}
+          isOpen={weeklyGoalCelebrationOpen}
+          onClose={() => setWeeklyGoalCelebrationOpen(false)}
+        />
+        <ContentTools course={course} />
+      </CourseLayout>
     </SidebarProviderComponent>
   );
 };

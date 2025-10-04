@@ -309,13 +309,13 @@
   // here we compensate for the padding of the parent div with "container-xl"
   // class to ensure that the viewport width is the same as the width of the
   // iframe.
-  margin-left: -$grid-gutter-width * .5;
-  margin-right: -$grid-gutter-width * .5;
+  margin-left: 0;
+  margin-right: 0;
 
   margin-bottom: 2rem;
 
   @media (min-width: 830px) {
-    margin: 0 -40px 2rem;
+    margin: 0 0 2rem;
   }
 }
 

@@ -28,7 +28,7 @@ const ReportButton = () => {
     { value: 'audio-problem', label: 'Lỗi âm thanh' },
     { value: 'loading-issue', label: 'Lỗi tải trang' },
     { value: 'broken-link', label: 'Liên kết hỏng' },
-    { value: 'other', label: 'Vấn đề khác' }
+    { value: 'other', label: 'Vấn đề khác' },
   ];
 
   // Close dropdown when clicking outside
@@ -50,14 +50,14 @@ const ReportButton = () => {
     // TODO: Handle report submission
     console.log('Report submitted:', {
       issue: selectedIssue,
-      comment: additionalComment
+      comment: additionalComment,
     });
-    
+
     // Reset form and close dropdown
     setSelectedIssue('');
     setAdditionalComment('');
     setIsOpen(false);
-    
+
     // Show success message (you can replace with actual notification system)
     alert('Báo cáo đã được gửi. Cảm ơn bạn đã phản hồi!');
   };
@@ -66,7 +66,7 @@ const ReportButton = () => {
     <div className="report-button-container" ref={dropdownRef}>
       {/* FontAwesome CDN */}
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-      
+
       <style jsx>{`
         .report-button-container {
           position: relative;
@@ -267,24 +267,25 @@ const ReportButton = () => {
             right: -20px;
           }
         }
-      `}</style>
-      
+      `}
+      </style>
+
       <button
         className={`report-toggle-btn ${isOpen ? 'active' : ''}`}
         onClick={() => setIsOpen(!isOpen)}
         type="button"
       >
         <div className="dots-icon">
-          <i className="fas fa-flag"></i>
+          <i className="fas fa-flag" />
         </div>
         <span>Báo cáo</span>
       </button>
-      
+
       <div className={`report-dropdown ${isOpen ? 'open' : ''}`}>
         <div className="report-header">
           <h4 className="report-title">Báo cáo vấn đề</h4>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="report-form">
           <div className="form-group">
             <label className="form-label">Chọn loại vấn đề:</label>
@@ -308,7 +309,7 @@ const ReportButton = () => {
               ))}
             </div>
           </div>
-          
+
           <div className="form-group">
             <label className="form-label" htmlFor="additional-comment">
               Mô tả chi tiết (tùy chọn):
@@ -321,7 +322,7 @@ const ReportButton = () => {
               onChange={(e) => setAdditionalComment(e.target.value)}
             />
           </div>
-          
+
           <div className="form-actions">
             <button
               type="button"
@@ -352,7 +353,7 @@ class IFrameLoadingManager {
     this.loadingStates = {
       iframeInit: false,
       contentLoad: false,
-      resourcesReady: false
+      resourcesReady: false,
     };
     this.loadingElement = null;
     this.totalSteps = Object.keys(this.loadingStates).length;
@@ -362,14 +363,14 @@ class IFrameLoadingManager {
   }
 
   init() {
-    if (this.isDestroyed || !this.iframeContainer) return;
+    if (this.isDestroyed || !this.iframeContainer) { return; }
     this.createLoadingOverlay();
     this.setupLoadingSequence();
     this.setAutoHideTimeout();
   }
 
   createLoadingOverlay() {
-    if (this.isDestroyed || !this.iframeContainer) return;
+    if (this.isDestroyed || !this.iframeContainer) { return; }
 
     // Remove existing loading overlay
     const existingOverlay = this.iframeContainer.querySelector('.iframe-loading-overlay');
@@ -526,23 +527,23 @@ class IFrameLoadingManager {
   }
 
   updateProgress(step, message) {
-    if (this.isDestroyed) return;
+    if (this.isDestroyed) { return; }
 
     if (this.loadingStates[step] !== undefined && !this.loadingStates[step]) {
       this.loadingStates[step] = true;
       this.completedSteps++;
-      
+
       const progress = (this.completedSteps / this.totalSteps) * 100;
       const progressFill = this.loadingElement?.querySelector('[data-progress="iframe-progress"]');
       const progressText = this.loadingElement?.querySelector('[data-text="iframe-progress-text"]');
       const statusText = this.loadingElement?.querySelector('[data-status="iframe-status"]');
-      
-      if (progressFill) progressFill.style.width = `${progress}%`;
-      if (progressText) progressText.textContent = `${Math.round(progress)}%`;
-      if (statusText) statusText.textContent = message;
-      
+
+      if (progressFill) { progressFill.style.width = `${progress}%`; }
+      if (progressText) { progressText.textContent = `${Math.round(progress)}%`; }
+      if (statusText) { statusText.textContent = message; }
+
       console.log(`IFrame loading step: ${step} - ${message} (${progress.toFixed(1)}%)`);
-      
+
       if (this.completedSteps === this.totalSteps) {
         setTimeout(() => this.hideLoading(), 500);
       }
@@ -550,7 +551,7 @@ class IFrameLoadingManager {
   }
 
   setupLoadingSequence() {
-    if (this.isDestroyed) return;
+    if (this.isDestroyed) { return; }
 
     // Step 1: IFrame initialization
     setTimeout(() => {
@@ -575,15 +576,15 @@ class IFrameLoadingManager {
   }
 
   waitForContent() {
-    if (this.isDestroyed) return;
+    if (this.isDestroyed) { return; }
 
     const checkContent = () => {
-      if (this.isDestroyed) return;
+      if (this.isDestroyed) { return; }
 
       const iframe = this.iframeContainer?.querySelector('iframe');
       if (iframe && iframe.src && iframe.src !== 'about:blank') {
         this.updateProgress('contentLoad', 'Loading course content...');
-        
+
         const onLoad = () => {
           if (!this.isDestroyed) {
             setTimeout(() => this.waitForResources(), 300);
@@ -604,10 +605,10 @@ class IFrameLoadingManager {
   }
 
   waitForResources() {
-    if (this.isDestroyed) return;
+    if (this.isDestroyed) { return; }
 
     const checkResources = () => {
-      if (this.isDestroyed) return;
+      if (this.isDestroyed) { return; }
 
       const iframe = this.iframeContainer?.querySelector('iframe');
       let resourcesReady = false;
@@ -638,11 +639,11 @@ class IFrameLoadingManager {
   }
 
   hideLoading() {
-    if (this.isDestroyed || !this.loadingElement) return;
+    if (this.isDestroyed || !this.loadingElement) { return; }
 
     this.clearTimeout();
     this.loadingElement.classList.add('fade-out');
-    
+
     setTimeout(() => {
       if (!this.isDestroyed && this.loadingElement && this.loadingElement.parentNode) {
         this.loadingElement.parentNode.removeChild(this.loadingElement);
@@ -673,7 +674,7 @@ class IFrameLoadingManager {
   destroy() {
     this.isDestroyed = true;
     this.clearTimeout();
-    
+
     if (this.loadingElement && this.loadingElement.parentNode) {
       this.loadingElement.parentNode.removeChild(this.loadingElement);
       this.loadingElement = null;
@@ -716,75 +717,71 @@ const Unit = ({
   const iframeUrl = getUrl();
 
   // Function to check if HLS.js is loaded
-  const checkHlsLibrary = () => {
-    return new Promise((resolve) => {
-      // Check if HLS is already available
-      if (window.Hls) {
-        resolve(true);
-        return;
-      }
+  const checkHlsLibrary = () => new Promise((resolve) => {
+    // Check if HLS is already available
+    if (window.Hls) {
+      resolve(true);
+      return;
+    }
 
-      // Check for script tags loading HLS.js
-      const scripts = document.querySelectorAll('script[src*="hls.js"]');
-      if (scripts.length > 0) {
-        // Monitor script loading
-        let scriptsLoaded = 0;
-        scripts.forEach(script => {
-          if (script.readyState === 'complete' || script.readyState === 'loaded') {
+    // Check for script tags loading HLS.js
+    const scripts = document.querySelectorAll('script[src*="hls.js"]');
+    if (scripts.length > 0) {
+      // Monitor script loading
+      let scriptsLoaded = 0;
+      scripts.forEach(script => {
+        if (script.readyState === 'complete' || script.readyState === 'loaded') {
+          scriptsLoaded++;
+        } else {
+          script.addEventListener('load', () => {
             scriptsLoaded++;
-          } else {
-            script.addEventListener('load', () => {
-              scriptsLoaded++;
-              if (scriptsLoaded === scripts.length && window.Hls) {
-                resolve(true);
-              }
-            });
-            script.addEventListener('error', () => {
-              scriptsLoaded++;
-              if (scriptsLoaded === scripts.length) {
-                resolve(false);
-              }
-            });
-          }
-        });
-
-        if (scriptsLoaded === scripts.length) {
-          resolve(!!window.Hls);
+            if (scriptsLoaded === scripts.length && window.Hls) {
+              resolve(true);
+            }
+          });
+          script.addEventListener('error', () => {
+            scriptsLoaded++;
+            if (scriptsLoaded === scripts.length) {
+              resolve(false);
+            }
+          });
         }
-      } else {
-        // Check network requests for HLS.js
-        const checkNetworkRequests = () => {
-          if (window.performance && window.performance.getEntriesByType) {
-            const resources = window.performance.getEntriesByType('resource');
-            const hlsResource = resources.find(resource => 
-              resource.name.includes('hls.js') || resource.name.includes('hls')
-            );
-            
-            if (hlsResource && hlsResource.responseEnd > 0) {
-              resolve(true);
-              return;
-            }
-          }
-          
-          // Fallback: check for HLS object periodically
-          const interval = setInterval(() => {
-            if (window.Hls) {
-              clearInterval(interval);
-              resolve(true);
-            }
-          }, 100);
-          
-          // Stop checking after 3 seconds
-          setTimeout(() => {
-            clearInterval(interval);
-            resolve(false);
-          }, 3000);
-        };
-        
-        checkNetworkRequests();
+      });
+
+      if (scriptsLoaded === scripts.length) {
+        resolve(!!window.Hls);
       }
-    });
-  };
+    } else {
+      // Check network requests for HLS.js
+      const checkNetworkRequests = () => {
+        if (window.performance && window.performance.getEntriesByType) {
+          const resources = window.performance.getEntriesByType('resource');
+          const hlsResource = resources.find(resource => resource.name.includes('hls.js') || resource.name.includes('hls'));
+
+          if (hlsResource && hlsResource.responseEnd > 0) {
+            resolve(true);
+            return;
+          }
+        }
+
+        // Fallback: check for HLS object periodically
+        const interval = setInterval(() => {
+          if (window.Hls) {
+            clearInterval(interval);
+            resolve(true);
+          }
+        }, 100);
+
+        // Stop checking after 3 seconds
+        setTimeout(() => {
+          clearInterval(interval);
+          resolve(false);
+        }, 3000);
+      };
+
+      checkNetworkRequests();
+    }
+  });
 
   // Function to hide content loading
   const hideContentLoading = () => {
@@ -812,7 +809,7 @@ const Unit = ({
   useEffect(() => {
     if (iframeUrl) {
       setIsContentLoading(true);
-      
+
       // Default 7 seconds timeout
       defaultLoadingTimeoutRef.current = setTimeout(() => {
         hideContentLoading();
@@ -847,40 +844,38 @@ const Unit = ({
     };
   }, [iframeUrl]);
 
-  // Initialize iframe loading manager when iframe container is ready
-  useEffect(() => {
-    if (iframeContainerRef.current && iframeUrl && !loadingManagerRef.current) {
-      loadingManagerRef.current = new IFrameLoadingManager(
-        iframeContainerRef.current,
-        () => {
-          console.log('IFrame content loading completed');
-          setIsContentReady(true);
-        }
-      );
-      loadingManagerRef.current.init();
-    }
+  // Disable iframe loading manager - using content loading overlay instead
+  // useEffect(() => {
+  //   if (iframeContainerRef.current && iframeUrl && !loadingManagerRef.current) {
+  //     loadingManagerRef.current = new IFrameLoadingManager(
+  //       iframeContainerRef.current,
+  //       () => {
+  //         console.log('IFrame content loading completed');
+  //         setIsContentReady(true);
+  //       }
+  //     );
+  //     loadingManagerRef.current.init();
+  //   }
 
-    return () => {
-      if (loadingManagerRef.current) {
-        loadingManagerRef.current.destroy();
-        loadingManagerRef.current = null;
-      }
-    };
-  }, [iframeUrl]);
+  //   return () => {
+  //     if (loadingManagerRef.current) {
+  //       loadingManagerRef.current.destroy();
+  //       loadingManagerRef.current = null;
+  //     }
+  //   };
+  // }, [iframeUrl]);
 
   // Clean up on unmount
-  useEffect(() => {
-    return () => {
-      if (loadingManagerRef.current) {
-        loadingManagerRef.current.destroy();
-      }
-      if (hlsCheckTimeoutRef.current) {
-        clearTimeout(hlsCheckTimeoutRef.current);
-      }
-      if (defaultLoadingTimeoutRef.current) {
-        clearTimeout(defaultLoadingTimeoutRef.current);
-      }
-    };
+  useEffect(() => () => {
+    if (loadingManagerRef.current) {
+      loadingManagerRef.current.destroy();
+    }
+    if (hlsCheckTimeoutRef.current) {
+      clearTimeout(hlsCheckTimeoutRef.current);
+    }
+    if (defaultLoadingTimeoutRef.current) {
+      clearTimeout(defaultLoadingTimeoutRef.current);
+    }
   }, []);
 
   if (!unit) {
@@ -908,28 +903,29 @@ const Unit = ({
         isProcessing={isProcessing}
       />
       <UnitSuspense {...{ courseId, id }} />
-      
+
       {/* Main Content Container with Loading Overlay */}
-      <div className="content-wrapper" style={{ position: 'relative' }}>
+      <div className="content-wrapper">
         {/* Content Loading Overlay - positioned absolutely to prevent user interaction */}
         {isContentLoading && (
           <div className="content-loading-overlay">
             <style jsx>{`
               .content-loading-overlay {
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                bottom: 0;
-                background: rgba(248, 249, 250, 0.95);
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(248, 249, 250, 0.98);
                 backdrop-filter: blur(2px);
                 border-radius: 8px;
-                min-height: 400px;
+                min-height: 200px;
+                min-width: 300px;
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 z-index: 200;
                 cursor: wait;
+                padding: 2rem;
               }
               
               .content-loading-container {
@@ -999,14 +995,13 @@ const Unit = ({
               }
               
               .content-wrapper {
-                min-height: 400px;
+                width: 100%;
               }
-              
+
               .iframe-container {
-                position: relative;
+                width: 100%;
                 min-height: 400px;
                 border-radius: 8px;
-                overflow: hidden;
               }
               
               @media (max-width: 768px) {
@@ -1024,14 +1019,15 @@ const Unit = ({
                   font-size: 1rem;
                 }
               }
-            `}</style>
-            
+            `}
+            </style>
+
             <div className="content-loading-container">
-              <div className="content-loading-spinner"></div>
+              <div className="content-loading-spinner" />
               <h4 className="content-loading-title">Đang tải nội dung</h4>
               <p className="content-loading-subtitle">Vui lòng đợi trong giây lát...</p>
               <div className="content-loading-progress">
-                <div className="content-loading-bar"></div>
+                <div className="content-loading-bar" />
               </div>
               <p className="content-loading-status">
                 Đang kiểm tra thư viện video và tài nguyên
@@ -1039,9 +1035,9 @@ const Unit = ({
             </div>
           </div>
         )}
-        
+
         {/* IFrame Content - Always rendered but may be covered by overlay */}
-        <div 
+        <div
           ref={iframeContainerRef}
           className="iframe-container"
         >
@@ -1056,15 +1052,18 @@ const Unit = ({
           />
         </div>
       </div>
-      
+
       {/* Report Button - positioned below the course content */}
-      <div className="unit-actions" style={{ 
-        marginTop: '16px', 
-        paddingTop: '12px', 
-        borderTop: '1px solid #e9ecef',
-        display: 'flex',
-        justifyContent: 'flex-end'
-      }}>
+      <div
+        className="unit-actions"
+        style={{
+          marginTop: '16px',
+          paddingTop: '12px',
+          borderTop: '1px solid #e9ecef',
+          display: 'flex',
+          justifyContent: 'flex-end',
+        }}
+      >
         <ReportButton />
       </div>
     </div>
