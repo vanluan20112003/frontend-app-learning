@@ -14,6 +14,9 @@ import {
   CheckCircle,
   Circle,
   Article,
+  VideoCamera,
+  Description,
+  Assignment,
 } from '@openedx/paragon/icons';
 import { getCourseOutline, getCourseOutlineStatus } from '../../data/selectors';
 import { getCourseOutlineStructure } from '../../data/thunks';
@@ -23,6 +26,7 @@ const CourseNavigationSidebar = ({
   courseId,
   currentSequenceId,
   currentSectionId,
+  currentUnitId,
   isCollapsed,
   onToggleCollapse,
 }) => {
@@ -32,6 +36,7 @@ const CourseNavigationSidebar = ({
   const courseOutline = useSelector(getCourseOutline);
   const courseOutlineStatus = useSelector(getCourseOutlineStatus);
   const [expandedSections, setExpandedSections] = useState(new Set());
+  const [expandedSequences, setExpandedSequences] = useState(new Set());
 
   // Get all sections
   const sections = useModels('sections', course?.sectionIds || []);
@@ -50,6 +55,13 @@ const CourseNavigationSidebar = ({
     }
   }, [currentSectionId]);
 
+  // Initialize: auto-expand current sequence when unitId is present
+  useEffect(() => {
+    if (currentSequenceId && currentUnitId && !expandedSequences.has(currentSequenceId)) {
+      setExpandedSequences(prev => new Set([...prev, currentSequenceId]));
+    }
+  }, [currentSequenceId, currentUnitId]);
+
   const toggleSection = (sectionId) => {
     setExpandedSections(prev => {
       const newSet = new Set(prev);
@@ -62,8 +74,24 @@ const CourseNavigationSidebar = ({
     });
   };
 
+  const toggleSequence = (sequenceId) => {
+    setExpandedSequences(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(sequenceId)) {
+        newSet.delete(sequenceId);
+      } else {
+        newSet.add(sequenceId);
+      }
+      return newSet;
+    });
+  };
+
   const handleSequenceClick = (sequenceId) => {
     navigate(`/course/${courseId}/${sequenceId}`);
+  };
+
+  const handleUnitClick = (sequenceId, unitId) => {
+    navigate(`/course/${courseId}/${sequenceId}/${unitId}`);
   };
 
   // Helper function to check if sequence is completed
@@ -99,6 +127,28 @@ const CourseNavigationSidebar = ({
     }
 
     return { completed: 0, total: 0 };
+  };
+
+  // Helper function to check if unit is completed
+  const isUnitCompleted = (unitId) => {
+    const outlineUnit = courseOutline?.units?.[unitId];
+    return outlineUnit?.complete === true;
+  };
+
+  // Helper function to get unit icon based on type
+  const getUnitIcon = (unit) => {
+    if (!unit) {
+      return Description;
+    }
+    const iconType = unit.icon || unit.type;
+    switch (iconType) {
+      case 'video':
+        return VideoCamera;
+      case 'problem':
+        return Assignment;
+      default:
+        return Description;
+    }
   };
 
   if (!course) {
@@ -275,6 +325,7 @@ const CourseNavigationSidebar = ({
           background: transparent;
           margin: 0.125rem 0.5rem;
           border: none;
+          width: calc(100% - 1rem);
         }
 
         .sequence-item:hover {
@@ -318,10 +369,83 @@ const CourseNavigationSidebar = ({
           text-overflow: ellipsis;
         }
 
+        .sequence-expand-icon {
+          flex-shrink: 0;
+          color: #94a3b8;
+          width: 18px;
+          height: 18px;
+        }
+
+        .units-list {
+          padding-left: 0;
+          margin: 0;
+          list-style: none;
+          background: #f8f9fa;
+          padding: 0.25rem 0;
+        }
+
+        .unit-item {
+          padding: 0.625rem 1rem 0.625rem 4.5rem;
+          cursor: pointer;
+          transition: all 0.2s;
+          font-size: 0.8125rem;
+          color: #64748b;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          background: transparent;
+          margin: 0.0625rem 0.5rem;
+          border: none;
+          width: calc(100% - 1rem);
+        }
+
+        .unit-item:hover {
+          background: #f1f5f9;
+          transform: translateX(2px);
+        }
+
+        .unit-item.active {
+          background: #bfdbfe;
+          color: #1e40af;
+          font-weight: 600;
+        }
+
+        .unit-item.completed {
+          color: #047857;
+        }
+
+        .unit-item.completed:not(.active) {
+          background: #ecfdf5;
+        }
+
+        .unit-icon {
+          width: 16px;
+          height: 16px;
+          flex-shrink: 0;
+          color: #94a3b8;
+        }
+
+        .unit-item.active .unit-icon {
+          color: #2563eb;
+        }
+
+        .unit-item.completed .unit-icon {
+          color: #059669;
+        }
+
+        .unit-title {
+          flex: 1;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
         .collapsed .sidebar-title,
         .collapsed .section-info,
         .collapsed .sequence-title,
-        .collapsed .section-expand-icon {
+        .collapsed .unit-title,
+        .collapsed .section-expand-icon,
+        .collapsed .sequence-expand-icon {
           display: none;
         }
 
@@ -336,7 +460,17 @@ const CourseNavigationSidebar = ({
           margin: 0.125rem 0.25rem;
         }
 
+        .collapsed .unit-item {
+          padding: 0.5rem 0.5rem;
+          justify-content: center;
+          margin: 0.0625rem 0.25rem;
+        }
+
         .collapsed .sequences-list {
+          padding-left: 0;
+        }
+
+        .collapsed .units-list {
           padding-left: 0;
         }
 
@@ -448,6 +582,12 @@ const CourseNavigationSidebar = ({
 
                     const isActive = sequence.id === currentSequenceId;
                     const sequenceCompleted = isSequenceCompleted(sequence.id);
+                    const isSequenceExpanded = expandedSequences.has(sequence.id);
+                    const units = (courseOutline?.units && sequence.unitIds)
+                      ? sequence.unitIds.map(unitId => courseOutline.units[unitId]).filter(Boolean)
+                      : [];
+                    const hasUnits = units.length > 0;
+
                     let sequenceIcon = Circle;
                     if (sequenceCompleted) {
                       sequenceIcon = CheckCircle;
@@ -456,19 +596,59 @@ const CourseNavigationSidebar = ({
                     }
 
                     return (
-                      <button
-                        key={sequence.id}
-                        type="button"
-                        className={`sequence-item ${isActive ? 'active' : ''} ${sequenceCompleted ? 'completed' : ''}`}
-                        onClick={() => handleSequenceClick(sequence.id)}
-                      >
-                        <span className="sequence-icon">
-                          <Icon src={sequenceIcon} />
-                        </span>
-                        <span className="sequence-title">
-                          {sectionIndex + 1}.{seqIndex + 1} {sequence.title}
-                        </span>
-                      </button>
+                      <li key={sequence.id}>
+                        <button
+                          type="button"
+                          className={`sequence-item ${isActive ? 'active' : ''} ${sequenceCompleted ? 'completed' : ''}`}
+                          onClick={() => {
+                            if (hasUnits) {
+                              toggleSequence(sequence.id);
+                            } else {
+                              handleSequenceClick(sequence.id);
+                            }
+                          }}
+                        >
+                          <span className="sequence-icon">
+                            <Icon src={sequenceIcon} />
+                          </span>
+                          <span className="sequence-title">
+                            {sectionIndex + 1}.{seqIndex + 1} {sequence.title}
+                          </span>
+                          {hasUnits && !isCollapsed && (
+                            <span className="sequence-expand-icon">
+                              <Icon src={isSequenceExpanded ? ExpandLess : ExpandMore} />
+                            </span>
+                          )}
+                        </button>
+
+                        {isSequenceExpanded && hasUnits && (
+                          <ul className="units-list">
+                            {units.map((unit, unitIndex) => {
+                              if (!unit) { return null; }
+
+                              const isUnitActive = unit.id === currentUnitId;
+                              const unitCompleted = isUnitCompleted(unit.id);
+                              const unitIconSrc = unitCompleted ? CheckCircle : getUnitIcon(unit);
+
+                              return (
+                                <button
+                                  key={unit.id}
+                                  type="button"
+                                  className={`unit-item ${isUnitActive ? 'active' : ''} ${unitCompleted ? 'completed' : ''}`}
+                                  onClick={() => handleUnitClick(sequence.id, unit.id)}
+                                >
+                                  <span className="unit-icon">
+                                    <Icon src={unitIconSrc} />
+                                  </span>
+                                  <span className="unit-title">
+                                    {sectionIndex + 1}.{seqIndex + 1}.{unitIndex + 1} {unit.title}
+                                  </span>
+                                </button>
+                              );
+                            })}
+                          </ul>
+                        )}
+                      </li>
                     );
                   })}
                 </ul>
@@ -485,6 +665,7 @@ CourseNavigationSidebar.propTypes = {
   courseId: PropTypes.string.isRequired,
   currentSequenceId: PropTypes.string,
   currentSectionId: PropTypes.string,
+  currentUnitId: PropTypes.string,
   isCollapsed: PropTypes.bool,
   onToggleCollapse: PropTypes.func.isRequired,
 };
@@ -492,6 +673,7 @@ CourseNavigationSidebar.propTypes = {
 CourseNavigationSidebar.defaultProps = {
   currentSequenceId: null,
   currentSectionId: null,
+  currentUnitId: null,
   isCollapsed: false,
 };
 

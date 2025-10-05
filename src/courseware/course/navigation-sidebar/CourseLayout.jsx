@@ -6,6 +6,7 @@ const CourseLayout = ({
   courseId,
   currentSequenceId,
   currentSectionId,
+  currentUnitId,
   children,
 }) => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => {
@@ -75,6 +76,7 @@ const CourseLayout = ({
         courseId={courseId}
         currentSequenceId={currentSequenceId}
         currentSectionId={currentSectionId}
+        currentUnitId={currentUnitId}
         isCollapsed={isSidebarCollapsed}
         onToggleCollapse={handleToggleSidebar}
       />
@@ -98,12 +100,14 @@ CourseLayout.propTypes = {
   courseId: PropTypes.string.isRequired,
   currentSequenceId: PropTypes.string,
   currentSectionId: PropTypes.string,
+  currentUnitId: PropTypes.string,
   children: PropTypes.node.isRequired,
 };
 
 CourseLayout.defaultProps = {
   currentSequenceId: null,
   currentSectionId: null,
+  currentUnitId: null,
 };
 
 export default CourseLayout;
