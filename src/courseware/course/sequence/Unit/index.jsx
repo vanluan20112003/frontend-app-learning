@@ -74,197 +74,241 @@ const ReportButton = () => {
         }
         
         .report-toggle-btn {
-          background: #f8f9fa;
-          border: 1px solid #dee2e6;
-          border-radius: 20px;
-          padding: 8px 12px;
+          background: white;
+          border: 2px solid #dee2e6;
+          border-radius: 8px;
+          padding: 10px 16px;
           font-size: 14px;
-          color: #6c757d;
+          font-weight: 500;
+          color: #495057;
           cursor: pointer;
           display: flex;
           align-items: center;
-          gap: 6px;
+          gap: 8px;
           transition: all 0.2s ease;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
         }
-        
+
         .report-toggle-btn:hover {
-          background: #e9ecef;
-          border-color: #adb5bd;
-          color: #495057;
+          background: #fff5f5;
+          border-color: #dc3545;
+          color: #dc3545;
+          box-shadow: 0 2px 6px rgba(220, 53, 69, 0.2);
+          transform: translateY(-1px);
         }
-        
+
         .report-toggle-btn.active {
-          background: #007bff;
-          border-color: #007bff;
+          background: #dc3545;
+          border-color: #dc3545;
           color: white;
+          box-shadow: 0 3px 8px rgba(220, 53, 69, 0.3);
         }
-        
+
         .dots-icon {
-          width: 16px;
-          height: 16px;
+          width: 18px;
+          height: 18px;
           display: flex;
           align-items: center;
           justify-content: center;
+          font-size: 16px;
         }
         
         .report-dropdown {
           position: absolute;
-          top: 100%;
+          top: calc(100% + 8px);
           right: 0;
           background: white;
-          border: 1px solid #dee2e6;
-          border-radius: 8px;
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-          min-width: 300px;
+          border: 1px solid #e0e0e0;
+          border-radius: 12px;
+          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+          min-width: 320px;
+          max-width: 400px;
           z-index: 1000;
-          margin-top: 4px;
           opacity: 0;
-          transform: translateY(-10px);
-          transition: all 0.2s ease;
+          transform: translateY(-8px);
+          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
           pointer-events: none;
         }
-        
+
         .report-dropdown.open {
           opacity: 1;
           transform: translateY(0);
           pointer-events: all;
         }
-        
+
         .report-header {
-          padding: 16px 16px 12px;
-          border-bottom: 1px solid #e9ecef;
+          padding: 18px 20px 14px;
+          border-bottom: 2px solid #f5f5f5;
+          background: linear-gradient(to bottom, #ffffff, #fafafa);
         }
-        
+
         .report-title {
-          font-size: 16px;
+          font-size: 17px;
           font-weight: 600;
-          color: #212529;
+          color: #1a1a1a;
           margin: 0;
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .report-title:before {
+          content: '⚠️';
+          font-size: 18px;
         }
         
         .report-form {
-          padding: 16px;
+          padding: 20px;
         }
-        
+
         .form-group {
-          margin-bottom: 16px;
+          margin-bottom: 18px;
         }
-        
+
         .form-label {
           display: block;
-          font-size: 14px;
-          font-weight: 500;
-          color: #495057;
-          margin-bottom: 8px;
+          font-size: 13px;
+          font-weight: 600;
+          color: #2c3e50;
+          margin-bottom: 10px;
+          letter-spacing: 0.3px;
         }
-        
+
         .report-options {
-          display: grid;
-          gap: 8px;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
         }
-        
+
         .option-item {
           display: flex;
           align-items: center;
-          padding: 8px 12px;
-          border: 1px solid #e9ecef;
-          border-radius: 6px;
+          padding: 12px 14px;
+          border: 2px solid #e8e8e8;
+          border-radius: 8px;
           cursor: pointer;
           transition: all 0.2s ease;
           background: white;
+          position: relative;
         }
-        
+
         .option-item:hover {
           background: #f8f9fa;
-          border-color: #dee2e6;
+          border-color: #ced4da;
+          transform: translateX(2px);
         }
-        
+
         .option-item.selected {
-          background: #e3f2fd;
+          background: #e8f4fd;
           border-color: #2196f3;
-          color: #1976d2;
+          color: #1565c0;
+          box-shadow: 0 2px 6px rgba(33, 150, 243, 0.15);
         }
-        
+
         .option-radio {
-          margin-right: 10px;
-          width: 16px;
-          height: 16px;
+          margin-right: 12px;
+          width: 18px;
+          height: 18px;
+          accent-color: #2196f3;
         }
-        
+
         .option-label {
           font-size: 14px;
+          font-weight: 500;
           flex: 1;
         }
         
         .form-textarea {
           width: 100%;
-          min-height: 80px;
-          padding: 10px 12px;
-          border: 1px solid #ced4da;
-          border-radius: 6px;
+          min-height: 90px;
+          padding: 12px 14px;
+          border: 2px solid #e8e8e8;
+          border-radius: 8px;
           font-size: 14px;
+          font-family: inherit;
           resize: vertical;
-          transition: border-color 0.2s ease;
-        }
-        
-        .form-textarea:focus {
-          outline: none;
-          border-color: #007bff;
-          box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
-        }
-        
-        .form-actions {
-          display: flex;
-          gap: 12px;
-          justify-content: flex-end;
-          margin-top: 16px;
-          padding-top: 16px;
-          border-top: 1px solid #e9ecef;
-        }
-        
-        .btn {
-          padding: 8px 16px;
-          border-radius: 6px;
-          font-size: 14px;
-          font-weight: 500;
-          border: 1px solid;
-          cursor: pointer;
           transition: all 0.2s ease;
         }
-        
+
+        .form-textarea:focus {
+          outline: none;
+          border-color: #2196f3;
+          box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+        }
+
+        .form-textarea::placeholder {
+          color: #999;
+        }
+
+        .form-actions {
+          display: flex;
+          gap: 10px;
+          justify-content: flex-end;
+          margin-top: 18px;
+          padding-top: 18px;
+          border-top: 2px solid #f0f0f0;
+        }
+
+        .btn {
+          padding: 10px 20px;
+          border-radius: 8px;
+          font-size: 14px;
+          font-weight: 600;
+          border: 2px solid;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+        }
+
         .btn-cancel {
           background: white;
-          border-color: #ced4da;
+          border-color: #dee2e6;
           color: #6c757d;
         }
-        
+
         .btn-cancel:hover {
           background: #f8f9fa;
           border-color: #adb5bd;
           color: #495057;
+          transform: translateY(-1px);
         }
-        
+
         .btn-submit {
-          background: #007bff;
-          border-color: #007bff;
+          background: #dc3545;
+          border-color: #dc3545;
           color: white;
         }
-        
+
         .btn-submit:hover:not(:disabled) {
-          background: #0056b3;
-          border-color: #0056b3;
+          background: #c82333;
+          border-color: #bd2130;
+          transform: translateY(-1px);
+          box-shadow: 0 3px 8px rgba(220, 53, 69, 0.3);
         }
-        
+
         .btn-submit:disabled {
-          background: #6c757d;
-          border-color: #6c757d;
+          background: #adb5bd;
+          border-color: #adb5bd;
           cursor: not-allowed;
+          opacity: 0.6;
         }
         
         @media (max-width: 480px) {
           .report-dropdown {
             min-width: 280px;
-            right: -20px;
+            max-width: calc(100vw - 40px);
+            right: -10px;
+          }
+
+          .option-item {
+            padding: 10px 12px;
+          }
+
+          .btn {
+            padding: 9px 16px;
+            font-size: 13px;
           }
         }
       `}
