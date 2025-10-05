@@ -272,9 +272,9 @@ const CourseNavigationSidebar = ({
           display: flex;
           align-items: center;
           gap: 0.625rem;
-          background: white;
+          background: transparent;
           margin: 0.125rem 0.5rem;
-          border-radius: 6px;
+          border: none;
         }
 
         .sequence-item:hover {
