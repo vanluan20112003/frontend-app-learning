@@ -38,6 +38,15 @@ import CourseAccessErrorPage from './generic/CourseAccessErrorPage';
 import DecodePageRoute from './decode-page-route';
 import { DECODE_ROUTES, ROUTES } from './constants';
 
+// Disable React error overlay in development
+if (process.env.NODE_ENV === 'development') {
+  window.addEventListener('error', (e) => {
+    if (e.message.includes('ResizeObserver') || e.message.includes('WebSocket')) {
+      e.stopImmediatePropagation();
+    }
+  });
+}
+
 subscribe(APP_READY, () => {
   ReactDOM.render(
     <AppProvider store={initializeStore()}>

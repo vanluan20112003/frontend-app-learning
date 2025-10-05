@@ -197,17 +197,14 @@ const CourseNavigationSidebar = ({
           text-align: left;
           transition: all 0.2s;
           gap: 0.75rem;
-          border-left: 4px solid transparent;
         }
 
         .section-header:hover {
           background: #f0f4ff;
-          border-left-color: #667eea;
         }
 
         .section-header.active {
           background: #e3f2fd;
-          border-left-color: #2196f3;
         }
 
         .section-icon {
@@ -272,7 +269,6 @@ const CourseNavigationSidebar = ({
           transition: all 0.2s;
           font-size: 0.875rem;
           color: #475569;
-          border-left: 4px solid transparent;
           display: flex;
           align-items: center;
           gap: 0.625rem;
@@ -283,14 +279,12 @@ const CourseNavigationSidebar = ({
 
         .sequence-item:hover {
           background: #f8fafc;
-          border-left-color: #cbd5e1;
           transform: translateX(2px);
         }
 
         .sequence-item.active {
           background: #dbeafe;
           color: #1e40af;
-          border-left-color: #3b82f6;
           font-weight: 600;
         }
 

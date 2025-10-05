@@ -5,6 +5,10 @@
 
 @import "~@edx/frontend-component-header/dist/index";
 
+// Hide React error overlay (red error screen)
+iframe[id^="webpack-dev-server-client-overlay"] {
+  display: none !important;
+}
 
 #root {
   display: flex;
