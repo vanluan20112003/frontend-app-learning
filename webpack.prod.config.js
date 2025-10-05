@@ -31,6 +31,9 @@ config.module.rules.forEach((rule) => {
             ...loader.options?.sassOptions,
             quietDeps: true, // Suppress deprecation warnings from dependencies
             verbose: false,
+            logger: {
+              warn: () => {}, // Completely silence all Sass warnings
+            },
           },
           warnRuleAsWarning: false, // Don't show sass warnings as webpack warnings
         };
@@ -38,5 +41,17 @@ config.module.rules.forEach((rule) => {
     });
   }
 });
+
+// Filter out Sass warnings from stats
+const originalStats = config.stats || {};
+config.stats = {
+  ...originalStats,
+  warningsFilter: [
+    /Deprecation.*Sass/i,
+    /legacy JS API/i,
+    /@import.*deprecated/i,
+    /Global built-in functions/i,
+  ],
+};
 
 module.exports = config;
