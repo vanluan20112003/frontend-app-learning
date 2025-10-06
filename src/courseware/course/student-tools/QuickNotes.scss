@@ -1,0 +1,329 @@
+.quick-notes {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+
+  .notes-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 20px;
+    border-bottom: 1px solid #e5e7eb;
+    gap: 12px;
+
+    .header-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+
+      .notes-icon {
+        width: 20px;
+        height: 20px;
+        color: #6b7280;
+      }
+
+      .save-status {
+        font-size: 13px;
+
+        .saving {
+          color: #3b82f6;
+          font-weight: 500;
+        }
+
+        .last-saved {
+          color: #10b981;
+          font-weight: 500;
+        }
+
+        .not-saved {
+          color: #9ca3af;
+        }
+      }
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 6px;
+      position: relative;
+
+      .action-btn {
+        background: transparent;
+        border: none;
+        padding: 8px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+        color: #6b7280;
+        position: relative;
+
+        &:hover {
+          background: #f3f4f6;
+          color: #111827;
+        }
+
+        &.danger:hover {
+          background: #fee2e2;
+          color: #dc2626;
+        }
+
+        .pgn__icon {
+          width: 18px;
+          height: 18px;
+        }
+
+        .copied-tooltip {
+          position: absolute;
+          top: -32px;
+          right: 0;
+          background: #111827;
+          color: white;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 12px;
+          white-space: nowrap;
+          animation: fadeInOut 2s ease;
+
+          &::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            right: 8px;
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid #111827;
+          }
+        }
+      }
+    }
+  }
+
+  .notes-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: #f9fafb;
+    border-bottom: 1px solid #e5e7eb;
+    overflow-x: auto;
+
+    .toolbar-label {
+      font-size: 13px;
+      color: #6b7280;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    .template-btn {
+      padding: 6px 12px;
+      background: white;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+      color: #374151;
+
+      &:hover {
+        background: #f3f4f6;
+        border-color: #9ca3af;
+      }
+
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+  }
+
+  .notes-editor {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+
+    .notes-textarea {
+      width: 100%;
+      height: 100%;
+      border: none;
+      outline: none;
+      resize: none;
+      font-size: 15px;
+      line-height: 1.6;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      color: #111827;
+
+      &::placeholder {
+        color: #9ca3af;
+        line-height: 1.8;
+      }
+
+      &:focus {
+        outline: none;
+      }
+    }
+  }
+
+  .notes-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 20px;
+    border-top: 1px solid #e5e7eb;
+    background: #f9fafb;
+
+    .stats {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: #6b7280;
+
+      .stat-item {
+        strong {
+          color: #111827;
+          font-weight: 600;
+        }
+      }
+
+      .stat-separator {
+        color: #d1d5db;
+      }
+    }
+
+    .info-text {
+      small {
+        color: #9ca3af;
+        font-size: 12px;
+      }
+    }
+  }
+
+  @keyframes fadeInOut {
+    0%, 100% {
+      opacity: 0;
+    }
+    10%, 90% {
+      opacity: 1;
+    }
+  }
+
+  // Responsive
+  @media (max-width: 480px) {
+    .notes-header {
+      .header-info {
+        .save-status {
+          font-size: 11px;
+        }
+      }
+
+      .header-actions {
+        .action-btn {
+          padding: 6px;
+
+          .pgn__icon {
+            width: 16px;
+            height: 16px;
+          }
+        }
+      }
+    }
+
+    .notes-toolbar {
+      .toolbar-label {
+        display: none;
+      }
+    }
+
+    .notes-editor {
+      padding: 16px;
+
+      .notes-textarea {
+        font-size: 14px;
+      }
+    }
+
+    .notes-footer {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 8px;
+    }
+  }
+}
+
+// Dark mode support
+@media (prefers-color-scheme: dark) {
+  .quick-notes {
+    background: #1f2937;
+    color: #f9fafb;
+
+    .notes-header {
+      border-bottom-color: #374151;
+
+      .header-info {
+        .notes-icon {
+          color: #9ca3af;
+        }
+      }
+
+      .header-actions {
+        .action-btn {
+          color: #9ca3af;
+
+          &:hover {
+            background: #374151;
+            color: #f9fafb;
+          }
+
+          &.danger:hover {
+            background: #7f1d1d;
+            color: #fca5a5;
+          }
+        }
+      }
+    }
+
+    .notes-toolbar {
+      background: #111827;
+      border-bottom-color: #374151;
+
+      .template-btn {
+        background: #374151;
+        border-color: #4b5563;
+        color: #f9fafb;
+
+        &:hover {
+          background: #4b5563;
+          border-color: #6b7280;
+        }
+      }
+    }
+
+    .notes-editor {
+      .notes-textarea {
+        background: transparent;
+        color: #f9fafb;
+
+        &::placeholder {
+          color: #6b7280;
+        }
+      }
+    }
+
+    .notes-footer {
+      background: #111827;
+      border-top-color: #374151;
+
+      .stats {
+        color: #9ca3af;
+
+        .stat-item strong {
+          color: #f9fafb;
+        }
+      }
+    }
+  }
+}

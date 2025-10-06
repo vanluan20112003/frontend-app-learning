@@ -19,6 +19,7 @@ import CourseBreadcrumbs from './CourseBreadcrumbs';
 import ContentTools from './content-tools';
 import Sequence from './sequence';
 import { CourseLayout } from './navigation-sidebar';
+import { ToolsPanel } from './student-tools';
 
 const Course = ({
   courseId,
@@ -134,6 +135,7 @@ const Course = ({
           onClose={() => setWeeklyGoalCelebrationOpen(false)}
         />
         <ContentTools course={course} />
+        <ToolsPanel />
       </CourseLayout>
     </SidebarProviderComponent>
   );
