@@ -13,7 +13,12 @@ const LeaderboardTab = () => {
   const { courseId } = useSelector((state) => state.courseHome);
   const course = useModel('courseHomeMeta', courseId);
 
+  // eslint-disable-next-line no-console
+  console.log('LeaderboardTab render - courseId:', courseId, 'course:', course);
+
   if (!courseId) {
+    // eslint-disable-next-line no-console
+    console.log('LeaderboardTab: No courseId, returning null');
     return null;
   }
 
