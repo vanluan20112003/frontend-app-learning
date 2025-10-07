@@ -2,10 +2,12 @@
   padding: 32px 20px;
   max-width: 1400px;
 
-  // Page header
+  // Page header - More elegant and professional
   .page-header {
-    margin-bottom: 32px;
+    margin-bottom: 40px;
     text-align: center;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #e5e7eb;
 
     .header-content {
       max-width: 700px;
@@ -13,101 +15,97 @@
     }
 
     .page-title {
-      font-size: 42px;
-      font-weight: 800;
-      margin-bottom: 12px;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #11998e 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      font-size: 32px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: #111827;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 16px;
+      gap: 12px;
 
       .trophy-icon {
-        font-size: 48px;
-        animation: float 3s ease-in-out infinite;
+        font-size: 32px;
+        opacity: 0.8;
       }
     }
 
     .page-description {
-      font-size: 18px;
+      font-size: 16px;
       color: #6b7280;
       margin: 0;
+      font-weight: 400;
     }
   }
 
-  // Tabs container
+  // Tabs container - Cleaner design
   .leaderboard-tabs-container {
     background: white;
-    border-radius: 16px;
+    border-radius: 12px;
     padding: 24px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     margin-bottom: 32px;
+    border: 1px solid #e5e7eb;
 
     .leaderboard-tabs {
       .nav-tabs {
-        border-bottom: 2px solid #e5e7eb;
+        border-bottom: 1px solid #e5e7eb;
         margin-bottom: 32px;
-        gap: 8px;
+        gap: 0;
 
         .nav-link {
           border: none;
-          border-bottom: 3px solid transparent;
-          padding: 16px 24px;
-          transition: all 0.3s ease;
+          border-bottom: 2px solid transparent;
+          padding: 12px 20px;
+          transition: all 0.2s ease;
           background: transparent;
-          border-radius: 12px 12px 0 0;
+          border-radius: 0;
 
           .tab-title {
             display: flex;
             align-items: center;
-            gap: 12px;
-            font-weight: 600;
-            font-size: 16px;
+            gap: 8px;
+            font-weight: 500;
+            font-size: 15px;
             color: #6b7280;
 
             .tab-icon {
-              font-size: 24px;
-              transition: transform 0.3s ease;
+              font-size: 20px;
+              transition: transform 0.2s ease;
             }
 
             .tab-badge {
-              background: #e5e7eb;
+              background: #f3f4f6;
               color: #6b7280;
-              padding: 4px 12px;
-              border-radius: 12px;
-              font-size: 11px;
-              font-weight: 700;
+              padding: 2px 8px;
+              border-radius: 6px;
+              font-size: 10px;
+              font-weight: 600;
               text-transform: uppercase;
-              letter-spacing: 0.5px;
+              letter-spacing: 0.3px;
             }
           }
 
           &:hover {
-            background: #f9fafb;
+            background: transparent;
             border-bottom-color: #d1d5db;
 
             .tab-title {
-              color: #111827;
-
-              .tab-icon {
-                transform: scale(1.1);
-              }
+              color: #374151;
             }
           }
 
           &.active {
-            background: linear-gradient(180deg, #f9fafb 0%, white 100%);
-            border-bottom-color: #3b82f6;
+            background: transparent;
+            border-bottom-color: #2563eb;
 
             .tab-title {
-              color: #3b82f6;
+              color: #2563eb;
+              font-weight: 600;
 
               .tab-badge {
-                background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-                color: white;
+                background: #dbeafe;
+                color: #1e40af;
               }
             }
           }
@@ -115,48 +113,50 @@
       }
 
       .tab-content-wrapper {
-        animation: fadeIn 0.4s ease;
+        animation: fadeIn 0.3s ease;
       }
     }
   }
 
-  // Info footer
+  // Info footer - Professional and subtle
   .leaderboard-footer {
     .info-card {
-      background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
-      border-radius: 16px;
-      padding: 24px;
-      border: 2px solid #bfdbfe;
+      background: #f9fafb;
+      border-radius: 8px;
+      padding: 20px;
+      border: 1px solid #e5e7eb;
 
       h3 {
-        font-size: 20px;
-        font-weight: 700;
-        color: #1e40af;
-        margin-bottom: 16px;
+        font-size: 16px;
+        font-weight: 600;
+        color: #374151;
+        margin-bottom: 12px;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
       }
 
       ul {
         margin: 0;
-        padding-left: 24px;
+        padding-left: 20px;
         list-style: none;
 
         li {
           position: relative;
-          padding-left: 24px;
-          margin-bottom: 12px;
-          color: #475569;
-          line-height: 1.6;
+          padding-left: 20px;
+          margin-bottom: 10px;
+          color: #6b7280;
+          line-height: 1.5;
+          font-size: 14px;
 
           &::before {
-            content: '✓';
+            content: '•';
             position: absolute;
             left: 0;
-            color: #10b981;
+            color: #9ca3af;
             font-weight: 700;
-            font-size: 18px;
+            font-size: 20px;
+            line-height: 1.2;
           }
 
           &:last-child {
@@ -164,7 +164,7 @@
           }
 
           strong {
-            color: #1e40af;
+            color: #374151;
             font-weight: 600;
           }
         }
