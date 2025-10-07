@@ -1,185 +1,349 @@
 .leaderboard-tab {
-  padding: 32px 20px;
+  padding: 24px 20px;
   max-width: 1400px;
+  background: #f9fafb;
 
-  // Page header - More elegant and professional
-  .page-header {
-    margin-bottom: 40px;
-    text-align: center;
-    padding-bottom: 24px;
-    border-bottom: 1px solid #e5e7eb;
+  // Statistics cards at top
+  .stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
 
-    .header-content {
-      max-width: 700px;
-      margin: 0 auto;
-    }
+    .stat-card {
+      background: white;
+      border-radius: 8px;
+      padding: 20px;
+      text-align: center;
+      border: 1px solid #e5e7eb;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-    .page-title {
-      font-size: 32px;
-      font-weight: 700;
-      margin-bottom: 8px;
-      color: #111827;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-
-      .trophy-icon {
-        font-size: 32px;
-        opacity: 0.8;
+      &:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
       }
-    }
 
-    .page-description {
-      font-size: 16px;
-      color: #6b7280;
-      margin: 0;
-      font-weight: 400;
+      .stat-value {
+        font-size: 32px;
+        font-weight: 700;
+        color: #111827;
+        margin-bottom: 4px;
+      }
+
+      .stat-label {
+        font-size: 13px;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 500;
+      }
+
+      &.stat-green .stat-value { color: #059669; }
+      &.stat-blue .stat-value { color: #2563eb; }
+      &.stat-purple .stat-value { color: #7c3aed; }
+      &.stat-orange .stat-value { color: #ea580c; }
+      &.stat-pink .stat-value { color: #db2777; }
+      &.stat-indigo .stat-value { color: #4f46e5; }
     }
   }
 
-  // Tabs container - Cleaner design
-  .leaderboard-tabs-container {
+  // Main content area
+  .leaderboard-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 24px;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  // Section card
+  .leaderboard-section {
     background: white;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    margin-bottom: 32px;
+    border-radius: 8px;
     border: 1px solid #e5e7eb;
+    overflow: hidden;
 
-    .leaderboard-tabs {
-      .nav-tabs {
-        border-bottom: 1px solid #e5e7eb;
-        margin-bottom: 32px;
-        gap: 0;
+    .section-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid #e5e7eb;
+      background: linear-gradient(to bottom, #ffffff, #f9fafb);
 
-        .nav-link {
-          border: none;
-          border-bottom: 2px solid transparent;
-          padding: 12px 20px;
-          transition: all 0.2s ease;
-          background: transparent;
-          border-radius: 0;
+      .header-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
 
-          .tab-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 500;
-            font-size: 15px;
-            color: #6b7280;
+        h2 {
+          font-size: 18px;
+          font-weight: 600;
+          color: #111827;
+          margin: 0;
+          display: flex;
+          align-items: center;
+          gap: 8px;
 
-            .tab-icon {
-              font-size: 20px;
-              transition: transform 0.2s ease;
-            }
-
-            .tab-badge {
-              background: #f3f4f6;
-              color: #6b7280;
-              padding: 2px 8px;
-              border-radius: 6px;
-              font-size: 10px;
-              font-weight: 600;
-              text-transform: uppercase;
-              letter-spacing: 0.3px;
-            }
+          .icon {
+            font-size: 22px;
           }
+        }
+
+        .refresh-btn {
+          padding: 6px 12px;
+          font-size: 13px;
+          border: 1px solid #d1d5db;
+          border-radius: 6px;
+          background: white;
+          color: #6b7280;
+          cursor: pointer;
+          transition: all 0.2s;
 
           &:hover {
-            background: transparent;
-            border-bottom-color: #d1d5db;
-
-            .tab-title {
-              color: #374151;
-            }
-          }
-
-          &.active {
-            background: transparent;
-            border-bottom-color: #2563eb;
-
-            .tab-title {
-              color: #2563eb;
-              font-weight: 600;
-
-              .tab-badge {
-                background: #dbeafe;
-                color: #1e40af;
-              }
-            }
+            background: #f3f4f6;
+            border-color: #9ca3af;
           }
         }
       }
 
-      .tab-content-wrapper {
-        animation: fadeIn 0.3s ease;
+      .header-controls {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+
+        select {
+          padding: 6px 12px;
+          border: 1px solid #d1d5db;
+          border-radius: 6px;
+          font-size: 13px;
+          color: #374151;
+          background: white;
+          cursor: pointer;
+
+          &:focus {
+            outline: none;
+            border-color: #2563eb;
+          }
+        }
+
+        .period-buttons {
+          display: flex;
+          gap: 4px;
+
+          button {
+            padding: 6px 12px;
+            font-size: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            background: white;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.2s;
+
+            &:hover {
+              background: #f3f4f6;
+            }
+
+            &.active {
+              background: #2563eb;
+              color: white;
+              border-color: #2563eb;
+            }
+          }
+        }
+      }
+    }
+
+    .section-body {
+      padding: 16px;
+      max-height: 600px;
+      overflow-y: auto;
+
+      &::-webkit-scrollbar {
+        width: 8px;
+      }
+
+      &::-webkit-scrollbar-track {
+        background: #f3f4f6;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        background: #d1d5db;
+        border-radius: 4px;
+
+        &:hover {
+          background: #9ca3af;
+        }
       }
     }
   }
 
-  // Info footer - Professional and subtle
-  .leaderboard-footer {
-    .info-card {
-      background: #f9fafb;
-      border-radius: 8px;
-      padding: 20px;
-      border: 1px solid #e5e7eb;
+  // Leaderboard table
+  .leaderboard-table {
+    width: 100%;
 
-      h3 {
+    .table-row {
+      display: grid;
+      grid-template-columns: 50px 1fr 100px;
+      gap: 16px;
+      align-items: center;
+      padding: 12px 16px;
+      border-radius: 6px;
+      transition: background 0.2s;
+
+      &:hover {
+        background: #f9fafb;
+      }
+
+      &.header-row {
+        background: #f3f4f6;
+        font-size: 12px;
+        font-weight: 600;
+        color: #6b7280;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 10px 16px;
+        margin-bottom: 4px;
+      }
+
+      .rank {
         font-size: 16px;
         font-weight: 600;
         color: #374151;
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-      }
+        text-align: center;
 
-      ul {
-        margin: 0;
-        padding-left: 20px;
-        list-style: none;
+        &.top-rank {
+          width: 32px;
+          height: 32px;
+          border-radius: 6px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 18px;
+          margin: 0 auto;
 
-        li {
-          position: relative;
-          padding-left: 20px;
-          margin-bottom: 10px;
-          color: #6b7280;
-          line-height: 1.5;
-          font-size: 14px;
-
-          &::before {
-            content: '•';
-            position: absolute;
-            left: 0;
-            color: #9ca3af;
-            font-weight: 700;
-            font-size: 20px;
-            line-height: 1.2;
+          &.rank-1 {
+            background: #fef3c7;
+            color: #d97706;
+            border: 1px solid #fbbf24;
           }
 
-          &:last-child {
-            margin-bottom: 0;
+          &.rank-2 {
+            background: #f1f5f9;
+            color: #64748b;
+            border: 1px solid #cbd5e1;
           }
 
-          strong {
-            color: #374151;
-            font-weight: 600;
+          &.rank-3 {
+            background: #fed7aa;
+            color: #c2410c;
+            border: 1px solid #fb923c;
           }
         }
       }
+
+      .student-info {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+
+        .name {
+          font-size: 15px;
+          font-weight: 500;
+          color: #111827;
+        }
+
+        .username {
+          font-size: 13px;
+          color: #6b7280;
+        }
+      }
+
+      .score {
+        font-size: 18px;
+        font-weight: 600;
+        color: #2563eb;
+        text-align: right;
+
+        &.progress-score {
+          color: #059669;
+        }
+      }
+    }
+  }
+
+  // Loading state
+  .loading-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    gap: 12px;
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid #e5e7eb;
+      border-top-color: #2563eb;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    p {
+      color: #6b7280;
+      font-size: 14px;
+      margin: 0;
+    }
+  }
+
+  // Error state
+  .error-state {
+    padding: 40px 20px;
+    text-align: center;
+
+    .error-icon {
+      font-size: 48px;
+      margin-bottom: 12px;
+    }
+
+    p {
+      color: #6b7280;
+      font-size: 14px;
+      margin: 0;
+    }
+  }
+
+  // Empty state
+  .empty-state {
+    padding: 60px 20px;
+    text-align: center;
+
+    .empty-icon {
+      font-size: 64px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+
+    h3 {
+      font-size: 16px;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: #6b7280;
+      font-size: 14px;
+      margin: 0;
     }
   }
 
   // Animations
-  @keyframes float {
-    0%, 100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
   }
 
   @keyframes fadeIn {
@@ -193,75 +357,58 @@
     }
   }
 
+  .table-row {
+    animation: fadeIn 0.3s ease;
+  }
+
   // Responsive
   @media (max-width: 768px) {
-    padding: 24px 16px;
+    padding: 16px 12px;
 
-    .page-header {
+    .stats-cards {
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
       margin-bottom: 24px;
 
-      .page-title {
-        font-size: 32px;
-        flex-direction: column;
-        gap: 8px;
+      .stat-card {
+        padding: 16px;
 
-        .trophy-icon {
-          font-size: 40px;
+        .stat-value {
+          font-size: 24px;
+        }
+
+        .stat-label {
+          font-size: 11px;
+        }
+      }
+    }
+
+    .leaderboard-section {
+      .section-header {
+        padding: 16px;
+
+        h2 {
+          font-size: 16px;
         }
       }
 
-      .page-description {
+      .section-body {
+        padding: 12px;
+        max-height: 500px;
+      }
+    }
+
+    .leaderboard-table .table-row {
+      grid-template-columns: 40px 1fr 80px;
+      gap: 12px;
+      padding: 10px 12px;
+
+      .student-info .name {
+        font-size: 14px;
+      }
+
+      .score {
         font-size: 16px;
-      }
-    }
-
-    .leaderboard-tabs-container {
-      padding: 16px;
-      border-radius: 12px;
-
-      .leaderboard-tabs {
-        .nav-tabs {
-          margin-bottom: 24px;
-          gap: 4px;
-
-          .nav-link {
-            padding: 12px 16px;
-
-            .tab-title {
-              gap: 8px;
-              font-size: 14px;
-              flex-direction: column;
-              text-align: center;
-
-              .tab-icon {
-                font-size: 20px;
-              }
-
-              .tab-badge {
-                display: none;
-              }
-
-              span:not(.tab-icon):not(.tab-badge) {
-                font-size: 13px;
-              }
-            }
-          }
-        }
-      }
-    }
-
-    .leaderboard-footer {
-      .info-card {
-        padding: 20px;
-
-        h3 {
-          font-size: 18px;
-        }
-
-        ul li {
-          font-size: 14px;
-          margin-bottom: 10px;
-        }
       }
     }
   }
@@ -270,77 +417,127 @@
 // Dark mode
 @media (prefers-color-scheme: dark) {
   .leaderboard-tab {
-    .page-header {
-      .page-description {
+    background: #111827;
+
+    .stats-cards .stat-card {
+      background: #1f2937;
+      border-color: #374151;
+
+      .stat-value {
+        color: #f9fafb;
+      }
+
+      .stat-label {
         color: #9ca3af;
       }
     }
 
-    .leaderboard-tabs-container {
+    .leaderboard-section {
       background: #1f2937;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+      border-color: #374151;
 
-      .leaderboard-tabs {
-        .nav-tabs {
-          border-bottom-color: #374151;
+      .section-header {
+        background: linear-gradient(to bottom, #1f2937, #111827);
+        border-bottom-color: #374151;
 
-          .nav-link {
-            .tab-title {
-              color: #9ca3af;
+        h2 {
+          color: #f9fafb;
+        }
 
-              .tab-badge {
-                background: #374151;
-                color: #9ca3af;
-              }
-            }
+        .refresh-btn,
+        select,
+        .period-buttons button {
+          background: #111827;
+          border-color: #4b5563;
+          color: #9ca3af;
 
-            &:hover {
-              background: #111827;
-              border-bottom-color: #4b5563;
+          &:hover {
+            background: #374151;
+          }
 
-              .tab-title {
-                color: #f9fafb;
-              }
-            }
+          &.active {
+            background: #2563eb;
+            color: white;
+          }
+        }
+      }
 
-            &.active {
-              background: linear-gradient(180deg, #111827 0%, #1f2937 100%);
-              border-bottom-color: #60a5fa;
+      .section-body {
+        &::-webkit-scrollbar-track {
+          background: #111827;
+        }
 
-              .tab-title {
-                color: #60a5fa;
+        &::-webkit-scrollbar-thumb {
+          background: #4b5563;
 
-                .tab-badge {
-                  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
-                  color: white;
-                }
-              }
-            }
+          &:hover {
+            background: #6b7280;
           }
         }
       }
     }
 
-    .leaderboard-footer {
-      .info-card {
-        background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
-        border-color: #1e40af;
-
-        h3 {
-          color: #93c5fd;
+    .leaderboard-table {
+      .table-row {
+        &:hover {
+          background: #111827;
         }
 
-        ul li {
-          color: #cbd5e1;
+        &.header-row {
+          background: #111827;
+          color: #9ca3af;
+        }
 
-          &::before {
+        .rank {
+          color: #f9fafb;
+
+          &.top-rank {
+            &.rank-1 {
+              background: #422006;
+              color: #fbbf24;
+            }
+
+            &.rank-2 {
+              background: #1e293b;
+              color: #cbd5e1;
+            }
+
+            &.rank-3 {
+              background: #431407;
+              color: #fb923c;
+            }
+          }
+        }
+
+        .student-info {
+          .name {
+            color: #f9fafb;
+          }
+
+          .username {
+            color: #9ca3af;
+          }
+        }
+
+        .score {
+          color: #60a5fa;
+
+          &.progress-score {
             color: #34d399;
           }
-
-          strong {
-            color: #93c5fd;
-          }
         }
+      }
+    }
+
+    .loading-state,
+    .error-state,
+    .empty-state {
+      p {
+        color: #9ca3af;
+      }
+
+      h3 {
+        color: #f9fafb;
       }
     }
   }

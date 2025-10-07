@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { Tabs, Tab, Container } from '@openedx/paragon';
+import { Container } from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
 import { getConfig } from '@edx/frontend-platform';
 import { useModel } from '../generic/model-store';
@@ -9,16 +9,42 @@ import TopProgressLeaderboard from './TopProgressLeaderboard';
 import './LeaderboardTab.scss';
 
 const LeaderboardTab = () => {
-  const [activeTab, setActiveTab] = useState('grades');
   const { courseId } = useSelector((state) => state.courseHome);
   const course = useModel('courseHomeMeta', courseId);
 
-  // eslint-disable-next-line no-console
-  console.log('LeaderboardTab render - courseId:', courseId, 'course:', course);
+  // Get leaderboard data for statistics
+  const gradesData = useSelector((state) => state.leaderboard.topGrades.data);
+  const progressData = useSelector((state) => state.leaderboard.topProgress.data);
+
+  // Calculate statistics
+  const stats = useMemo(() => {
+    const gradesSummary = gradesData?.summary || {};
+    const items = [
+      {
+        value: gradesSummary.total_students || 0,
+        label: 'Tổng học viên',
+        colorClass: 'stat-blue',
+      },
+      {
+        value: gradesSummary.average_grade ? `${gradesSummary.average_grade}%` : '0%',
+        label: 'Điểm TB',
+        colorClass: 'stat-green',
+      },
+      {
+        value: gradesSummary.highest_grade ? `${gradesSummary.highest_grade}%` : '0%',
+        label: 'Điểm cao nhất',
+        colorClass: 'stat-purple',
+      },
+      {
+        value: progressData?.students?.length || 0,
+        label: 'Đang thi đua',
+        colorClass: 'stat-orange',
+      },
+    ];
+    return items;
+  }, [gradesData, progressData]);
 
   if (!courseId) {
-    // eslint-disable-next-line no-console
-    console.log('LeaderboardTab: No courseId, returning null');
     return null;
   }
 
@@ -29,75 +55,20 @@ const LeaderboardTab = () => {
       </Helmet>
 
       <Container size="xl" className="leaderboard-tab">
-        <div className="page-header">
-          <div className="header-content">
-            <h1 className="page-title">
-              <span className="trophy-icon">🏆</span>
-              Bảng Xếp Hạng
-            </h1>
-            <p className="page-description">
-              Khám phá những học viên xuất sắc nhất trong khóa học
-            </p>
-          </div>
+        {/* Statistics Cards */}
+        <div className="stats-cards">
+          {stats.map((stat) => (
+            <div key={stat.label} className={`stat-card ${stat.colorClass}`}>
+              <div className="stat-value">{stat.value}</div>
+              <div className="stat-label">{stat.label}</div>
+            </div>
+          ))}
         </div>
 
-        <div className="leaderboard-tabs-container">
-          <Tabs
-            variant="tabs"
-            activeKey={activeTab}
-            onSelect={setActiveTab}
-            className="leaderboard-tabs"
-          >
-            <Tab
-              eventKey="grades"
-              title={(
-                <span className="tab-title">
-                  <span className="tab-icon">📊</span>
-                  <span>Điểm Số</span>
-                  <span className="tab-badge">Grades</span>
-                </span>
-              )}
-            >
-              <div className="tab-content-wrapper">
-                <TopGradesLeaderboard courseId={courseId} />
-              </div>
-            </Tab>
-
-            <Tab
-              eventKey="progress"
-              title={(
-                <span className="tab-title">
-                  <span className="tab-icon">⚡</span>
-                  <span>Tiến Độ</span>
-                  <span className="tab-badge">Progress</span>
-                </span>
-              )}
-            >
-              <div className="tab-content-wrapper">
-                <TopProgressLeaderboard courseId={courseId} />
-              </div>
-            </Tab>
-          </Tabs>
-        </div>
-
-        <div className="leaderboard-footer">
-          <div className="info-card">
-            <h3>💡 Thông tin</h3>
-            <ul>
-              <li>
-                <strong>Bảng Điểm Số:</strong> Xếp hạng dựa trên điểm số trung bình của các bài kiểm tra và bài tập.
-              </li>
-              <li>
-                <strong>Bảng Tiến Độ:</strong> Xếp hạng dựa trên tốc độ hoàn thành các bài học trong khóa.
-              </li>
-              <li>
-                <strong>Cập nhật:</strong> Bảng xếp hạng được cập nhật realtime khi có thay đổi về điểm số hoặc tiến độ.
-              </li>
-              <li>
-                <strong>Privacy:</strong> Chỉ hiển thị thông tin công khai của học viên.
-              </li>
-            </ul>
-          </div>
+        {/* Leaderboards Grid */}
+        <div className="leaderboard-content">
+          <TopGradesLeaderboard courseId={courseId} />
+          <TopProgressLeaderboard courseId={courseId} />
         </div>
       </Container>
     </>

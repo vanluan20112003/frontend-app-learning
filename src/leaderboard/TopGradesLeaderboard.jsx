@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  Card, Icon, Spinner, Alert, Form,
-} from '@openedx/paragon';
-import { EmojiEvents, Refresh } from '@openedx/paragon/icons';
 import { fetchTopGradesData } from './data/thunks';
-import LeaderboardCard from './LeaderboardCard';
-import './TopGradesLeaderboard.scss';
 
 const TopGradesLeaderboard = ({ courseId }) => {
   const dispatch = useDispatch();
@@ -16,12 +10,7 @@ const TopGradesLeaderboard = ({ courseId }) => {
 
   useEffect(() => {
     if (courseId) {
-      // eslint-disable-next-line no-console
-      console.log('TopGradesLeaderboard: Fetching data for courseId:', courseId, 'limit:', limit);
       dispatch(fetchTopGradesData(courseId, limit));
-    } else {
-      // eslint-disable-next-line no-console
-      console.log('TopGradesLeaderboard: No courseId provided');
     }
   }, [courseId, limit, dispatch]);
 
@@ -30,114 +19,96 @@ const TopGradesLeaderboard = ({ courseId }) => {
   };
 
   const handleLimitChange = (e) => {
-    const newLimit = parseInt(e.target.value, 10);
-    setLimit(newLimit);
+    setLimit(parseInt(e.target.value, 10));
   };
 
-  if (status === 'loading') {
-    return (
-      <div className="leaderboard-loading">
-        <Spinner animation="border" variant="primary" />
-        <p>Đang tải bảng xếp hạng...</p>
-      </div>
-    );
-  }
-
-  if (status === 'failed') {
-    return (
-      <Alert variant="danger">
-        <Alert.Heading>Không thể tải bảng xếp hạng</Alert.Heading>
-        <p>{error || 'Đã xảy ra lỗi khi tải dữ liệu'}</p>
-        <button type="button" className="btn btn-outline-danger btn-sm" onClick={handleRefresh}>
-          Thử lại
-        </button>
-      </Alert>
-    );
-  }
-
-  if (!data || !data.top_students || data.top_students.length === 0) {
-    return (
-      <Alert variant="info">
-        <p>Chưa có dữ liệu bảng xếp hạng cho khóa học này.</p>
-      </Alert>
-    );
-  }
-
-  const { summary, top_students: topStudents } = data;
-
   return (
-    <div className="top-grades-leaderboard">
-      {/* Header */}
-      <Card className="leaderboard-header">
-        <Card.Body>
-          <div className="header-content">
-            <div className="header-title">
-              <Icon src={EmojiEvents} className="title-icon" />
-              <div>
-                <h2>Bảng Xếp Hạng Điểm Số</h2>
-                <p className="subtitle">Top học viên có điểm cao nhất</p>
-              </div>
-            </div>
+    <div className="leaderboard-section">
+      <div className="section-header">
+        <div className="header-top">
+          <h2>
+            <span className="icon">🏆</span>
+            Bảng Xếp Hạng Điểm
+          </h2>
+          <button
+            type="button"
+            className="refresh-btn"
+            onClick={handleRefresh}
+            disabled={status === 'loading'}
+          >
+            🔄 Làm mới
+          </button>
+        </div>
+        <div className="header-controls">
+          <label htmlFor="grades-limit">
+            Hiển thị:
+            <select
+              id="grades-limit"
+              value={limit}
+              onChange={handleLimitChange}
+              disabled={status === 'loading'}
+            >
+              <option value={10}>Top 10</option>
+              <option value={20}>Top 20</option>
+              <option value={50}>Top 50</option>
+              <option value={100}>Top 100</option>
+            </select>
+          </label>
+        </div>
+      </div>
 
-            <div className="header-actions">
-              <Form.Group className="limit-select">
-                <Form.Label className="small">Hiển thị:</Form.Label>
-                <Form.Control
-                  as="select"
-                  value={limit}
-                  onChange={handleLimitChange}
-                  size="sm"
-                >
-                  <option value={10}>Top 10</option>
-                  <option value={20}>Top 20</option>
-                  <option value={50}>Top 50</option>
-                  <option value={100}>Top 100</option>
-                </Form.Control>
-              </Form.Group>
-
-              <button
-                type="button"
-                className="btn btn-outline-primary btn-sm"
-                onClick={handleRefresh}
-                title="Làm mới"
-              >
-                <Icon src={Refresh} />
-              </button>
-            </div>
+      <div className="section-body">
+        {status === 'loading' && (
+          <div className="loading-state">
+            <div className="spinner" />
+            <p>Đang tải bảng xếp hạng...</p>
           </div>
+        )}
 
-          {/* Summary stats */}
-          <div className="summary-stats">
-            <div className="stat-box">
-              <div className="stat-value">{summary.total_students}</div>
-              <div className="stat-label">Tổng học viên</div>
-            </div>
-            <div className="stat-box">
-              <div className="stat-value">{summary.avg_grade?.toFixed(1)}%</div>
-              <div className="stat-label">Điểm TB</div>
-            </div>
-            <div className="stat-box">
-              <div className="stat-value highlight">{summary.max_grade?.toFixed(1)}%</div>
-              <div className="stat-label">Điểm cao nhất</div>
-            </div>
-            <div className="stat-box">
-              <div className="stat-value">{summary.min_grade?.toFixed(1)}%</div>
-              <div className="stat-label">Điểm thấp nhất</div>
-            </div>
+        {status === 'failed' && (
+          <div className="error-state">
+            <div className="error-icon">⚠️</div>
+            <p>{error || 'Không thể tải dữ liệu. Vui lòng thử lại.'}</p>
           </div>
-        </Card.Body>
-      </Card>
+        )}
 
-      {/* Leaderboard list */}
-      <div className="leaderboard-list">
-        {topStudents.map((student) => (
-          <LeaderboardCard
-            key={student.user_id}
-            student={student}
-            type="grades"
-            animated
-          />
-        ))}
+        {status === 'succeeded' && data?.students?.length === 0 && (
+          <div className="empty-state">
+            <div className="empty-icon">📊</div>
+            <h3>Chưa có dữ liệu</h3>
+            <p>Bảng xếp hạng sẽ được cập nhật khi có điểm số.</p>
+          </div>
+        )}
+
+        {status === 'succeeded' && data?.students?.length > 0 && (
+          <div className="leaderboard-table">
+            <div className="table-row header-row">
+              <div className="rank">Hạng</div>
+              <div className="student-info">Học viên</div>
+              <div className="score">Điểm</div>
+            </div>
+
+            {data.students.map((student) => {
+              const position = student.position || student.rank;
+              const isTopRank = position <= 3;
+
+              return (
+                <div key={student.user_id} className="table-row">
+                  <div className={isTopRank ? `rank top-rank rank-${position}` : 'rank'}>
+                    {position}
+                  </div>
+                  <div className="student-info">
+                    <div className="name">{student.full_name || student.username}</div>
+                    <div className="username">@{student.username}</div>
+                  </div>
+                  <div className="score">
+                    {parseFloat(student.average_grade || 0).toFixed(1)}%
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );

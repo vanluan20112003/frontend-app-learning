@@ -1,27 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-  Card, Icon, Spinner, Alert, Form, ButtonGroup, Button,
-} from '@openedx/paragon';
-import { Speed, Refresh } from '@openedx/paragon/icons';
 import { fetchTopProgressData } from './data/thunks';
-import LeaderboardCard from './LeaderboardCard';
-import './TopProgressLeaderboard.scss';
 
 const PERIOD_OPTIONS = [
-  { value: 'week', label: 'Tuần này', icon: '📅' },
-  { value: 'month', label: 'Tháng này', icon: '📆' },
-  { value: 'all', label: 'Mọi thời đại', icon: '🏛️' },
+  { value: 'week', label: 'Tuần này' },
+  { value: 'month', label: 'Tháng này' },
+  { value: 'all', label: 'Mọi thời đại' },
 ];
 
 const TopProgressLeaderboard = ({ courseId }) => {
   const dispatch = useDispatch();
   const [limit, setLimit] = useState(10);
-  const {
-    data, status, error,
-  } = useSelector((state) => state.leaderboard.topProgress);
   const [selectedPeriod, setSelectedPeriod] = useState('all');
+  const { data, status, error } = useSelector((state) => state.leaderboard.topProgress);
 
   useEffect(() => {
     if (courseId) {
@@ -33,137 +25,108 @@ const TopProgressLeaderboard = ({ courseId }) => {
     dispatch(fetchTopProgressData(courseId, selectedPeriod, limit));
   };
 
-  const handlePeriodChange = (newPeriod) => {
-    setSelectedPeriod(newPeriod);
-  };
-
   const handleLimitChange = (e) => {
-    const newLimit = parseInt(e.target.value, 10);
-    setLimit(newLimit);
+    setLimit(parseInt(e.target.value, 10));
   };
-
-  if (status === 'loading') {
-    return (
-      <div className="leaderboard-loading">
-        <Spinner animation="border" variant="success" />
-        <p>Đang tải bảng xếp hạng...</p>
-      </div>
-    );
-  }
-
-  if (status === 'failed') {
-    return (
-      <Alert variant="danger">
-        <Alert.Heading>Không thể tải bảng xếp hạng</Alert.Heading>
-        <p>{error || 'Đã xảy ra lỗi khi tải dữ liệu'}</p>
-        <button type="button" className="btn btn-outline-danger btn-sm" onClick={handleRefresh}>
-          Thử lại
-        </button>
-      </Alert>
-    );
-  }
-
-  if (!data || !data.top_students || data.top_students.length === 0) {
-    return (
-      <Alert variant="info">
-        <p>Chưa có dữ liệu bảng xếp hạng cho khóa học này.</p>
-      </Alert>
-    );
-  }
-
-  const { summary, top_students: topStudents } = data;
-  const currentPeriodLabel = PERIOD_OPTIONS.find((p) => p.value === selectedPeriod)?.label || 'Mọi thời đại';
 
   return (
-    <div className="top-progress-leaderboard">
-      {/* Header */}
-      <Card className="leaderboard-header">
-        <Card.Body>
-          <div className="header-content">
-            <div className="header-title">
-              <Icon src={Speed} className="title-icon" />
-              <div>
-                <h2>Bảng Xếp Hạng Tiến Độ</h2>
-                <p className="subtitle">Top học viên hoàn thành nhanh nhất</p>
-              </div>
-            </div>
-
-            <div className="header-actions">
-              <Form.Group className="limit-select">
-                <Form.Label className="small">Hiển thị:</Form.Label>
-                <Form.Control
-                  as="select"
-                  value={limit}
-                  onChange={handleLimitChange}
-                  size="sm"
-                >
-                  <option value={10}>Top 10</option>
-                  <option value={20}>Top 20</option>
-                  <option value={50}>Top 50</option>
-                  <option value={100}>Top 100</option>
-                </Form.Control>
-              </Form.Group>
-
+    <div className="leaderboard-section">
+      <div className="section-header">
+        <div className="header-top">
+          <h2>
+            <span className="icon">⚡</span>
+            Bảng Xếp Hạng Tiến Độ
+          </h2>
+          <button
+            type="button"
+            className="refresh-btn"
+            onClick={handleRefresh}
+            disabled={status === 'loading'}
+          >
+            🔄 Làm mới
+          </button>
+        </div>
+        <div className="header-controls">
+          <div className="period-buttons">
+            {PERIOD_OPTIONS.map((option) => (
               <button
+                key={option.value}
                 type="button"
-                className="btn btn-outline-light btn-sm"
-                onClick={handleRefresh}
-                title="Làm mới"
+                className={selectedPeriod === option.value ? 'active' : ''}
+                onClick={() => setSelectedPeriod(option.value)}
+                disabled={status === 'loading'}
               >
-                <Icon src={Refresh} />
+                {option.label}
               </button>
-            </div>
+            ))}
           </div>
+          <label htmlFor="progress-limit">
+            <select
+              id="progress-limit"
+              value={limit}
+              onChange={handleLimitChange}
+              disabled={status === 'loading'}
+            >
+              <option value={10}>Top 10</option>
+              <option value={20}>Top 20</option>
+              <option value={50}>Top 50</option>
+            </select>
+          </label>
+        </div>
+      </div>
 
-          {/* Period selector */}
-          <div className="period-selector">
-            <ButtonGroup>
-              {PERIOD_OPTIONS.map((option) => (
-                <Button
-                  key={option.value}
-                  variant={selectedPeriod === option.value ? 'light' : 'outline-light'}
-                  onClick={() => handlePeriodChange(option.value)}
-                  size="sm"
-                >
-                  <span className="period-icon">{option.icon}</span>
-                  {option.label}
-                </Button>
-              ))}
-            </ButtonGroup>
+      <div className="section-body">
+        {status === 'loading' && (
+          <div className="loading-state">
+            <div className="spinner" />
+            <p>Đang tải bảng xếp hạng...</p>
           </div>
+        )}
 
-          {/* Summary stats */}
-          <div className="summary-stats">
-            <div className="stat-box">
-              <div className="stat-value">{summary.total_students_with_progress}</div>
-              <div className="stat-label">Học viên</div>
-            </div>
-            <div className="stat-box">
-              <div className="stat-value">{summary.total_course_components}</div>
-              <div className="stat-label">Tổng bài học</div>
-            </div>
-            <div className="stat-box">
-              <div className="stat-value highlight">{summary.avg_progress?.toFixed(0)}%</div>
-              <div className="stat-label">Tiến độ TB</div>
-            </div>
-            <div className="stat-box">
-              <div className="stat-value">{currentPeriodLabel}</div>
-              <div className="stat-label">Khoảng thời gian</div>
-            </div>
+        {status === 'failed' && (
+          <div className="error-state">
+            <div className="error-icon">⚠️</div>
+            <p>{error || 'Không thể tải dữ liệu. Vui lòng thử lại.'}</p>
           </div>
-        </Card.Body>
-      </Card>
+        )}
 
-      {/* Leaderboard list */}
-      <div className="leaderboard-list">
-        {topStudents.map((student) => (
-          <LeaderboardCard
-            key={student.user_id}
-            student={student}
-            type="progress"
-            animated
-          />
-        ))}
+        {status === 'succeeded' && data?.students?.length === 0 && (
+          <div className="empty-state">
+            <div className="empty-icon">📈</div>
+            <h3>Chưa có dữ liệu</h3>
+            <p>Bảng xếp hạng sẽ được cập nhật khi có tiến độ học tập.</p>
+          </div>
+        )}
+
+        {status === 'succeeded' && data?.students?.length > 0 && (
+          <div className="leaderboard-table">
+            <div className="table-row header-row">
+              <div className="rank">Hạng</div>
+              <div className="student-info">Học viên</div>
+              <div className="score">Tiến độ</div>
+            </div>
+
+            {data.students.map((student) => {
+              const position = student.position || student.rank;
+              const isTopRank = position <= 3;
+
+              return (
+                <div key={student.user_id} className="table-row">
+                  <div className={isTopRank ? `rank top-rank rank-${position}` : 'rank'}>
+                    {position}
+                  </div>
+                  <div className="student-info">
+                    <div className="name">{student.full_name || student.username}</div>
+                    <div className="username">@{student.username}</div>
+                  </div>
+                  <div className="score progress-score">
+                    {parseFloat(student.progress_percent || 0).toFixed(1)}%
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
