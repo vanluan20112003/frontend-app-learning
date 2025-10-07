@@ -158,8 +158,8 @@ const SimpleCalculator = () => {
         )}
       </div>
       <div className="calculator-keypad">
-        {buttons.map((row, idx) => (
-          <div key={`row-${idx}`} className="calculator-row">
+        {buttons.map((row) => (
+          <div key={row[0].label || 'empty-row'} className="calculator-row">
             {row.map((button) => (
               <button
                 key={button.label || `empty-${button.className}`}

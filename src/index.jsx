@@ -28,12 +28,15 @@ import GoalUnsubscribe from './course-home/goal-unsubscribe';
 import ProgressTab from './course-home/progress-tab/ProgressTab';
 import { TabContainer } from './tab-page';
 
-import { fetchDatesTab, fetchOutlineTab, fetchProgressTab } from './course-home/data';
+import {
+  fetchDatesTab, fetchOutlineTab, fetchProgressTab, fetchLeaderboardTab,
+} from './course-home/data';
 import { fetchCourse } from './courseware/data';
 import initializeStore from './store';
 import NoticesProvider from './generic/notices';
 import PathFixesProvider from './generic/path-fixes';
 import LiveTab from './course-home/live-tab/LiveTab';
+import { LeaderboardTab } from './leaderboard';
 import CourseAccessErrorPage from './generic/CourseAccessErrorPage';
 import DecodePageRoute from './decode-page-route';
 import { DECODE_ROUTES, ROUTES } from './constants';
@@ -99,6 +102,16 @@ subscribe(APP_READY, () => {
                   <DecodePageRoute>
                     <TabContainer tab="discussion" fetch={fetchDiscussionTab} slice="courseHome">
                       <DiscussionTab />
+                    </TabContainer>
+                  </DecodePageRoute>
+                )}
+              />
+              <Route
+                path={DECODE_ROUTES.LEADERBOARD}
+                element={(
+                  <DecodePageRoute>
+                    <TabContainer tab="leaderboard" fetch={fetchLeaderboardTab} slice="courseHome">
+                      <LeaderboardTab />
                     </TabContainer>
                   </DecodePageRoute>
                 )}

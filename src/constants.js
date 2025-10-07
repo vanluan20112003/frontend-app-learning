@@ -8,6 +8,7 @@ export const DECODE_ROUTES = {
     '/course/:courseId/progress/:targetUserId/',
     '/course/:courseId/progress',
   ],
+  LEADERBOARD: '/course/:courseId/leaderboard',
   COURSE_END: '/course/:courseId/course-end',
   COURSEWARE: [
     '/course/:courseId/:sequenceId/:unitId',

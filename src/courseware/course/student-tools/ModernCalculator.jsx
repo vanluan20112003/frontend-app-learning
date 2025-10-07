@@ -165,8 +165,8 @@ const ModernCalculator = () => {
 
           <div className="calculator-buttons">
             <div className="calculator-keypad">
-              {buttons.map((row, idx) => (
-                <div key={`row-${idx}`} className="button-row">
+              {buttons.map((row) => (
+                <div key={row[0].label} className="button-row">
                   {row.map((button) => {
                     let buttonClass = 'number';
                     if (['÷', '×', '-', '+'].includes(button.label)) {

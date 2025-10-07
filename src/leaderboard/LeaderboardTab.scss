@@ -1,0 +1,347 @@
+.leaderboard-tab {
+  padding: 32px 20px;
+  max-width: 1400px;
+
+  // Page header
+  .page-header {
+    margin-bottom: 32px;
+    text-align: center;
+
+    .header-content {
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .page-title {
+      font-size: 42px;
+      font-weight: 800;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #11998e 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+
+      .trophy-icon {
+        font-size: 48px;
+        animation: float 3s ease-in-out infinite;
+      }
+    }
+
+    .page-description {
+      font-size: 18px;
+      color: #6b7280;
+      margin: 0;
+    }
+  }
+
+  // Tabs container
+  .leaderboard-tabs-container {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
+    margin-bottom: 32px;
+
+    .leaderboard-tabs {
+      .nav-tabs {
+        border-bottom: 2px solid #e5e7eb;
+        margin-bottom: 32px;
+        gap: 8px;
+
+        .nav-link {
+          border: none;
+          border-bottom: 3px solid transparent;
+          padding: 16px 24px;
+          transition: all 0.3s ease;
+          background: transparent;
+          border-radius: 12px 12px 0 0;
+
+          .tab-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            color: #6b7280;
+
+            .tab-icon {
+              font-size: 24px;
+              transition: transform 0.3s ease;
+            }
+
+            .tab-badge {
+              background: #e5e7eb;
+              color: #6b7280;
+              padding: 4px 12px;
+              border-radius: 12px;
+              font-size: 11px;
+              font-weight: 700;
+              text-transform: uppercase;
+              letter-spacing: 0.5px;
+            }
+          }
+
+          &:hover {
+            background: #f9fafb;
+            border-bottom-color: #d1d5db;
+
+            .tab-title {
+              color: #111827;
+
+              .tab-icon {
+                transform: scale(1.1);
+              }
+            }
+          }
+
+          &.active {
+            background: linear-gradient(180deg, #f9fafb 0%, white 100%);
+            border-bottom-color: #3b82f6;
+
+            .tab-title {
+              color: #3b82f6;
+
+              .tab-badge {
+                background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+                color: white;
+              }
+            }
+          }
+        }
+      }
+
+      .tab-content-wrapper {
+        animation: fadeIn 0.4s ease;
+      }
+    }
+  }
+
+  // Info footer
+  .leaderboard-footer {
+    .info-card {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0e7ff 100%);
+      border-radius: 16px;
+      padding: 24px;
+      border: 2px solid #bfdbfe;
+
+      h3 {
+        font-size: 20px;
+        font-weight: 700;
+        color: #1e40af;
+        margin-bottom: 16px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      ul {
+        margin: 0;
+        padding-left: 24px;
+        list-style: none;
+
+        li {
+          position: relative;
+          padding-left: 24px;
+          margin-bottom: 12px;
+          color: #475569;
+          line-height: 1.6;
+
+          &::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #10b981;
+            font-weight: 700;
+            font-size: 18px;
+          }
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+
+          strong {
+            color: #1e40af;
+            font-weight: 600;
+          }
+        }
+      }
+    }
+  }
+
+  // Animations
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  // Responsive
+  @media (max-width: 768px) {
+    padding: 24px 16px;
+
+    .page-header {
+      margin-bottom: 24px;
+
+      .page-title {
+        font-size: 32px;
+        flex-direction: column;
+        gap: 8px;
+
+        .trophy-icon {
+          font-size: 40px;
+        }
+      }
+
+      .page-description {
+        font-size: 16px;
+      }
+    }
+
+    .leaderboard-tabs-container {
+      padding: 16px;
+      border-radius: 12px;
+
+      .leaderboard-tabs {
+        .nav-tabs {
+          margin-bottom: 24px;
+          gap: 4px;
+
+          .nav-link {
+            padding: 12px 16px;
+
+            .tab-title {
+              gap: 8px;
+              font-size: 14px;
+              flex-direction: column;
+              text-align: center;
+
+              .tab-icon {
+                font-size: 20px;
+              }
+
+              .tab-badge {
+                display: none;
+              }
+
+              span:not(.tab-icon):not(.tab-badge) {
+                font-size: 13px;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .leaderboard-footer {
+      .info-card {
+        padding: 20px;
+
+        h3 {
+          font-size: 18px;
+        }
+
+        ul li {
+          font-size: 14px;
+          margin-bottom: 10px;
+        }
+      }
+    }
+  }
+}
+
+// Dark mode
+@media (prefers-color-scheme: dark) {
+  .leaderboard-tab {
+    .page-header {
+      .page-description {
+        color: #9ca3af;
+      }
+    }
+
+    .leaderboard-tabs-container {
+      background: #1f2937;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+
+      .leaderboard-tabs {
+        .nav-tabs {
+          border-bottom-color: #374151;
+
+          .nav-link {
+            .tab-title {
+              color: #9ca3af;
+
+              .tab-badge {
+                background: #374151;
+                color: #9ca3af;
+              }
+            }
+
+            &:hover {
+              background: #111827;
+              border-bottom-color: #4b5563;
+
+              .tab-title {
+                color: #f9fafb;
+              }
+            }
+
+            &.active {
+              background: linear-gradient(180deg, #111827 0%, #1f2937 100%);
+              border-bottom-color: #60a5fa;
+
+              .tab-title {
+                color: #60a5fa;
+
+                .tab-badge {
+                  background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+                  color: white;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+
+    .leaderboard-footer {
+      .info-card {
+        background: linear-gradient(135deg, #1e3a8a 0%, #3730a3 100%);
+        border-color: #1e40af;
+
+        h3 {
+          color: #93c5fd;
+        }
+
+        ul li {
+          color: #cbd5e1;
+
+          &::before {
+            color: #34d399;
+          }
+
+          strong {
+            color: #93c5fd;
+          }
+        }
+      }
+    }
+  }
+}

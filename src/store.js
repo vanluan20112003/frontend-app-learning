@@ -7,6 +7,7 @@ import { reducer as recommendationsReducer } from './courseware/course/course-ex
 import { reducer as toursReducer } from './product-tours/data';
 import { reducer as modelsReducer } from './generic/model-store';
 import { reducer as pluginsReducer } from './generic/plugin-store';
+import { leaderboardReducer } from './leaderboard/data';
 
 export default function initializeStore() {
   return configureStore({
@@ -19,6 +20,7 @@ export default function initializeStore() {
       recommendations: recommendationsReducer,
       tours: toursReducer,
       plugins: pluginsReducer,
+      leaderboard: leaderboardReducer,
     },
     // temporarily solutions to disable serializable check for plugin actions
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({
