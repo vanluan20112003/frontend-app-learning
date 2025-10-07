@@ -11,7 +11,9 @@ const TopGradesLeaderboard = ({ courseId }) => {
   useEffect(() => {
     if (courseId) {
       // eslint-disable-next-line no-console
-      console.log('TopGradesLeaderboard: Fetching...', { courseId, limit, status, data });
+      console.log('TopGradesLeaderboard: Fetching...', {
+        courseId, limit, status, data,
+      });
       dispatch(fetchTopGradesData(courseId, limit));
     } else {
       // eslint-disable-next-line no-console
@@ -97,24 +99,24 @@ const TopGradesLeaderboard = ({ courseId }) => {
               // eslint-disable-next-line no-console
               console.log('TopGrades: Rendering students', data.students);
               return data.students.map((student) => {
-              const position = student.position || student.rank;
-              const isTopRank = position <= 3;
+                const position = student.position || student.rank;
+                const isTopRank = position <= 3;
 
-              return (
-                <div key={student.user_id} className="table-row">
-                  <div className={isTopRank ? `rank top-rank rank-${position}` : 'rank'}>
-                    {position}
+                return (
+                  <div key={student.user_id} className="table-row">
+                    <div className={isTopRank ? `rank top-rank rank-${position}` : 'rank'}>
+                      {position}
+                    </div>
+                    <div className="student-info">
+                      <div className="name">{student.full_name || student.username}</div>
+                      <div className="username">@{student.username}</div>
+                    </div>
+                    <div className="score">
+                      {parseFloat(student.average_grade || 0).toFixed(1)}%
+                    </div>
                   </div>
-                  <div className="student-info">
-                    <div className="name">{student.full_name || student.username}</div>
-                    <div className="username">@{student.username}</div>
-                  </div>
-                  <div className="score">
-                    {parseFloat(student.average_grade || 0).toFixed(1)}%
-                  </div>
-                </div>
-              );
-            });
+                );
+              });
             })()}
           </div>
         )}

@@ -16,9 +16,18 @@ export function fetchTopGradesData(courseId, limit = 10) {
   return async (dispatch) => {
     dispatch(fetchTopGradesRequest());
     try {
-      const data = await getTopGrades(courseId, limit);
-      dispatch(fetchTopGradesSuccess(data));
-      return data;
+      const apiData = await getTopGrades(courseId, limit);
+      // Map lại dữ liệu cho đúng với component
+      const mappedData = {
+        summary: {
+          total_students: apiData.summary?.total_students || 0,
+          average_grade: apiData.summary?.avg_grade || 0,
+          highest_grade: apiData.summary?.max_grade || 0,
+        },
+        students: apiData.top_students || [],
+      };
+      dispatch(fetchTopGradesSuccess(mappedData));
+      return mappedData;
     } catch (error) {
       logError(error);
       dispatch(fetchTopGradesFailure(error.message || 'Failed to fetch top grades'));
@@ -34,9 +43,14 @@ export function fetchTopProgressData(courseId, period = 'all', limit = 10) {
   return async (dispatch) => {
     dispatch(fetchTopProgressRequest());
     try {
-      const data = await getTopProgress(courseId, period, limit);
-      dispatch(fetchTopProgressSuccess({ data, period }));
-      return data;
+      const apiData = await getTopProgress(courseId, period, limit);
+      // Map lại dữ liệu cho đúng với component
+      const mappedData = {
+        summary: apiData.summary || {},
+        students: apiData.top_students || [],
+      };
+      dispatch(fetchTopProgressSuccess({ data: mappedData, period }));
+      return mappedData;
     } catch (error) {
       logError(error);
       dispatch(fetchTopProgressFailure(error.message || 'Failed to fetch top progress'));
