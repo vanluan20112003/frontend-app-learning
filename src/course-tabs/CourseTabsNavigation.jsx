@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import classNames from 'classnames';
@@ -13,6 +13,44 @@ const CourseTabsNavigation = ({
 }) => {
   const { show } = useCoursewareSearchState();
 
+  // Add leaderboard tab if not already present
+  const enhancedTabs = useMemo(() => {
+    const hasLeaderboard = tabs.some((tab) => tab.slug === 'leaderboard');
+    if (hasLeaderboard) {
+      return tabs;
+    }
+
+    // Extract courseId from the first tab's URL
+    const firstTab = tabs[0];
+    if (!firstTab) {
+      return tabs;
+    }
+
+    const courseIdMatch = firstTab.url.match(/\/course\/([^/]+)/);
+    if (!courseIdMatch) {
+      return tabs;
+    }
+
+    const courseId = courseIdMatch[1];
+    const leaderboardTab = {
+      title: '🏆 Bảng Xếp Hạng',
+      slug: 'leaderboard',
+      url: `/course/${courseId}/leaderboard`,
+    };
+
+    // Insert leaderboard after progress tab or at the end
+    const progressIndex = tabs.findIndex((tab) => tab.slug === 'progress');
+    if (progressIndex !== -1) {
+      return [
+        ...tabs.slice(0, progressIndex + 1),
+        leaderboardTab,
+        ...tabs.slice(progressIndex + 1),
+      ];
+    }
+
+    return [...tabs, leaderboardTab];
+  }, [tabs]);
+
   return (
     <div id="courseTabsNavigation" className={classNames('course-tabs-navigation', className)}>
       <div className="container-xl">
@@ -20,7 +58,7 @@ const CourseTabsNavigation = ({
           className="nav-underline-tabs"
           aria-label={intl.formatMessage(messages.courseMaterial)}
         >
-          {tabs.map(({ url, title, slug }) => (
+          {enhancedTabs.map(({ url, title, slug }) => (
             <a
               key={slug}
               className={classNames('nav-item flex-shrink-0 nav-link', { active: slug === activeTabSlug })}
