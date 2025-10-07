@@ -16,7 +16,12 @@ const TopGradesLeaderboard = ({ courseId }) => {
 
   useEffect(() => {
     if (courseId) {
+      // eslint-disable-next-line no-console
+      console.log('TopGradesLeaderboard: Fetching data for courseId:', courseId, 'limit:', limit);
       dispatch(fetchTopGradesData(courseId, limit));
+    } else {
+      // eslint-disable-next-line no-console
+      console.log('TopGradesLeaderboard: No courseId provided');
     }
   }, [courseId, limit, dispatch]);
 

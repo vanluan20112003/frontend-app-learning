@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+import { useSelector } from 'react-redux';
 import { Tabs, Tab, Container } from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
 import { getConfig } from '@edx/frontend-platform';
@@ -8,9 +8,14 @@ import TopGradesLeaderboard from './TopGradesLeaderboard';
 import TopProgressLeaderboard from './TopProgressLeaderboard';
 import './LeaderboardTab.scss';
 
-const LeaderboardTab = ({ courseId }) => {
+const LeaderboardTab = () => {
   const [activeTab, setActiveTab] = useState('grades');
+  const { courseId } = useSelector((state) => state.courseHome);
   const course = useModel('courseHomeMeta', courseId);
+
+  if (!courseId) {
+    return null;
+  }
 
   return (
     <>
@@ -19,7 +24,6 @@ const LeaderboardTab = ({ courseId }) => {
       </Helmet>
 
       <Container size="xl" className="leaderboard-tab">
-        {/* Page header */}
         <div className="page-header">
           <div className="header-content">
             <h1 className="page-title">
@@ -32,7 +36,6 @@ const LeaderboardTab = ({ courseId }) => {
           </div>
         </div>
 
-        {/* Tabs */}
         <div className="leaderboard-tabs-container">
           <Tabs
             variant="tabs"
@@ -72,7 +75,6 @@ const LeaderboardTab = ({ courseId }) => {
           </Tabs>
         </div>
 
-        {/* Info footer */}
         <div className="leaderboard-footer">
           <div className="info-card">
             <h3>💡 Thông tin</h3>
@@ -95,10 +97,6 @@ const LeaderboardTab = ({ courseId }) => {
       </Container>
     </>
   );
-};
-
-LeaderboardTab.propTypes = {
-  courseId: PropTypes.string.isRequired,
 };
 
 export default LeaderboardTab;
