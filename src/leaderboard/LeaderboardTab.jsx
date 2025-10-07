@@ -3,12 +3,14 @@ import { useSelector } from 'react-redux';
 import { Container } from '@openedx/paragon';
 import { Helmet } from 'react-helmet';
 import { getConfig } from '@edx/frontend-platform';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { useModel } from '../generic/model-store';
 import TopGradesLeaderboard from './TopGradesLeaderboard';
 import TopProgressLeaderboard from './TopProgressLeaderboard';
+import messages from './messages';
 import './LeaderboardTab.scss';
 
-const LeaderboardTab = () => {
+const LeaderboardTab = ({ intl }) => {
   const { courseId } = useSelector((state) => state.courseHome);
   const course = useModel('courseHomeMeta', courseId);
 
@@ -22,27 +24,27 @@ const LeaderboardTab = () => {
     const items = [
       {
         value: gradesSummary.total_students || 0,
-        label: 'Tổng học viên',
+        label: intl.formatMessage(messages.totalStudents),
         colorClass: 'stat-blue',
       },
       {
         value: gradesSummary.average_grade ? `${gradesSummary.average_grade}%` : '0%',
-        label: 'Điểm TB',
+        label: intl.formatMessage(messages.averageGrade),
         colorClass: 'stat-green',
       },
       {
         value: gradesSummary.highest_grade ? `${gradesSummary.highest_grade}%` : '0%',
-        label: 'Điểm cao nhất',
+        label: intl.formatMessage(messages.highestGrade),
         colorClass: 'stat-purple',
       },
       {
         value: progressData?.students?.length || 0,
-        label: 'Đang thi đua',
+        label: intl.formatMessage(messages.activeCompetitors),
         colorClass: 'stat-orange',
       },
     ];
     return items;
-  }, [gradesData, progressData]);
+  }, [gradesData, progressData, intl]);
 
   if (!courseId) {
     return null;
@@ -51,7 +53,7 @@ const LeaderboardTab = () => {
   return (
     <>
       <Helmet>
-        <title>{`Bảng Xếp Hạng | ${course?.title || 'Khóa học'} | ${getConfig().SITE_NAME}`}</title>
+        <title>{`${intl.formatMessage(messages.leaderboardTitle)} | ${course?.title || intl.formatMessage(messages.leaderboardTitle)} | ${getConfig().SITE_NAME}`}</title>
       </Helmet>
 
       <Container size="xl" className="leaderboard-tab">
@@ -75,4 +77,8 @@ const LeaderboardTab = () => {
   );
 };
 
-export default LeaderboardTab;
+LeaderboardTab.propTypes = {
+  intl: intlShape.isRequired,
+};
+
+export default injectIntl(LeaderboardTab);

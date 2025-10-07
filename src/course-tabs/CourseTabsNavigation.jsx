@@ -4,6 +4,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import classNames from 'classnames';
 
 import messages from './messages';
+import leaderboardMessages from '../leaderboard/messages';
 import Tabs from '../generic/tabs/Tabs';
 import { CoursewareSearch, CoursewareSearchToggle } from '../course-home/courseware-search';
 import { useCoursewareSearchState } from '../course-home/courseware-search/hooks';
@@ -35,7 +36,7 @@ const CourseTabsNavigation = ({
     const basePath = urlMatch[1]; // e.g., "/learning/course/" or "/course/"
     const courseId = urlMatch[2];
     const leaderboardTab = {
-      title: '🏆 Bảng Xếp Hạng',
+      title: `🏆 ${intl.formatMessage(leaderboardMessages.leaderboardTitle)}`,
       slug: 'leaderboard',
       url: `${basePath}${courseId}/leaderboard`,
     };
@@ -51,7 +52,7 @@ const CourseTabsNavigation = ({
     }
 
     return [...tabs, leaderboardTab];
-  }, [tabs]);
+  }, [tabs, intl]);
 
   return (
     <div id="courseTabsNavigation" className={classNames('course-tabs-navigation', className)}>

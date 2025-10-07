@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { useDispatch, useSelector } from 'react-redux';
+import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { fetchTopGradesData } from './data/thunks';
+import messages from './messages';
 
-const TopGradesLeaderboard = ({ courseId }) => {
+const TopGradesLeaderboard = ({ courseId, intl }) => {
   const dispatch = useDispatch();
   const [limit, setLimit] = useState(10);
   const { data, status, error } = useSelector((state) => state.leaderboard.topGrades);
@@ -35,7 +37,7 @@ const TopGradesLeaderboard = ({ courseId }) => {
         <div className="header-top">
           <h2>
             <span className="icon">🏆</span>
-            Bảng Xếp Hạng Điểm
+            {intl.formatMessage(messages.gradesLeaderboardTitle)}
           </h2>
           <button
             type="button"
@@ -43,22 +45,22 @@ const TopGradesLeaderboard = ({ courseId }) => {
             onClick={handleRefresh}
             disabled={status === 'loading'}
           >
-            🔄 Làm mới
+            🔄 {intl.formatMessage(messages.refreshButton)}
           </button>
         </div>
         <div className="header-controls">
           <label htmlFor="grades-limit">
-            Hiển thị:
+            {intl.formatMessage(messages.displayLabel)}
             <select
               id="grades-limit"
               value={limit}
               onChange={handleLimitChange}
               disabled={status === 'loading'}
             >
-              <option value={10}>Top 10</option>
-              <option value={20}>Top 20</option>
-              <option value={50}>Top 50</option>
-              <option value={100}>Top 100</option>
+              <option value={10}>{intl.formatMessage(messages.top10)}</option>
+              <option value={20}>{intl.formatMessage(messages.top20)}</option>
+              <option value={50}>{intl.formatMessage(messages.top50)}</option>
+              <option value={100}>{intl.formatMessage(messages.top100)}</option>
             </select>
           </label>
         </div>
@@ -68,31 +70,31 @@ const TopGradesLeaderboard = ({ courseId }) => {
         {status === 'loading' && (
           <div className="loading-state">
             <div className="spinner" />
-            <p>Đang tải bảng xếp hạng...</p>
+            <p>{intl.formatMessage(messages.loading)}</p>
           </div>
         )}
 
         {status === 'failed' && (
           <div className="error-state">
             <div className="error-icon">⚠️</div>
-            <p>{error || 'Không thể tải dữ liệu. Vui lòng thử lại.'}</p>
+            <p>{error || intl.formatMessage(messages.errorMessage)}</p>
           </div>
         )}
 
         {status === 'succeeded' && data?.students?.length === 0 && (
           <div className="empty-state">
             <div className="empty-icon">📊</div>
-            <h3>Chưa có dữ liệu</h3>
-            <p>Bảng xếp hạng sẽ được cập nhật khi có điểm số.</p>
+            <h3>{intl.formatMessage(messages.noGradesData)}</h3>
+            <p>{intl.formatMessage(messages.noGradesDescription)}</p>
           </div>
         )}
 
         {status === 'succeeded' && data?.students?.length > 0 && (
           <div className="leaderboard-table">
             <div className="table-row header-row">
-              <div className="rank">Hạng</div>
-              <div className="student-info">Học viên</div>
-              <div className="score">Điểm</div>
+              <div className="rank">{intl.formatMessage(messages.rankColumn)}</div>
+              <div className="student-info">{intl.formatMessage(messages.studentColumn)}</div>
+              <div className="score">{intl.formatMessage(messages.gradeColumn)}</div>
             </div>
 
             {(() => {
@@ -127,6 +129,7 @@ const TopGradesLeaderboard = ({ courseId }) => {
 
 TopGradesLeaderboard.propTypes = {
   courseId: PropTypes.string.isRequired,
+  intl: intlShape.isRequired,
 };
 
-export default TopGradesLeaderboard;
+export default injectIntl(TopGradesLeaderboard);
