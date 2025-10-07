@@ -10,7 +10,12 @@ const TopGradesLeaderboard = ({ courseId }) => {
 
   useEffect(() => {
     if (courseId) {
+      // eslint-disable-next-line no-console
+      console.log('TopGradesLeaderboard: Fetching...', { courseId, limit, status, data });
       dispatch(fetchTopGradesData(courseId, limit));
+    } else {
+      // eslint-disable-next-line no-console
+      console.log('TopGradesLeaderboard: No courseId');
     }
   }, [courseId, limit, dispatch]);
 
@@ -88,7 +93,10 @@ const TopGradesLeaderboard = ({ courseId }) => {
               <div className="score">Điểm</div>
             </div>
 
-            {data.students.map((student) => {
+            {(() => {
+              // eslint-disable-next-line no-console
+              console.log('TopGrades: Rendering students', data.students);
+              return data.students.map((student) => {
               const position = student.position || student.rank;
               const isTopRank = position <= 3;
 
@@ -106,7 +114,8 @@ const TopGradesLeaderboard = ({ courseId }) => {
                   </div>
                 </div>
               );
-            })}
+            });
+            })()}
           </div>
         )}
       </div>
