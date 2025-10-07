@@ -20,22 +20,24 @@ const CourseTabsNavigation = ({
       return tabs;
     }
 
-    // Extract courseId from the first tab's URL
+    // Extract courseId and base path from the first tab's URL
     const firstTab = tabs[0];
     if (!firstTab) {
       return tabs;
     }
 
-    const courseIdMatch = firstTab.url.match(/\/course\/([^/]+)/);
-    if (!courseIdMatch) {
+    // Match pattern like /learning/course/course-v1:... or /course/course-v1:...
+    const urlMatch = firstTab.url.match(/(.*\/course\/)([^/]+)/);
+    if (!urlMatch) {
       return tabs;
     }
 
-    const courseId = courseIdMatch[1];
+    const basePath = urlMatch[1]; // e.g., "/learning/course/" or "/course/"
+    const courseId = urlMatch[2];
     const leaderboardTab = {
       title: '🏆 Bảng Xếp Hạng',
       slug: 'leaderboard',
-      url: `/course/${courseId}/leaderboard`,
+      url: `${basePath}${courseId}/leaderboard`,
     };
 
     // Insert leaderboard after progress tab or at the end
