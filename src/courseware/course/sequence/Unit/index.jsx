@@ -13,383 +13,8 @@ import { useExamAccess, useShouldDisplayHonorCode } from './hooks';
 import { getIFrameUrl } from './urls';
 import UnitTitleSlot from '../../../../plugin-slots/UnitTitleSlot';
 
-// Report Button Component
-const ReportButton = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedIssue, setSelectedIssue] = useState('');
-  const [additionalComment, setAdditionalComment] = useState('');
-  const dropdownRef = useRef(null);
-
-  const reportOptions = [
-    { value: 'video-not-working', label: 'Video không hoạt động' },
-    { value: 'spelling-error', label: 'Lỗi chính tả' },
-    { value: 'video-error', label: 'Video bị lỗi' },
-    { value: 'missing-content', label: 'Thiếu nội dung' },
-    { value: 'audio-problem', label: 'Lỗi âm thanh' },
-    { value: 'loading-issue', label: 'Lỗi tải trang' },
-    { value: 'broken-link', label: 'Liên kết hỏng' },
-    { value: 'other', label: 'Vấn đề khác' },
-  ];
-
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // TODO: Handle report submission
-    console.log('Report submitted:', {
-      issue: selectedIssue,
-      comment: additionalComment,
-    });
-
-    // Reset form and close dropdown
-    setSelectedIssue('');
-    setAdditionalComment('');
-    setIsOpen(false);
-
-    // Show success message (you can replace with actual notification system)
-    alert('Báo cáo đã được gửi. Cảm ơn bạn đã phản hồi!');
-  };
-
-  return (
-    <div className="report-button-container" ref={dropdownRef}>
-      {/* FontAwesome CDN */}
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
-      <style jsx>{`
-        .report-button-container {
-          position: relative;
-          display: inline-block;
-        }
-        
-        .report-toggle-btn {
-          background: white;
-          border: 2px solid #dee2e6;
-          border-radius: 8px;
-          padding: 10px 16px;
-          font-size: 14px;
-          font-weight: 500;
-          color: #495057;
-          cursor: pointer;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          transition: all 0.2s ease;
-          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
-        }
-
-        .report-toggle-btn:hover {
-          background: #fff5f5;
-          border-color: #dc3545;
-          color: #dc3545;
-          box-shadow: 0 2px 6px rgba(220, 53, 69, 0.2);
-          transform: translateY(-1px);
-        }
-
-        .report-toggle-btn.active {
-          background: #dc3545;
-          border-color: #dc3545;
-          color: white;
-          box-shadow: 0 3px 8px rgba(220, 53, 69, 0.3);
-        }
-
-        .dots-icon {
-          width: 18px;
-          height: 18px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 16px;
-        }
-        
-        .report-dropdown {
-          position: absolute;
-          top: calc(100% + 8px);
-          right: 0;
-          background: white;
-          border: 1px solid #e0e0e0;
-          border-radius: 12px;
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
-          min-width: 320px;
-          max-width: 400px;
-          z-index: 1000;
-          opacity: 0;
-          transform: translateY(-8px);
-          transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-          pointer-events: none;
-        }
-
-        .report-dropdown.open {
-          opacity: 1;
-          transform: translateY(0);
-          pointer-events: all;
-        }
-
-        .report-header {
-          padding: 18px 20px 14px;
-          border-bottom: 2px solid #f5f5f5;
-          background: linear-gradient(to bottom, #ffffff, #fafafa);
-        }
-
-        .report-title {
-          font-size: 17px;
-          font-weight: 600;
-          color: #1a1a1a;
-          margin: 0;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-        }
-
-        .report-title:before {
-          content: '⚠️';
-          font-size: 18px;
-        }
-        
-        .report-form {
-          padding: 20px;
-        }
-
-        .form-group {
-          margin-bottom: 18px;
-        }
-
-        .form-label {
-          display: block;
-          font-size: 13px;
-          font-weight: 600;
-          color: #2c3e50;
-          margin-bottom: 10px;
-          letter-spacing: 0.3px;
-        }
-
-        .report-options {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        }
-
-        .option-item {
-          display: flex;
-          align-items: center;
-          padding: 12px 14px;
-          border: 2px solid #e8e8e8;
-          border-radius: 8px;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          background: white;
-          position: relative;
-        }
-
-        .option-item:hover {
-          background: #f8f9fa;
-          border-color: #ced4da;
-          transform: translateX(2px);
-        }
-
-        .option-item.selected {
-          background: #e8f4fd;
-          border-color: #2196f3;
-          color: #1565c0;
-          box-shadow: 0 2px 6px rgba(33, 150, 243, 0.15);
-        }
-
-        .option-radio {
-          margin-right: 12px;
-          width: 18px;
-          height: 18px;
-          accent-color: #2196f3;
-        }
-
-        .option-label {
-          font-size: 14px;
-          font-weight: 500;
-          flex: 1;
-        }
-        
-        .form-textarea {
-          width: 100%;
-          min-height: 90px;
-          padding: 12px 14px;
-          border: 2px solid #e8e8e8;
-          border-radius: 8px;
-          font-size: 14px;
-          font-family: inherit;
-          resize: vertical;
-          transition: all 0.2s ease;
-        }
-
-        .form-textarea:focus {
-          outline: none;
-          border-color: #2196f3;
-          box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
-        }
-
-        .form-textarea::placeholder {
-          color: #999;
-        }
-
-        .form-actions {
-          display: flex;
-          gap: 10px;
-          justify-content: flex-end;
-          margin-top: 18px;
-          padding-top: 18px;
-          border-top: 2px solid #f0f0f0;
-        }
-
-        .btn {
-          padding: 10px 20px;
-          border-radius: 8px;
-          font-size: 14px;
-          font-weight: 600;
-          border: 2px solid;
-          cursor: pointer;
-          transition: all 0.2s ease;
-          display: inline-flex;
-          align-items: center;
-          gap: 6px;
-        }
-
-        .btn-cancel {
-          background: white;
-          border-color: #dee2e6;
-          color: #6c757d;
-        }
-
-        .btn-cancel:hover {
-          background: #f8f9fa;
-          border-color: #adb5bd;
-          color: #495057;
-          transform: translateY(-1px);
-        }
-
-        .btn-submit {
-          background: #dc3545;
-          border-color: #dc3545;
-          color: white;
-        }
-
-        .btn-submit:hover:not(:disabled) {
-          background: #c82333;
-          border-color: #bd2130;
-          transform: translateY(-1px);
-          box-shadow: 0 3px 8px rgba(220, 53, 69, 0.3);
-        }
-
-        .btn-submit:disabled {
-          background: #adb5bd;
-          border-color: #adb5bd;
-          cursor: not-allowed;
-          opacity: 0.6;
-        }
-        
-        @media (max-width: 480px) {
-          .report-dropdown {
-            min-width: 280px;
-            max-width: calc(100vw - 40px);
-            right: -10px;
-          }
-
-          .option-item {
-            padding: 10px 12px;
-          }
-
-          .btn {
-            padding: 9px 16px;
-            font-size: 13px;
-          }
-        }
-      `}
-      </style>
-
-      <button
-        className={`report-toggle-btn ${isOpen ? 'active' : ''}`}
-        onClick={() => setIsOpen(!isOpen)}
-        type="button"
-      >
-        <div className="dots-icon">
-          <i className="fas fa-flag" />
-        </div>
-        <span>Báo cáo</span>
-      </button>
-
-      <div className={`report-dropdown ${isOpen ? 'open' : ''}`}>
-        <div className="report-header">
-          <h4 className="report-title">Báo cáo vấn đề</h4>
-        </div>
-
-        <form onSubmit={handleSubmit} className="report-form">
-          <div className="form-group">
-            <label className="form-label">Chọn loại vấn đề:</label>
-            <div className="report-options">
-              {reportOptions.map((option) => (
-                <div
-                  key={option.value}
-                  className={`option-item ${selectedIssue === option.value ? 'selected' : ''}`}
-                  onClick={() => setSelectedIssue(option.value)}
-                >
-                  <input
-                    type="radio"
-                    className="option-radio"
-                    name="issue"
-                    value={option.value}
-                    checked={selectedIssue === option.value}
-                    onChange={() => setSelectedIssue(option.value)}
-                  />
-                  <span className="option-label">{option.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="form-group">
-            <label className="form-label" htmlFor="additional-comment">
-              Mô tả chi tiết (tùy chọn):
-            </label>
-            <textarea
-              id="additional-comment"
-              className="form-textarea"
-              placeholder="Vui lòng mô tả chi tiết vấn đề bạn gặp phải..."
-              value={additionalComment}
-              onChange={(e) => setAdditionalComment(e.target.value)}
-            />
-          </div>
-
-          <div className="form-actions">
-            <button
-              type="button"
-              className="btn btn-cancel"
-              onClick={() => setIsOpen(false)}
-            >
-              Hủy
-            </button>
-            <button
-              type="submit"
-              className="btn btn-submit"
-              disabled={!selectedIssue}
-            >
-              Gửi báo cáo
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
-};
-
 // Iframe Loading Manager Class
+// eslint-disable-next-line no-unused-vars
 class IFrameLoadingManager {
   constructor(iframeContainer, onComplete) {
     this.iframeContainer = iframeContainer;
@@ -586,6 +211,7 @@ class IFrameLoadingManager {
       if (progressText) { progressText.textContent = `${Math.round(progress)}%`; }
       if (statusText) { statusText.textContent = message; }
 
+      // eslint-disable-next-line no-console
       console.log(`IFrame loading step: ${step} - ${message} (${progress.toFixed(1)}%)`);
 
       if (this.completedSteps === this.totalSteps) {
@@ -702,6 +328,7 @@ class IFrameLoadingManager {
   setAutoHideTimeout() {
     this.timeoutId = setTimeout(() => {
       if (!this.isDestroyed) {
+        // eslint-disable-next-line no-console
         console.log('IFrame loading timeout - forcing hide');
         this.hideLoading();
       }
@@ -747,7 +374,6 @@ const Unit = ({
   const view = authenticatedUser ? views.student : views.public;
   const loadingManagerRef = useRef(null);
   const iframeContainerRef = useRef(null);
-  const [isContentReady, setIsContentReady] = useState(false);
   const [isContentLoading, setIsContentLoading] = useState(true);
   const hlsCheckTimeoutRef = useRef(null);
   const defaultLoadingTimeoutRef = useRef(null);
@@ -842,7 +468,6 @@ const Unit = ({
 
   // Enhanced onLoaded handler
   const handleLoaded = React.useCallback(() => {
-    setIsContentReady(true);
     hideContentLoading();
     if (onLoaded) {
       onLoaded();
@@ -867,6 +492,7 @@ const Unit = ({
             hideContentLoading();
           }
         } catch (error) {
+          // eslint-disable-next-line no-console
           console.log('Error checking HLS library:', error);
           // Continue with default timeout
         }
@@ -1097,19 +723,6 @@ const Unit = ({
         </div>
       </div>
 
-      {/* Report Button - positioned below the course content */}
-      <div
-        className="unit-actions"
-        style={{
-          marginTop: '16px',
-          paddingTop: '12px',
-          borderTop: '1px solid #e9ecef',
-          display: 'flex',
-          justifyContent: 'flex-end',
-        }}
-      >
-        <ReportButton />
-      </div>
     </div>
   );
 };

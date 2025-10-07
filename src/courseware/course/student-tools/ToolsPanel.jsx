@@ -6,10 +6,14 @@ import {
   Notes,
   ChevronLeft,
   ChevronRight,
+  Help,
+  Report,
 } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import ModernCalculator from './ModernCalculator';
 import QuickNotes from './QuickNotes';
+import SupportForm from './SupportForm';
+import ContentReport from './ContentReport';
 import messages from './messages';
 import './ToolsPanel.scss';
 
@@ -34,6 +38,18 @@ const ToolsPanel = () => {
       name: intl.formatMessage(messages.notesTitle),
       icon: Notes,
       component: QuickNotes,
+    },
+    {
+      id: 'support',
+      name: intl.formatMessage(messages.supportTitle),
+      icon: Help,
+      component: SupportForm,
+    },
+    {
+      id: 'content-report',
+      name: intl.formatMessage(messages.contentReportTitle),
+      icon: Report,
+      component: ContentReport,
     },
   ];
 

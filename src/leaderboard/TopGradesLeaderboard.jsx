@@ -114,7 +114,7 @@ const TopGradesLeaderboard = ({ courseId, intl }) => {
                       <div className="username">@{student.username}</div>
                     </div>
                     <div className="score">
-                      {parseFloat(student.average_grade || 0).toFixed(1)}%
+                      {parseFloat(student.grade_percentage || 0).toFixed(1)}%
                     </div>
                   </div>
                 );
