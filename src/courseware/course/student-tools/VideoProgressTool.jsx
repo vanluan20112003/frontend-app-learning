@@ -35,6 +35,41 @@ const VideoProgressTool = () => {
   const [error, setError] = useState(null);
   const [isCompactView, setIsCompactView] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [currentContentDetail, setCurrentContentDetail] = useState(null);
+  const [contentDetailLoading, setContentDetailLoading] = useState(false);
+  const [h5pContentId, setH5pContentId] = useState(null);
+
+  // Extract H5P content ID from iframe
+  const extractH5PContentId = () => {
+    try {
+      const mainIframe = document.getElementById('unit-iframe');
+      if (!mainIframe) {
+        return null;
+      }
+
+      // Try to access iframe document (same-origin)
+      try {
+        const iframeDoc = mainIframe.contentDocument || mainIframe.contentWindow.document;
+        if (iframeDoc) {
+          // Find H5P iframes in the document
+          const h5pIframes = iframeDoc.querySelectorAll('iframe[src*="h5p"]');
+          if (h5pIframes.length > 0) {
+            const src = h5pIframes[0].src;
+            const match = src.match(/[?&]id=(\d+)/);
+            return match ? match[1] : null;
+          }
+        }
+      } catch (crossOriginError) {
+        // Cross-origin, cannot access
+        // console.log('Cannot access iframe (cross-origin)');
+      }
+
+      return null;
+    } catch (error) {
+      // console.error('Error extracting H5P content ID:', error);
+      return null;
+    }
+  };
 
   // Fetch user data
   const fetchUserData = async () => {
@@ -49,6 +84,24 @@ const VideoProgressTool = () => {
       return response.data.data;
     }
     throw new Error('Invalid API response');
+  };
+
+  // Fetch content detail for current unit
+  const fetchContentDetail = async (userId, contentId) => {
+    const H5P_API_BASE = 'https://h5p.itp.vn/wp-json/mooc/v1';
+    const apiUrl = `${H5P_API_BASE}/content-detail/${userId}/${courseId}/${contentId}`;
+
+    const response = await fetch(apiUrl);
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null; // No data for this content
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
   };
 
   // Fetch H5P progress data from API
@@ -96,6 +149,68 @@ const VideoProgressTool = () => {
 
     return mappedData;
   };
+
+  // Extract H5P content ID and fetch content detail
+  useEffect(() => {
+    const extractAndFetchContentDetail = async () => {
+      if (!userData?.id) {
+        return;
+      }
+
+      // Try to extract H5P content ID after a delay (wait for iframe to load)
+      const timeoutId = setTimeout(() => {
+        const contentId = extractH5PContentId();
+        if (contentId && contentId !== h5pContentId) {
+          setH5pContentId(contentId);
+
+          // Fetch content detail
+          setContentDetailLoading(true);
+          fetchContentDetail(userData.id, contentId)
+            .then(detail => {
+              setCurrentContentDetail(detail);
+            })
+            .catch(err => {
+              // console.error('Error fetching content detail:', err);
+              setCurrentContentDetail(null);
+            })
+            .finally(() => {
+              setContentDetailLoading(false);
+            });
+        } else if (!contentId) {
+          // No H5P content found
+          setH5pContentId(null);
+          setCurrentContentDetail(null);
+        }
+      }, 2000); // Wait 2 seconds for iframe to load
+
+      return () => clearTimeout(timeoutId);
+    };
+
+    extractAndFetchContentDetail();
+
+    // Also try to extract on interval (in case iframe loads slowly)
+    const intervalId = setInterval(() => {
+      if (!h5pContentId && userData?.id) {
+        const contentId = extractH5PContentId();
+        if (contentId) {
+          setH5pContentId(contentId);
+          setContentDetailLoading(true);
+          fetchContentDetail(userData.id, contentId)
+            .then(detail => {
+              setCurrentContentDetail(detail);
+            })
+            .catch(() => {
+              setCurrentContentDetail(null);
+            })
+            .finally(() => {
+              setContentDetailLoading(false);
+            });
+        }
+      }
+    }, 3000);
+
+    return () => clearInterval(intervalId);
+  }, [userData, h5pContentId]);
 
   // Initial data load
   useEffect(() => {
@@ -234,6 +349,110 @@ const VideoProgressTool = () => {
             )}
           </div>
         </div>
+      </div>
+
+      {/* Current Unit Progress Detail */}
+      <div className="current-unit-progress">
+        {contentDetailLoading && (
+          <div className="unit-loading">
+            <Spinner animation="border" size="sm" />
+            <span className="loading-text">Đang tải tiến độ bài học...</span>
+          </div>
+        )}
+
+        {!contentDetailLoading && !currentContentDetail && !h5pContentId && (
+          <div className="no-h5p-content">
+            <Icon src={VideoLibrary} className="no-content-icon" />
+            <p className="no-content-text">Bài học này không có video/bài tập tương tác H5P</p>
+          </div>
+        )}
+
+        {!contentDetailLoading && currentContentDetail && (
+          <div className="unit-detail-card">
+            <div className="unit-detail-header">
+              <Icon src={PlayCircle} className="unit-icon" />
+              <div className="unit-header-text">
+                <h4 className="unit-title">Tiến độ bài học hiện tại</h4>
+                {currentContentDetail.content_info?.title && (
+                  <span className="unit-subtitle">{currentContentDetail.content_info.title}</span>
+                )}
+              </div>
+            </div>
+
+            <div className="unit-detail-body">
+              {/* Video Progress */}
+              {currentContentDetail.video_progress?.has_progress && (
+                <div className="unit-progress-item">
+                  <div className="progress-item-header">
+                    <Icon src={VideoLibrary} className="progress-icon video" />
+                    <span className="progress-label">Tiến độ video</span>
+                    <span className="progress-value">{Math.round(currentContentDetail.video_progress.progress_percent)}%</span>
+                  </div>
+                  <div className="progress-bar-mini">
+                    <div
+                      className="progress-fill video"
+                      style={{ width: `${currentContentDetail.video_progress.progress_percent}%` }}
+                    />
+                  </div>
+                  <div className="progress-meta">
+                    <span className="meta-text">
+                      {Math.floor(currentContentDetail.video_progress.current_time / 60)}:{String(Math.floor(currentContentDetail.video_progress.current_time % 60)).padStart(2, '0')}
+                      {' / '}
+                      {Math.floor(currentContentDetail.video_progress.duration / 60)}:{String(Math.floor(currentContentDetail.video_progress.duration % 60)).padStart(2, '0')}
+                    </span>
+                    <span className={`status-badge ${currentContentDetail.video_progress.status}`}>
+                      {currentContentDetail.video_progress.status === 'completed' ? 'Hoàn thành' :
+                       currentContentDetail.video_progress.status === 'in_progress' ? 'Đang xem' : 'Chưa bắt đầu'}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Score Progress */}
+              {currentContentDetail.score?.has_score && (
+                <div className="unit-progress-item">
+                  <div className="progress-item-header">
+                    <Icon src={Assessment} className="progress-icon score" />
+                    <span className="progress-label">Điểm bài tập</span>
+                    <span className="progress-value">
+                      {currentContentDetail.score.score}/{currentContentDetail.score.max_score} ({Math.round(currentContentDetail.score.percentage)}%)
+                    </span>
+                  </div>
+                  <div className="progress-bar-mini">
+                    <div
+                      className="progress-fill score"
+                      style={{ width: `${currentContentDetail.score.percentage}%` }}
+                    />
+                  </div>
+                  <div className="progress-meta">
+                    <span className="meta-text">
+                      Thời gian làm bài: {Math.floor(currentContentDetail.score.time_spent / 60)} phút
+                    </span>
+                    <span className={`status-badge ${currentContentDetail.score.finished ? 'completed' : 'in-progress'}`}>
+                      {currentContentDetail.score.finished ? 'Đã hoàn thành' : 'Chưa hoàn thành'}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {/* Overall Summary */}
+              {currentContentDetail.summary && (
+                <div className="unit-summary-footer">
+                  <div className="summary-item">
+                    <span className="summary-label">Tổng tiến độ:</span>
+                    <span className="summary-value highlight">{Math.round(currentContentDetail.summary.overall_progress)}%</span>
+                  </div>
+                  {currentContentDetail.folder_info && (
+                    <div className="summary-item">
+                      <span className="summary-label">Thuộc:</span>
+                      <span className="summary-value">{currentContentDetail.folder_info.folder_name}</span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Compact View - Summary */}
