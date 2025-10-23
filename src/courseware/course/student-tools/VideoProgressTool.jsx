@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   Spinner,
   Icon,
@@ -42,6 +42,7 @@ const VideoProgressTool = () => {
   const [contentDetailLoading, setContentDetailLoading] = useState(false);
   const [h5pContentId, setH5pContentId] = useState(null);
   const [activeTab, setActiveTab] = useState('all'); // 'current', 'overall', or 'all'
+  const h5pContentIdRef = useRef(null); // Use ref to avoid re-creating interval
 
   // Fetch and extract H5P from URL
   const fetchH5PFromURL = async (url) => {
@@ -235,7 +236,7 @@ const VideoProgressTool = () => {
     return mappedData;
   };
 
-  // Extract H5P content ID and fetch content detail
+  // Extract H5P content ID and fetch content detail when unit changes
   useEffect(() => {
     const extractAndFetchContentDetail = async () => {
       if (!userData?.id) {
@@ -244,6 +245,7 @@ const VideoProgressTool = () => {
 
       // Reset state when unit changes
       setH5pContentId(null);
+      h5pContentIdRef.current = null;
       setCurrentContentDetail(null);
       setContentDetailLoading(true);
 
@@ -253,6 +255,7 @@ const VideoProgressTool = () => {
 
         if (contentId) {
           setH5pContentId(contentId);
+          h5pContentIdRef.current = contentId;
 
           // Fetch content detail
           fetchContentDetail(userData.id, contentId)
@@ -274,31 +277,38 @@ const VideoProgressTool = () => {
     };
 
     extractAndFetchContentDetail();
+  }, [userData, unitId]); // Only run when unitId changes
 
-    // Poll for updates every 15 seconds (slower polling to reduce API calls)
+  // Polling for updates every 15 seconds (separate effect to avoid re-creating interval)
+  useEffect(() => {
+    if (!userData?.id) {
+      return undefined;
+    }
+
     const intervalId = setInterval(async () => {
-      if (h5pContentId && userData?.id) {
+      const currentH5pId = h5pContentIdRef.current;
+
+      if (currentH5pId && userData?.id) {
         // Only fetch content detail if we already have H5P content ID
-        fetchContentDetail(userData.id, h5pContentId)
+        fetchContentDetail(userData.id, currentH5pId)
           .then(detail => {
             setCurrentContentDetail(detail);
           })
           .catch(() => {
             // Silently fail, don't show error
           });
-      } else if (!h5pContentId && userData?.id) {
+      } else if (!currentH5pId && userData?.id) {
         // Try to extract H5P content ID if we don't have it yet
         const contentId = await extractH5PContentId();
         if (contentId) {
           setH5pContentId(contentId);
+          h5pContentIdRef.current = contentId;
           fetchContentDetail(userData.id, contentId)
             .then(detail => {
               setCurrentContentDetail(detail);
-              setContentDetailLoading(false);
             })
             .catch(() => {
               setCurrentContentDetail(null);
-              setContentDetailLoading(false);
             });
         }
       }
@@ -307,7 +317,7 @@ const VideoProgressTool = () => {
     return () => {
       clearInterval(intervalId);
     };
-  }, [userData, unitId, h5pContentId]); // Added h5pContentId to dependencies
+  }, [userData]); // Only depend on userData, not h5pContentId
 
   // Initial data load
   useEffect(() => {
