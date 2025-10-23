@@ -58,9 +58,9 @@ const VideoProgressTool = () => {
         console.log('📄 [H5P Extract] Iframe document:', iframeDoc);
 
         if (iframeDoc) {
-          // Find H5P iframes in the document
+          // Method 1: Find H5P iframes using querySelector
           const h5pIframes = iframeDoc.querySelectorAll('iframe[src*="h5p"]');
-          console.log(`🎯 [H5P Extract] Found ${h5pIframes.length} H5P iframe(s)`);
+          console.log(`🎯 [H5P Extract Method 1] Found ${h5pIframes.length} H5P iframe(s) with querySelector`);
 
           if (h5pIframes.length > 0) {
             h5pIframes.forEach((iframe, index) => {
@@ -70,29 +70,83 @@ const VideoProgressTool = () => {
             const src = h5pIframes[0].src;
             const match = src.match(/[?&]id=(\d+)/);
             const contentId = match ? match[1] : null;
-            console.log('✅ [H5P Extract] Content ID extracted:', contentId);
+            console.log('✅ [H5P Extract] Content ID extracted (Method 1):', contentId);
             return contentId;
-          } else {
-            console.log('⚠️ [H5P Extract] No H5P iframes found in document');
-
-            // Try to find in HTML source
-            const bodyHTML = iframeDoc.body?.innerHTML || '';
-            console.log('📝 [H5P Extract] Body HTML length:', bodyHTML.length);
-            console.log('📝 [H5P Extract] Body HTML preview:', bodyHTML.substring(0, 500));
-
-            // Search for h5p in HTML
-            const h5pMatches = bodyHTML.match(/h5p/gi);
-            console.log('🔎 [H5P Extract] "h5p" found in HTML:', h5pMatches?.length || 0, 'times');
-
-            // Try regex search for H5P content ID
-            const idRegex = /id=(\d+)/g;
-            let idMatch;
-            const foundIds = [];
-            while ((idMatch = idRegex.exec(bodyHTML)) !== null) {
-              foundIds.push(idMatch[1]);
-            }
-            console.log('🔢 [H5P Extract] IDs found in HTML:', foundIds);
           }
+
+          // Method 2: Find all iframes and check their src
+          const allIframes = iframeDoc.querySelectorAll('iframe');
+          console.log(`🎯 [H5P Extract Method 2] Found ${allIframes.length} total iframe(s)`);
+
+          for (let i = 0; i < allIframes.length; i++) {
+            const iframe = allIframes[i];
+            const src = iframe.src || iframe.getAttribute('src') || '';
+            console.log(`   [${i}] Iframe src:`, src);
+
+            if (src.includes('h5p')) {
+              console.log(`   ✅ Found H5P iframe at index ${i}`);
+              const match = src.match(/[?&]id=(\d+)/);
+              const contentId = match ? match[1] : null;
+              console.log('✅ [H5P Extract] Content ID extracted (Method 2):', contentId);
+              return contentId;
+            }
+          }
+
+          // Method 3: Search in HTML source for raw embed code
+          console.log('🔎 [H5P Extract Method 3] Searching in HTML source...');
+          const bodyHTML = iframeDoc.body?.innerHTML || '';
+          const documentHTML = iframeDoc.documentElement?.outerHTML || '';
+
+          console.log('📝 [H5P Extract] Body HTML length:', bodyHTML.length);
+          console.log('📝 [H5P Extract] Document HTML length:', documentHTML.length);
+
+          // Search for h5p embed pattern
+          const h5pEmbedRegex = /<iframe[^>]+src=["']([^"']*h5p[^"']*)["'][^>]*>/gi;
+          const embedMatches = [];
+          let embedMatch;
+
+          while ((embedMatch = h5pEmbedRegex.exec(bodyHTML)) !== null) {
+            embedMatches.push(embedMatch[1]);
+            console.log('   🎯 Found H5P embed in HTML:', embedMatch[1]);
+          }
+
+          if (embedMatches.length > 0) {
+            const firstEmbed = embedMatches[0];
+            const match = firstEmbed.match(/[?&]id=(\d+)/);
+            const contentId = match ? match[1] : null;
+            console.log('✅ [H5P Extract] Content ID extracted (Method 3 - HTML):', contentId);
+            return contentId;
+          }
+
+          // Method 4: Search for any ID pattern after h5p
+          console.log('🔎 [H5P Extract Method 4] Searching for h5p...id= pattern...');
+          const h5pIdRegex = /h5p[^>]*[?&]id=(\d+)/gi;
+          const idMatch = h5pIdRegex.exec(bodyHTML);
+
+          if (idMatch) {
+            const contentId = idMatch[1];
+            console.log('✅ [H5P Extract] Content ID extracted (Method 4 - pattern):', contentId);
+            return contentId;
+          }
+
+          // Debug: Show HTML preview
+          console.log('📝 [H5P Extract] Body HTML preview (first 1000 chars):');
+          console.log(bodyHTML.substring(0, 1000));
+
+          // Count h5p occurrences
+          const h5pMatches = bodyHTML.match(/h5p/gi);
+          console.log('🔎 [H5P Extract] "h5p" found in HTML:', h5pMatches?.length || 0, 'times');
+
+          // List all IDs
+          const allIdRegex = /id=(\d+)/g;
+          const foundIds = [];
+          let idMatchResult;
+          while ((idMatchResult = allIdRegex.exec(bodyHTML)) !== null) {
+            foundIds.push(idMatchResult[1]);
+          }
+          console.log('🔢 [H5P Extract] All IDs found in HTML:', foundIds);
+
+          console.log('⚠️ [H5P Extract] No H5P content ID found after all methods');
         }
       } catch (crossOriginError) {
         console.log('❌ [H5P Extract] Cross-origin error:', crossOriginError.message);
