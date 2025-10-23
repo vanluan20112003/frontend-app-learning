@@ -39,8 +39,70 @@ const VideoProgressTool = () => {
   const [contentDetailLoading, setContentDetailLoading] = useState(false);
   const [h5pContentId, setH5pContentId] = useState(null);
 
+  // Fetch and extract H5P from URL
+  const fetchH5PFromURL = async (url) => {
+    try {
+      console.log('📡 [H5P Fetch] Fetching iframe HTML from:', url);
+
+      const response = await fetch(url, {
+        credentials: 'include',
+        headers: {
+          'Accept': 'text/html',
+        },
+      });
+
+      if (!response.ok) {
+        console.log('❌ [H5P Fetch] HTTP error:', response.status);
+        return null;
+      }
+
+      const html = await response.text();
+      console.log('✅ [H5P Fetch] HTML fetched, length:', html.length);
+
+      // Method 1: Search for H5P iframe in HTML
+      const h5pIframeRegex = /<iframe[^>]+src=["']([^"']*h5p\.itp\.vn[^"']*)["'][^>]*>/gi;
+      const iframeMatch = h5pIframeRegex.exec(html);
+
+      if (iframeMatch) {
+        const h5pSrc = iframeMatch[1];
+        console.log('🎯 [H5P Fetch] Found H5P iframe src:', h5pSrc);
+
+        const idMatch = h5pSrc.match(/[?&]id=(\d+)/);
+        if (idMatch) {
+          const contentId = idMatch[1];
+          console.log('✅ [H5P Fetch] Content ID extracted:', contentId);
+          return contentId;
+        }
+      }
+
+      // Method 2: Search for any h5p...id= pattern
+      const h5pIdRegex = /h5p\.itp\.vn[^"']*[?&]id=(\d+)/gi;
+      const idMatch = h5pIdRegex.exec(html);
+
+      if (idMatch) {
+        const contentId = idMatch[1];
+        console.log('✅ [H5P Fetch] Content ID extracted (pattern):', contentId);
+        return contentId;
+      }
+
+      // Debug: Show HTML preview
+      console.log('📝 [H5P Fetch] HTML preview (first 1000 chars):');
+      console.log(html.substring(0, 1000));
+
+      // Count h5p occurrences
+      const h5pMatches = html.match(/h5p\.itp\.vn/gi);
+      console.log('🔎 [H5P Fetch] "h5p.itp.vn" found:', h5pMatches?.length || 0, 'times');
+
+      console.log('⚠️ [H5P Fetch] No H5P content ID found in fetched HTML');
+      return null;
+    } catch (error) {
+      console.error('💥 [H5P Fetch] Error fetching iframe HTML:', error);
+      return null;
+    }
+  };
+
   // Extract H5P content ID from iframe
-  const extractH5PContentId = () => {
+  const extractH5PContentId = async () => {
     try {
       const mainIframe = document.getElementById('unit-iframe');
       console.log('🔍 [H5P Extract] Main iframe:', mainIframe);
@@ -151,6 +213,13 @@ const VideoProgressTool = () => {
       } catch (crossOriginError) {
         console.log('❌ [H5P Extract] Cross-origin error:', crossOriginError.message);
         console.log('💡 [H5P Extract] Cannot access iframe document (different origin)');
+        console.log('🔄 [H5P Extract] Trying to fetch iframe HTML directly...');
+
+        // Fallback: Fetch iframe HTML directly
+        const iframeSrc = mainIframe.src;
+        if (iframeSrc) {
+          return fetchH5PFromURL(iframeSrc);
+        }
       }
 
       return null;
@@ -250,9 +319,9 @@ const VideoProgressTool = () => {
       console.log('🚀 [H5P Extract] Starting extraction after 2s delay...');
 
       // Try to extract H5P content ID after a delay (wait for iframe to load)
-      const timeoutId = setTimeout(() => {
+      const timeoutId = setTimeout(async () => {
         console.log('⏰ [H5P Extract] Timeout triggered, extracting now...');
-        const contentId = extractH5PContentId();
+        const contentId = await extractH5PContentId();
 
         if (contentId && contentId !== h5pContentId) {
           console.log(`✅ [H5P Extract] New content ID found: ${contentId}`);
@@ -289,10 +358,10 @@ const VideoProgressTool = () => {
 
     // Also try to extract on interval (in case iframe loads slowly)
     console.log('🔄 [H5P Extract] Setting up interval check every 3s...');
-    const intervalId = setInterval(() => {
+    const intervalId = setInterval(async () => {
       if (!h5pContentId && userData?.id) {
         console.log('🔄 [H5P Extract] Interval check - trying to extract...');
-        const contentId = extractH5PContentId();
+        const contentId = await extractH5PContentId();
         if (contentId) {
           console.log(`✅ [H5P Extract] Content ID found in interval: ${contentId}`);
           setH5pContentId(contentId);
