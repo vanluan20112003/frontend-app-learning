@@ -331,8 +331,22 @@ const VideoProgressTool = () => {
       setRefreshing(true);
       setError(null);
 
+      // Refresh overall progress data
       const progress = await fetchProgressData(userData.id);
       setProgressData(progress);
+
+      // Also refresh current unit progress if we have H5P content
+      if (h5pContentId) {
+        setContentDetailLoading(true);
+        try {
+          const detail = await fetchContentDetail(userData.id, h5pContentId);
+          setCurrentContentDetail(detail);
+        } catch (contentErr) {
+          setCurrentContentDetail(null);
+        } finally {
+          setContentDetailLoading(false);
+        }
+      }
     } catch (err) {
       // console.error('Error refreshing data:', err);
       setError('Không thể cập nhật dữ liệu. Vui lòng thử lại.');
