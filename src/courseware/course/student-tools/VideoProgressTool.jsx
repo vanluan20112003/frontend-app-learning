@@ -86,6 +86,9 @@ const VideoProgressTool = () => {
       completedContents: data.scores?.completed_contents || 0,
       totalWatchedTime: data.video_progress?.total_watched_time || 0,
       totalDuration: data.video_progress?.total_duration || 0,
+
+      // Total contents in all course folders (including not started)
+      totalContentsInCourseFolders: data.overall?.total_contents_in_course_folders || 0,
     };
 
     return mappedData;
@@ -316,6 +319,11 @@ const VideoProgressTool = () => {
               <span className="summary-label">Điểm Quá Trình:</span>
               <span className="summary-value score">{progressData.currentScore}/{progressData.maxPossibleScore}</span>
             </div>
+            <div className="summary-divider" />
+            <div className="summary-item">
+              <span className="summary-label">Tổng Bài Tập:</span>
+              <span className="summary-value total">{progressData.totalContentsInCourseFolders}</span>
+            </div>
           </div>
 
           <div className="stats-grid">
@@ -433,6 +441,14 @@ const VideoProgressTool = () => {
                   <div className="score-detail-item">
                     <span className="detail-label">% đạt được trên bài đã làm:</span>
                     <span className="detail-value success">{progressData.scorePercentage}%</span>
+                  </div>
+                  <div className="score-detail-item">
+                    <span className="detail-label">Tổng số bài tập trong khóa học:</span>
+                    <span className="detail-value total">{progressData.totalContentsInCourseFolders}</span>
+                  </div>
+                  <div className="score-detail-item">
+                    <span className="detail-label">Bài tập đã hoàn thành:</span>
+                    <span className="detail-value completed">{progressData.completedContents}/{progressData.totalContentsInCourseFolders}</span>
                   </div>
                 </div>
               </div>

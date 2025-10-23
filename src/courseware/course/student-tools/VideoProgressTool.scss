@@ -640,6 +640,14 @@
               &.success {
                 color: #10b981;
               }
+
+              &.total {
+                color: #6366f1;
+              }
+
+              &.completed {
+                color: #10b981;
+              }
             }
           }
         }
@@ -687,6 +695,10 @@
 
         &.score {
           color: #667eea;
+        }
+
+        &.total {
+          color: #6366f1;
         }
       }
     }
