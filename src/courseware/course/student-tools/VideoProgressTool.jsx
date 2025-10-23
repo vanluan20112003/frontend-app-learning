@@ -3,6 +3,8 @@ import {
   Spinner,
   Icon,
   Button,
+  Tabs,
+  Tab,
 } from '@openedx/paragon';
 import {
   Person,
@@ -16,6 +18,7 @@ import {
   ExpandLess,
   Refresh,
   School,
+  Article,
 } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
@@ -27,7 +30,7 @@ import './VideoProgressTool.scss';
 
 const VideoProgressTool = () => {
   const intl = useIntl();
-  const { courseId } = useParams();
+  const { courseId, sequenceId, unitId } = useParams();
   const course = useModel('coursewareMeta', courseId);
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
@@ -38,6 +41,7 @@ const VideoProgressTool = () => {
   const [currentContentDetail, setCurrentContentDetail] = useState(null);
   const [contentDetailLoading, setContentDetailLoading] = useState(false);
   const [h5pContentId, setH5pContentId] = useState(null);
+  const [activeTab, setActiveTab] = useState('all'); // 'current', 'overall', or 'all'
 
   // Fetch and extract H5P from URL
   const fetchH5PFromURL = async (url) => {
@@ -238,15 +242,19 @@ const VideoProgressTool = () => {
         return;
       }
 
+      // Reset state when unit changes
+      setH5pContentId(null);
+      setCurrentContentDetail(null);
+      setContentDetailLoading(true);
+
       // Try to extract H5P content ID after a delay (wait for iframe to load)
       const timeoutId = setTimeout(async () => {
         const contentId = await extractH5PContentId();
 
-        if (contentId && contentId !== h5pContentId) {
+        if (contentId) {
           setH5pContentId(contentId);
 
           // Fetch content detail
-          setContentDetailLoading(true);
           fetchContentDetail(userData.id, contentId)
             .then(detail => {
               setCurrentContentDetail(detail);
@@ -257,9 +265,8 @@ const VideoProgressTool = () => {
             .finally(() => {
               setContentDetailLoading(false);
             });
-        } else if (!contentId) {
-          setH5pContentId(null);
-          setCurrentContentDetail(null);
+        } else {
+          setContentDetailLoading(false);
         }
       }, 2000); // Wait 2 seconds for iframe to load
 
@@ -292,7 +299,7 @@ const VideoProgressTool = () => {
     return () => {
       clearInterval(intervalId);
     };
-  }, [userData, h5pContentId]);
+  }, [userData, unitId]); // Changed dependency from h5pContentId to unitId
 
   // Initial data load
   useEffect(() => {
@@ -408,7 +415,14 @@ const VideoProgressTool = () => {
         <Button
           variant="outline-primary"
           size="sm"
-          onClick={() => setIsCompactView(!isCompactView)}
+          onClick={() => {
+            const newCompactView = !isCompactView;
+            setIsCompactView(newCompactView);
+            // When switching to full view, default to "all" tab
+            if (!newCompactView) {
+              setActiveTab('all');
+            }
+          }}
           iconBefore={isCompactView ? ExpandMore : ExpandLess}
         >
           {isCompactView ? 'Xem đầy đủ' : 'Xem tóm tắt'}
@@ -447,8 +461,15 @@ const VideoProgressTool = () => {
         </div>
       </div>
 
-      {/* Current Unit Progress Detail */}
-      <div className="current-unit-progress">
+      {/* Tabs for switching between Current Unit and Overall Course */}
+      <Tabs
+        activeKey={activeTab}
+        onSelect={(k) => setActiveTab(k)}
+        variant="tabs"
+        className="progress-tabs"
+      >
+        <Tab eventKey="current" title="Bài học hiện tại">
+          <div className="current-unit-progress">
         {contentDetailLoading && (
           <div className="unit-loading">
             <Spinner animation="border" size="sm" />
@@ -566,10 +587,25 @@ const VideoProgressTool = () => {
             </div>
           </div>
         )}
-      </div>
+          </div>
+        </Tab>
 
-      {/* Compact View - Summary */}
-      {isCompactView && (
+        <Tab eventKey="overall" title="Toàn bộ khóa học">
+          {/* Overall Course Progress Header */}
+          <div className="overall-course-header">
+            <div className="unit-detail-header">
+              <Icon src={Article} className="unit-icon" />
+              <div className="unit-header-text">
+                <h4 className="unit-title">Tiến độ toàn khóa học</h4>
+                {course?.title && (
+                  <span className="unit-subtitle">{course.title}</span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Compact View - Summary */}
+          {isCompactView && (
         <div className="compact-summary">
           <div className="compact-stat-row">
             <div className="compact-stat-item">
@@ -803,6 +839,380 @@ const VideoProgressTool = () => {
           </div>
         </>
       )}
+        </Tab>
+
+        <Tab eventKey="all" title="Xem tất cả">
+          {/* Current Unit Progress Section */}
+          <div className="current-unit-progress">
+            {contentDetailLoading && (
+              <div className="unit-loading">
+                <Spinner animation="border" size="sm" />
+                <span className="loading-text">Đang tải tiến độ bài học...</span>
+              </div>
+            )}
+
+            {!contentDetailLoading && !currentContentDetail && !h5pContentId && (
+              <div className="no-h5p-content">
+                <Icon src={VideoLibrary} className="no-content-icon" />
+                <p className="no-content-text">Bài học này không có video/bài tập tương tác H5P</p>
+              </div>
+            )}
+
+            {!contentDetailLoading && currentContentDetail && (
+              <div className="unit-detail-card">
+                <div className="unit-detail-header">
+                  <Icon src={PlayCircle} className="unit-icon" />
+                  <div className="unit-header-text">
+                    <h4 className="unit-title">Tiến độ bài học hiện tại</h4>
+                    {currentContentDetail.content_info?.title && (
+                      <span className="unit-subtitle">{currentContentDetail.content_info.title}</span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="unit-detail-body">
+                  {/* Video Progress */}
+                  {currentContentDetail.video_progress?.has_progress && (
+                    <div className="unit-progress-item">
+                      <div className="progress-item-header">
+                        <Icon src={VideoLibrary} className="progress-icon video" />
+                        <span className="progress-label">Tiến độ xem video</span>
+                      </div>
+                      <div className="progress-stats-row">
+                        <div className="stat-box">
+                          <span className="stat-label">Thời gian</span>
+                          <span className="stat-value">
+                            {Math.floor(currentContentDetail.video_progress.current_time / 60)}:{String(Math.floor(currentContentDetail.video_progress.current_time % 60)).padStart(2, '0')}
+                            {' / '}
+                            {Math.floor(currentContentDetail.video_progress.duration / 60)}:{String(Math.floor(currentContentDetail.video_progress.duration % 60)).padStart(2, '0')}
+                          </span>
+                        </div>
+                        <div className="stat-box">
+                          <span className="stat-label">Phần trăm</span>
+                          <span className="stat-value highlight">{Math.round(currentContentDetail.video_progress.progress_percent)}%</span>
+                        </div>
+                      </div>
+                      <div className="progress-bar-mini">
+                        <div
+                          className="progress-fill video"
+                          style={{ width: `${currentContentDetail.video_progress.progress_percent}%` }}
+                        />
+                      </div>
+                      <div className="progress-meta">
+                        <span className={`status-badge ${currentContentDetail.video_progress.status}`}>
+                          {currentContentDetail.video_progress.status === 'completed' ? 'Hoàn thành' :
+                           currentContentDetail.video_progress.status === 'in_progress' ? 'Đang xem' : 'Chưa bắt đầu'}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Score Progress */}
+                  {currentContentDetail.score?.has_score && (
+                    <div className="unit-progress-item">
+                      <div className="progress-item-header">
+                        <Icon src={Assessment} className="progress-icon score" />
+                        <span className="progress-label">Điểm bài tập tương tác</span>
+                      </div>
+                      <div className="progress-stats-row">
+                        <div className="stat-box">
+                          <span className="stat-label">Điểm số</span>
+                          <span className="stat-value">
+                            {currentContentDetail.score.score}/{currentContentDetail.score.max_score}
+                          </span>
+                        </div>
+                        <div className="stat-box">
+                          <span className="stat-label">Phần trăm</span>
+                          <span className="stat-value highlight">{Math.round(currentContentDetail.score.percentage)}%</span>
+                        </div>
+                      </div>
+                      <div className="progress-bar-mini">
+                        <div
+                          className="progress-fill score"
+                          style={{ width: `${currentContentDetail.score.percentage}%` }}
+                        />
+                      </div>
+                      <div className="progress-meta">
+                        <span className="meta-text">
+                          Thời gian làm bài: {Math.floor(currentContentDetail.score.time_spent / 60)} phút
+                        </span>
+                        <span className={`status-badge ${currentContentDetail.score.finished ? 'completed' : 'in-progress'}`}>
+                          {currentContentDetail.score.finished ? 'Đã hoàn thành' : 'Chưa hoàn thành'}
+                        </span>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Overall Summary */}
+                  {currentContentDetail.summary && (
+                    <div className="unit-summary-footer">
+                      <div className="summary-item">
+                        <span className="summary-label">Tổng tiến độ:</span>
+                        <span className="summary-value highlight">{Math.round(currentContentDetail.summary.overall_progress)}%</span>
+                      </div>
+                      {currentContentDetail.folder_info && (
+                        <div className="summary-item">
+                          <span className="summary-label">Thuộc:</span>
+                          <span className="summary-value">{currentContentDetail.folder_info.folder_name}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Overall Course Progress Header */}
+          <div className="overall-course-header">
+            <div className="unit-detail-header">
+              <Icon src={Article} className="unit-icon" />
+              <div className="unit-header-text">
+                <h4 className="unit-title">Tiến độ toàn khóa học</h4>
+                {course?.title && (
+                  <span className="unit-subtitle">{course.title}</span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Compact View - Summary */}
+          {isCompactView && (
+            <div className="compact-summary">
+              <div className="compact-stat-row">
+                <div className="compact-stat-item">
+                  <Icon src={Assessment} className="compact-icon" />
+                  <div className="compact-stat-info">
+                    <span className="compact-label">Hoàn thành</span>
+                    <span className="compact-value">{progressData.courseCompletionRate}%</span>
+                  </div>
+                </div>
+                <div className="compact-stat-item">
+                  <Icon src={VideoLibrary} className="compact-icon video" />
+                  <div className="compact-stat-info">
+                    <span className="compact-label">Video</span>
+                    <span className="compact-value">{progressData.videosCompleted}/{progressData.totalVideos}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="compact-stat-row">
+                <div className="compact-stat-item">
+                  <Icon src={TrendingUp} className="compact-icon score" />
+                  <div className="compact-stat-info">
+                    <span className="compact-label">Điểm quá trình</span>
+                    <span className="compact-value">{progressData.currentScore}/{progressData.maxPossibleScore}</span>
+                  </div>
+                </div>
+                <div className="compact-stat-item">
+                  <Icon src={PlayCircle} className="compact-icon started" />
+                  <div className="compact-stat-info">
+                    <span className="compact-label">Tiến độ TB</span>
+                    <span className="compact-value">{progressData.averageWatchProgress}%</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="compact-stat-row">
+                <div className="compact-stat-item full-width">
+                  <Icon src={VideoLibrary} className="compact-icon total" />
+                  <div className="compact-stat-info">
+                    <span className="compact-label">Tổng Video Môn Học</span>
+                    <span className="compact-value total">{progressData.totalContentsInCourseFolders}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="compact-progress-bar">
+                <div className="compact-progress-label">
+                  <span>Tiến độ khóa học</span>
+                  <span className="compact-percentage">{progressData.courseCompletionRate}%</span>
+                </div>
+                <div className="compact-progress">
+                  <div
+                    className="compact-progress-fill"
+                    style={{ width: `${progressData.courseCompletionRate}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Important Notices in Compact View */}
+              <div className="compact-notices">
+                <div className="compact-notice warning">
+                  <span className="notice-icon">⭐</span>
+                  <span className="notice-text">Bấm nút ngôi sao ở cuối video để hoàn thành</span>
+                </div>
+                <div className="compact-notice warning">
+                  <span className="notice-icon">📝</span>
+                  <span className="notice-text">Nhớ bấm &quot;Nộp bài&quot; để kết quả được ghi nhận</span>
+                </div>
+                <div className="compact-notice danger">
+                  <span className="notice-icon">⚠️</span>
+                  <span className="notice-text">Không dùng tab ẩn danh khi làm bài tập</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Full View - Main Statistics Grid */}
+          {!isCompactView && (
+            <>
+              {/* Summary Bar - Moved to top */}
+              <div className="summary-bar">
+                <div className="summary-item">
+                  <span className="summary-label">Tổng Video:</span>
+                  <span className="summary-value">{progressData.totalVideos}</span>
+                </div>
+                <div className="summary-divider" />
+                <div className="summary-item">
+                  <span className="summary-label">Đã Xem:</span>
+                  <span className="summary-value started">{progressData.videosStarted}</span>
+                </div>
+                <div className="summary-divider" />
+                <div className="summary-item">
+                  <span className="summary-label">Hoàn Thành:</span>
+                  <span className="summary-value completed">{progressData.videosCompleted}</span>
+                </div>
+                <div className="summary-divider" />
+                <div className="summary-item">
+                  <span className="summary-label">Điểm Quá Trình:</span>
+                  <span className="summary-value score">{progressData.currentScore}/{progressData.maxPossibleScore}</span>
+                </div>
+                <div className="summary-divider" />
+                <div className="summary-item">
+                  <span className="summary-label">Tổng Video Môn:</span>
+                  <span className="summary-value total">{progressData.totalContentsInCourseFolders}</span>
+                </div>
+              </div>
+
+              <div className="stats-grid">
+                {/* Overall Course Completion - Large Card */}
+                <div className="stat-card large-card">
+                  <div className="card-header">
+                    <Icon src={Assessment} className="card-icon" />
+                    <h4>Tiến Độ Khóa Học</h4>
+                  </div>
+                  <div className="circular-progress-wrapper">
+                    <svg className="circular-chart" viewBox="0 0 36 36">
+                      <path
+                        className="circle-bg"
+                        d="M18 2.0845
+                      a 15.9155 15.9155 0 0 1 0 31.831
+                      a 15.9155 15.9155 0 0 1 0 -31.831"
+                      />
+                      <path
+                        className="circle"
+                        strokeDasharray={`${progressData.courseCompletionRate}, 100`}
+                        d="M18 2.0845
+                      a 15.9155 15.9155 0 0 1 0 31.831
+                      a 15.9155 15.9155 0 0 1 0 -31.831"
+                      />
+                      <text x="18" y="20.35" className="percentage-large">
+                        {progressData.courseCompletionRate}%
+                      </text>
+                    </svg>
+                  </div>
+                  <p className="stat-description">Hoàn thành khóa học</p>
+                </div>
+
+                {/* Video Statistics */}
+                <div className="stat-card">
+                  <div className="card-header">
+                    <Icon src={VideoLibrary} className="card-icon" />
+                    <h4>Video</h4>
+                  </div>
+                  <div className="stat-row">
+                    <div className="stat-item">
+                      <Icon src={PlayCircle} className="stat-icon started" />
+                      <div className="stat-content">
+                        <span className="stat-label">Đã bắt đầu</span>
+                        <span className="stat-value">{progressData.videosStarted}/{progressData.totalVideos}</span>
+                        <div className="mini-progress">
+                          <div className="mini-progress-bar started" style={{ width: `${videoStartedRate}%` }} />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="stat-item">
+                      <Icon src={CheckCircle} className="stat-icon completed" />
+                      <div className="stat-content">
+                        <span className="stat-label">Hoàn thành (≥95%)</span>
+                        <span className="stat-value">{progressData.videosCompleted}/{progressData.totalVideos}</span>
+                        <div className="mini-progress">
+                          <div className="mini-progress-bar completed" style={{ width: `${videoCompletionRate}%` }} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="avg-progress">
+                    <span className="avg-label">Tiến trình xem trung bình:</span>
+                    <span className="avg-value">{progressData.averageWatchProgress}%</span>
+                  </div>
+                </div>
+
+                {/* Score Statistics */}
+                <div className="stat-card">
+                  <div className="card-header">
+                    <Icon src={TrendingUp} className="card-icon" />
+                    <h4>Điểm Quá Trình</h4>
+                  </div>
+                  <div className="score-content">
+                    <div className="score-main">
+                      <div className="score-numbers">
+                        <span className="current-score">{progressData.currentScore}</span>
+                        <span className="score-divider">/</span>
+                        <span className="max-score">{progressData.maxPossibleScore}</span>
+                      </div>
+                      <div className="progress-bar-modern">
+                        <div className="progress-fill score" style={{ width: `${scoreRate}%` }}>
+                          <span className="progress-label">{scoreRate}%</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="score-details">
+                      <div className="score-detail-item info-note">
+                        <span className="detail-note">
+                          💡 Điểm quá trình bao gồm điểm tương tác video và bài tập trong khóa học (không bao gồm điểm thi)
+                        </span>
+                      </div>
+
+                      <div className="score-detail-item warning-note">
+                        <span className="detail-note">
+                          ⭐ <strong>Quan trọng:</strong> Bấm vào nút ngôi sao ở cuối video để hoàn thành xem video
+                        </span>
+                      </div>
+
+                      <div className="score-detail-item warning-note">
+                        <span className="detail-note">
+                          📝 <strong>Bài tập:</strong> Nhớ bấm nút &quot;Nộp bài&quot; để kết quả được ghi nhận
+                        </span>
+                      </div>
+
+                      <div className="score-detail-item danger-note">
+                        <span className="detail-note">
+                          ⚠️ <strong>Chú ý:</strong> Không sử dụng tab ẩn danh khi làm bài tập tương tác
+                        </span>
+                      </div>
+
+                      <div className="score-detail-item">
+                        <span className="detail-label">Điểm tương tác video & bài tập:</span>
+                        <span className="detail-value highlight">{progressData.videoInteractionPoints}</span>
+                      </div>
+                      <div className="score-detail-item">
+                        <span className="detail-label">% đạt được trên bài đã làm:</span>
+                        <span className="detail-value success">{progressData.scorePercentage}%</span>
+                      </div>
+                      <div className="score-detail-item">
+                        <span className="detail-label">Tổng số video trong môn học:</span>
+                        <span className="detail-value total">{progressData.totalContentsInCourseFolders}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </Tab>
+      </Tabs>
     </div>
   );
 };

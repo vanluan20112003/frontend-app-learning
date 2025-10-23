@@ -1182,4 +1182,72 @@
       }
     }
   }
+
+  // Tabs Styles
+  .progress-tabs {
+    margin: 0 1.5rem;
+
+    .nav-tabs {
+      border-bottom: 2px solid #e9ecef;
+
+      .nav-link {
+        font-weight: 600;
+        font-size: 0.875rem;
+        color: #6c757d;
+        border: none;
+        border-bottom: 3px solid transparent;
+        padding: 0.75rem 1.5rem;
+        transition: all 0.3s ease;
+
+        &:hover {
+          color: #667eea;
+          border-bottom-color: rgba(102, 126, 234, 0.3);
+        }
+
+        &.active {
+          color: #667eea;
+          border-bottom-color: #667eea;
+          background: transparent;
+        }
+      }
+    }
+
+    .tab-content {
+      padding: 1.5rem 0;
+    }
+  }
+
+  // Overall Course Header
+  .overall-course-header {
+    margin-bottom: 1.5rem;
+    margin-top: 2rem; // Add spacing between current unit and overall course in "all" tab
+
+    .unit-detail-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+
+      .unit-icon {
+        color: white;
+      }
+
+      .unit-title {
+        color: white;
+      }
+
+      .unit-subtitle {
+        color: rgba(255, 255, 255, 0.9);
+      }
+    }
+  }
+
+  // Add top padding for current unit progress in "all" tab
+  .tab-content {
+    .current-unit-progress {
+      &:first-child {
+        padding-top: 0.5rem;
+      }
+    }
+  }
 }
