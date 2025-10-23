@@ -275,31 +275,39 @@ const VideoProgressTool = () => {
 
     extractAndFetchContentDetail();
 
-    // Also try to extract on interval (in case iframe loads slowly)
+    // Poll for updates every 15 seconds (slower polling to reduce API calls)
     const intervalId = setInterval(async () => {
-      if (!h5pContentId && userData?.id) {
+      if (h5pContentId && userData?.id) {
+        // Only fetch content detail if we already have H5P content ID
+        fetchContentDetail(userData.id, h5pContentId)
+          .then(detail => {
+            setCurrentContentDetail(detail);
+          })
+          .catch(() => {
+            // Silently fail, don't show error
+          });
+      } else if (!h5pContentId && userData?.id) {
+        // Try to extract H5P content ID if we don't have it yet
         const contentId = await extractH5PContentId();
         if (contentId) {
           setH5pContentId(contentId);
-          setContentDetailLoading(true);
           fetchContentDetail(userData.id, contentId)
             .then(detail => {
               setCurrentContentDetail(detail);
+              setContentDetailLoading(false);
             })
             .catch(() => {
               setCurrentContentDetail(null);
-            })
-            .finally(() => {
               setContentDetailLoading(false);
             });
         }
       }
-    }, 3000);
+    }, 15000); // Poll every 15 seconds
 
     return () => {
       clearInterval(intervalId);
     };
-  }, [userData, unitId]); // Changed dependency from h5pContentId to unitId
+  }, [userData, unitId, h5pContentId]); // Added h5pContentId to dependencies
 
   // Initial data load
   useEffect(() => {
