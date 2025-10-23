@@ -13,7 +13,7 @@ import {
   FullscreenExit,
 } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { useToolsDrawer } from '../navigation-sidebar/CourseLayout';
+import { useToolsDrawer } from '../navigation-sidebar';
 import ModernCalculator from './ModernCalculator';
 import QuickNotes from './QuickNotes';
 import SupportForm from './SupportForm';
@@ -30,7 +30,7 @@ const ToolsPanel = () => {
   const [isResizing, setIsResizing] = useState(false);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
   const [isMaximized, setIsMaximized] = useState(false);
-  const [savedWidth, setSavedWidth] = useState(400);
+  const [previousWidth, setPreviousWidth] = useState(400);
   const drawerRef = useRef(null);
 
   // Use context to communicate with CourseLayout
@@ -99,12 +99,12 @@ const ToolsPanel = () => {
   const handleToggleMaximize = () => {
     if (isMaximized) {
       // Restore to saved width
-      setLocalDrawerWidth(savedWidth);
-      setDrawerWidth(savedWidth);
+      setLocalDrawerWidth(previousWidth);
+      setDrawerWidth(previousWidth);
       setIsMaximized(false);
     } else {
       // Maximize to 80% of window width
-      setSavedWidth(localDrawerWidth);
+      setPreviousWidth(localDrawerWidth);
       const maxWidth = Math.floor(window.innerWidth * 0.8);
       setLocalDrawerWidth(maxWidth);
       setDrawerWidth(maxWidth);
@@ -231,7 +231,7 @@ const ToolsPanel = () => {
             type="button"
             className={`resize-handle ${isResizing ? 'resizing' : ''}`}
             onMouseDown={handleMouseDown}
-            onClick={(e) => {
+            onClick={() => {
               // Only trigger click if not dragging
               if (!isResizing) {
                 handleResizeClick();
