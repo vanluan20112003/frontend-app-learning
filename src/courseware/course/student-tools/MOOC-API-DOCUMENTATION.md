@@ -477,6 +477,109 @@ Chỉ trả về số liệu tổng hợp, không có chi tiết.
 
 ---
 
+## 7. CONTENT DETAIL API
+API để lấy chi tiết điểm số và tiến độ video của một content cụ thể.
+
+### 7.1. Lấy chi tiết một content
+```
+GET /content-detail/{user_id}/{course_id}/{content_id}
+```
+
+**Ví dụ:**
+```bash
+curl "https://h5p.itp.vn/wp-json/mooc/v1/content-detail/4/course-v1:DHQG-HCM+FM101+2025_S2/259"
+```
+
+**Response:**
+```json
+{
+  "user_id": "4",
+  "course_id": "course-v1:DHQG-HCM+FM101+2025_S2",
+  "content_id": 259,
+  "content_info": {
+    "title": "Bài tập chương 1",
+    "library_id": 15
+  },
+  "folder_info": {
+    "folder_id": 10,
+    "folder_name": "Chương 1 - Giới thiệu",
+    "total_contents_in_folder": 25
+  },
+  "score": {
+    "has_score": true,
+    "score": 4,
+    "max_score": 5,
+    "percentage": 80.0,
+    "opened": true,
+    "finished": false,
+    "time_spent": 904,
+    "created_at": "2025-10-09 14:27:41",
+    "updated_at": "2025-10-09 14:30:44"
+  },
+  "video_progress": {
+    "has_progress": true,
+    "progress_percent": 97.65,
+    "current_time": 498.48,
+    "duration": 510.49,
+    "watch_percentage": 97.65,
+    "status": "completed",
+    "remaining_time": 12.01,
+    "last_updated": "2025-10-09 23:49:14"
+  },
+  "summary": {
+    "is_completed": true,
+    "has_interaction": true,
+    "overall_progress": 88.83
+  }
+}
+```
+
+**Thông tin trả về:**
+
+**`content_info`** - Thông tin H5P content:
+- `title`: Tiêu đề content
+- `library_id`: ID thư viện H5P
+
+**`folder_info`** - Thông tin folder chứa content:
+- `folder_id`: ID folder
+- `folder_name`: Tên folder
+- `total_contents_in_folder`: Tổng số contents trong folder
+- `null` nếu content không thuộc folder nào
+
+**`score`** - Thông tin điểm số:
+- `has_score`: Có dữ liệu điểm hay không
+- `score`: Điểm đạt được
+- `max_score`: Điểm tối đa
+- `percentage`: Phần trăm điểm (score/max_score × 100)
+- `opened`: Đã mở content chưa
+- `finished`: Đã hoàn thành chưa
+- `time_spent`: Thời gian làm bài (giây)
+- `created_at`: Thời gian tạo record
+- `updated_at`: Thời gian cập nhật cuối
+
+**`video_progress`** - Tiến độ xem video:
+- `has_progress`: Có dữ liệu tiến độ hay không
+- `progress_percent`: Phần trăm tiến độ xem (0-100)
+- `current_time`: Thời gian hiện tại đã xem (giây)
+- `duration`: Tổng thời lượng video (giây)
+- `watch_percentage`: Phần trăm thời gian đã xem (current_time/duration × 100)
+- `status`: Trạng thái (`not_started`, `started`, `in_progress`, `completed`)
+- `remaining_time`: Thời gian còn lại (giây)
+- `last_updated`: Thời gian cập nhật cuối
+
+**`summary`** - Tổng hợp:
+- `is_completed`: Content đã hoàn thành chưa (finished=true hoặc progress≥95%)
+- `has_interaction`: User đã tương tác với content chưa
+- `overall_progress`: Tiến độ tổng thể (trung bình cộng của score percentage và video progress)
+
+**Use cases:**
+- Hiển thị chi tiết tiến độ của một content cụ thể
+- Tracking học tập chi tiết của học viên
+- Hiển thị popup thông tin khi click vào content
+- Sync trạng thái content giữa MOOC và H5P
+
+---
+
 ## Ví dụ sử dụng
 
 ### JavaScript/Fetch API

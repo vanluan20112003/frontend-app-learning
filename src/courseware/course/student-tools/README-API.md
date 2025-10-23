@@ -113,6 +113,13 @@ GET /combined-progress/{user_id}/{course_id}/summary
 
 **🎯 Khuyến nghị:** Sử dụng endpoint này để lấy tổng hợp cả video và điểm trong một lần gọi API thay vì gọi riêng lẻ.
 
+### 7. Content Detail (Chi tiết một content) 🆕 MỚI
+```
+GET /content-detail/{user_id}/{course_id}/{content_id}
+```
+
+**🎯 Use case:** Lấy chi tiết đầy đủ về điểm số và tiến độ video của một content cụ thể. Bao gồm thông tin folder, điểm số chi tiết, tiến độ xem video và tổng hợp completion status.
+
 ## 💡 Lưu ý quan trọng
 
 ### Course ID Format
