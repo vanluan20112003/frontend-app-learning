@@ -321,7 +321,7 @@ const VideoProgressTool = () => {
             </div>
             <div className="summary-divider" />
             <div className="summary-item">
-              <span className="summary-label">Tổng Bài Tập:</span>
+              <span className="summary-label">Tổng Video Môn:</span>
               <span className="summary-value total">{progressData.totalContentsInCourseFolders}</span>
             </div>
           </div>
@@ -443,11 +443,11 @@ const VideoProgressTool = () => {
                     <span className="detail-value success">{progressData.scorePercentage}%</span>
                   </div>
                   <div className="score-detail-item">
-                    <span className="detail-label">Tổng số bài tập trong khóa học:</span>
+                    <span className="detail-label">Tổng số video trong môn học:</span>
                     <span className="detail-value total">{progressData.totalContentsInCourseFolders}</span>
                   </div>
                   <div className="score-detail-item">
-                    <span className="detail-label">Bài tập đã hoàn thành:</span>
+                    <span className="detail-label">Video có bài tập đã làm:</span>
                     <span className="detail-value completed">{progressData.completedContents}/{progressData.totalContentsInCourseFolders}</span>
                   </div>
                 </div>
