@@ -15,17 +15,20 @@ import {
   ExpandMore,
   ExpandLess,
   Refresh,
+  School,
 } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { useParams } from 'react-router-dom';
+import { useModel } from '../../../generic/model-store';
 import messages from './messages';
 import './VideoProgressTool.scss';
 
 const VideoProgressTool = () => {
   const intl = useIntl();
   const { courseId } = useParams();
+  const course = useModel('coursewareMeta', courseId);
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [progressData, setProgressData] = useState(null);
@@ -223,6 +226,12 @@ const VideoProgressTool = () => {
               <Icon src={Email} className="meta-icon" />
               <span className="user-email">{userData?.email || 'N/A'}</span>
             </div>
+            {course?.title && (
+              <div className="user-meta">
+                <Icon src={School} className="meta-icon" />
+                <span className="course-name">{course.title}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -260,6 +269,16 @@ const VideoProgressTool = () => {
               <div className="compact-stat-info">
                 <span className="compact-label">Tiến độ TB</span>
                 <span className="compact-value">{progressData.averageWatchProgress}%</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="compact-stat-row">
+            <div className="compact-stat-item full-width">
+              <Icon src={VideoLibrary} className="compact-icon total" />
+              <div className="compact-stat-info">
+                <span className="compact-label">Tổng Video Môn Học</span>
+                <span className="compact-value total">{progressData.totalContentsInCourseFolders}</span>
               </div>
             </div>
           </div>

@@ -109,6 +109,25 @@
           box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
         }
 
+        &.full-width {
+          grid-column: 1 / -1;
+          background: linear-gradient(135deg, #e0e7ff 0%, #dbeafe 100%);
+          border: 1px solid #c7d2fe;
+
+          &:hover {
+            background: linear-gradient(135deg, #c7d2fe 0%, #bfdbfe 100%);
+          }
+
+          .compact-icon.total {
+            color: #6366f1;
+          }
+
+          .compact-value.total {
+            color: #6366f1;
+            font-size: 1.5rem;
+          }
+        }
+
         .compact-icon {
           width: 32px;
           height: 32px;
@@ -125,6 +144,10 @@
 
           &.started {
             color: #3b82f6;
+          }
+
+          &.total {
+            color: #6366f1;
           }
         }
 
@@ -307,8 +330,14 @@
 
           .user-email,
           .course-id,
-          .user-id {
+          .user-id,
+          .course-name {
             color: rgba(255, 255, 255, 0.95);
+          }
+
+          .course-name {
+            font-weight: 600;
+            font-size: 0.9rem;
           }
         }
       }
@@ -755,6 +784,10 @@
 
             .compact-value {
               font-size: 1.125rem;
+
+              &.total {
+                font-size: 1.25rem;
+              }
             }
           }
         }
