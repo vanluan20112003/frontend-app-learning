@@ -401,6 +401,19 @@
             }
           }
 
+          .progress-note {
+            font-size: 0.75rem;
+            color: #f59e0b;
+            font-style: italic;
+            margin-bottom: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 3px solid #f59e0b;
+            border-radius: 6px;
+            font-weight: 500;
+            line-height: 1.4;
+          }
+
           .progress-stats-row {
             display: grid;
             grid-template-columns: 1fr 1fr;

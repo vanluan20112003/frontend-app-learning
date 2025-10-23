@@ -504,6 +504,9 @@ const VideoProgressTool = () => {
                     <Icon src={VideoLibrary} className="progress-icon video" />
                     <span className="progress-label">Tiến độ xem video</span>
                   </div>
+                  <div className="progress-note">
+                    * Tiến độ video và điểm sẽ lấy kết quả cao nhất
+                  </div>
                   <div className="progress-stats-row">
                     <div className="stat-box">
                       <span className="stat-label">Thời gian xem</span>
@@ -884,6 +887,9 @@ const VideoProgressTool = () => {
                       <div className="progress-item-header">
                         <Icon src={VideoLibrary} className="progress-icon video" />
                         <span className="progress-label">Tiến độ xem video</span>
+                      </div>
+                      <div className="progress-note">
+                        * Tiến độ video và điểm sẽ lấy kết quả cao nhất
                       </div>
                       <div className="progress-stats-row">
                         <div className="stat-box">
