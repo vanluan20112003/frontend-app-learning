@@ -35,70 +35,60 @@ const VideoProgressTool = () => {
 
   // Fetch user data
   const fetchUserData = async () => {
-    try {
-      const client = getAuthenticatedHttpClient();
-      const { LMS_BASE_URL } = getConfig();
-      const apiUrl = `${LMS_BASE_URL}/api/custom/v1/users/me/`;
+    const client = getAuthenticatedHttpClient();
+    const { LMS_BASE_URL } = getConfig();
+    const apiUrl = `${LMS_BASE_URL}/api/custom/v1/users/me/`;
 
-      const response = await client.get(apiUrl);
+    const response = await client.get(apiUrl);
 
-      if (response.data && response.data.success) {
-        setUserData(response.data.data);
-        return response.data.data;
-      }
-      throw new Error('Invalid API response');
-    } catch (err) {
-      console.error('Error fetching user data:', err);
-      throw err;
+    if (response.data && response.data.success) {
+      setUserData(response.data.data);
+      return response.data.data;
     }
+    throw new Error('Invalid API response');
   };
 
   // Fetch H5P progress data from API
   const fetchProgressData = async (userId) => {
-    try {
-      const H5P_API_BASE = 'https://h5p.itp.vn/wp-json/mooc/v1';
-      const apiUrl = `${H5P_API_BASE}/combined-progress/${userId}/${courseId}`;
+    const H5P_API_BASE = 'https://h5p.itp.vn/wp-json/mooc/v1';
+    const apiUrl = `${H5P_API_BASE}/combined-progress/${userId}/${courseId}`;
 
-      console.log('Fetching progress from:', apiUrl);
+    // console.log('Fetching progress from:', apiUrl);
 
-      const response = await fetch(apiUrl);
+    const response = await fetch(apiUrl);
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log('H5P Progress Data:', data);
-
-      // Map API response to progressData format
-      const mappedData = {
-        // Video statistics
-        videosStarted: data.video_progress?.total_videos || 0,
-        totalVideos: data.video_progress?.total_videos || 0,
-        videosCompleted: data.video_progress?.completed_videos || 0,
-        averageWatchProgress: Math.round(data.video_progress?.average_progress || 0),
-
-        // Score statistics
-        currentScore: data.scores?.total_score || 0,
-        maxPossibleScore: data.scores?.total_max_score || 0,
-        scorePercentage: Math.round(data.scores?.average_percentage || 0),
-        videoInteractionPoints: data.scores?.total_score || 0,
-
-        // Overall completion
-        courseCompletionRate: Math.round(data.overall?.overall_completion || 0),
-
-        // Additional info
-        totalContents: data.scores?.total_contents || 0,
-        completedContents: data.scores?.completed_contents || 0,
-        totalWatchedTime: data.video_progress?.total_watched_time || 0,
-        totalDuration: data.video_progress?.total_duration || 0,
-      };
-
-      return mappedData;
-    } catch (err) {
-      console.error('Error fetching progress data:', err);
-      throw err;
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
+
+    const data = await response.json();
+    // console.log('H5P Progress Data:', data);
+
+    // Map API response to progressData format
+    const mappedData = {
+      // Video statistics
+      videosStarted: data.video_progress?.total_videos || 0,
+      totalVideos: data.video_progress?.total_videos || 0,
+      videosCompleted: data.video_progress?.completed_videos || 0,
+      averageWatchProgress: Math.round(data.video_progress?.average_progress || 0),
+
+      // Score statistics
+      currentScore: data.scores?.total_score || 0,
+      maxPossibleScore: data.scores?.total_max_score || 0,
+      scorePercentage: Math.round(data.scores?.average_percentage || 0),
+      videoInteractionPoints: data.scores?.total_score || 0,
+
+      // Overall completion
+      courseCompletionRate: Math.round(data.overall?.overall_completion || 0),
+
+      // Additional info
+      totalContents: data.scores?.total_contents || 0,
+      completedContents: data.scores?.completed_contents || 0,
+      totalWatchedTime: data.video_progress?.total_watched_time || 0,
+      totalDuration: data.video_progress?.total_duration || 0,
+    };
+
+    return mappedData;
   };
 
   // Initial data load
@@ -117,7 +107,7 @@ const VideoProgressTool = () => {
           setProgressData(progress);
         }
       } catch (err) {
-        console.error('Error loading data:', err);
+        // console.error('Error loading data:', err);
         setError('Không thể tải dữ liệu. Vui lòng thử lại.');
       } finally {
         setLoading(false);
@@ -141,7 +131,7 @@ const VideoProgressTool = () => {
       const progress = await fetchProgressData(userData.id);
       setProgressData(progress);
     } catch (err) {
-      console.error('Error refreshing data:', err);
+      // console.error('Error refreshing data:', err);
       setError('Không thể cập nhật dữ liệu. Vui lòng thử lại.');
     } finally {
       setRefreshing(false);
@@ -292,7 +282,7 @@ const VideoProgressTool = () => {
             </div>
             <div className="compact-notice warning">
               <span className="notice-icon">📝</span>
-              <span className="notice-text">Nhớ bấm "Nộp bài" để kết quả được ghi nhận</span>
+              <span className="notice-text">Nhớ bấm &quot;Nộp bài&quot; để kết quả được ghi nhận</span>
             </div>
             <div className="compact-notice danger">
               <span className="notice-icon">⚠️</span>
@@ -426,7 +416,7 @@ const VideoProgressTool = () => {
 
                   <div className="score-detail-item warning-note">
                     <span className="detail-note">
-                      📝 <strong>Bài tập:</strong> Nhớ bấm nút "Nộp bài" để kết quả được ghi nhận
+                      📝 <strong>Bài tập:</strong> Nhớ bấm nút &quot;Nộp bài&quot; để kết quả được ghi nhận
                     </span>
                   </div>
 

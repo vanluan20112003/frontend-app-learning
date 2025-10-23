@@ -331,6 +331,61 @@ const messages = defineMessages({
     defaultMessage: 'Bạn có thể gửi báo cáo tiếp theo sau: {time}',
     description: 'Next submit time message',
   },
+  videoProgressTitle: {
+    id: 'learn.course.studentTools.videoProgress.title',
+    defaultMessage: 'Quá trình',
+    description: 'Title for video progress tool',
+  },
+  videoProgressLoading: {
+    id: 'learn.course.studentTools.videoProgress.loading',
+    defaultMessage: 'Đang tải dữ liệu...',
+    description: 'Loading message for video progress',
+  },
+  videoProgressUserInfo: {
+    id: 'learn.course.studentTools.videoProgress.userInfo',
+    defaultMessage: 'Thông tin sinh viên',
+    description: 'User info section title',
+  },
+  videoProgressName: {
+    id: 'learn.course.studentTools.videoProgress.name',
+    defaultMessage: 'Tên sinh viên',
+    description: 'Student name label',
+  },
+  videoProgressEmail: {
+    id: 'learn.course.studentTools.videoProgress.email',
+    defaultMessage: 'Email sinh viên',
+    description: 'Student email label',
+  },
+  videoProgressStats: {
+    id: 'learn.course.studentTools.videoProgress.stats',
+    defaultMessage: 'Thống kê tương tác',
+    description: 'Statistics section title',
+  },
+  videoProgressInteraction: {
+    id: 'learn.course.studentTools.videoProgress.interaction',
+    defaultMessage: 'Video đã tương tác',
+    description: 'Video interaction label',
+  },
+  videoProgressVideos: {
+    id: 'learn.course.studentTools.videoProgress.videos',
+    defaultMessage: 'video',
+    description: 'Videos unit',
+  },
+  videoProgressPoints: {
+    id: 'learn.course.studentTools.videoProgress.points',
+    defaultMessage: 'Điểm tích lũy',
+    description: 'Points label',
+  },
+  videoProgressPointsUnit: {
+    id: 'learn.course.studentTools.videoProgress.pointsUnit',
+    defaultMessage: 'điểm',
+    description: 'Points unit',
+  },
+  videoProgressNote: {
+    id: 'learn.course.studentTools.videoProgress.note',
+    defaultMessage: 'Lưu ý: Dữ liệu được cập nhật theo thời gian thực khi bạn tương tác với các video trong khóa học.',
+    description: 'Note about data update',
+  },
 });
 
 export default messages;

@@ -185,9 +185,7 @@ const CourseNavigationSidebar = ({
           align-items: center;
           justify-content: space-between;
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          position: sticky;
-          top: 0;
-          z-index: 10;
+          flex-shrink: 0;
         }
 
         .sidebar-title {
@@ -488,22 +486,27 @@ const CourseNavigationSidebar = ({
           }
         }
 
-        /* Scrollbar styling */
+        /* Scrollbar styling - thanh mỏng, đẹp, hiện đại */
+        .course-nav-sidebar {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+        }
+
         .course-nav-sidebar::-webkit-scrollbar {
-          width: 6px;
+          width: 5px;
         }
 
         .course-nav-sidebar::-webkit-scrollbar-track {
-          background: #f1f1f1;
+          background: transparent;
         }
 
         .course-nav-sidebar::-webkit-scrollbar-thumb {
-          background: #cbd5e0;
-          border-radius: 3px;
+          background: rgba(0, 0, 0, 0.15);
+          border-radius: 10px;
         }
 
         .course-nav-sidebar::-webkit-scrollbar-thumb:hover {
-          background: #a0aec0;
+          background: rgba(0, 0, 0, 0.25);
         }
       `}
       </style>

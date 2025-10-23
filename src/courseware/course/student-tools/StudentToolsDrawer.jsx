@@ -12,16 +12,18 @@ import {
   Close,
   Calculate,
   Build,
+  Tv,
 } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import SimpleCalculator from './SimpleCalculator';
+import VideoProgressTool from './VideoProgressTool';
 import messages from './messages';
 import './StudentToolsDrawer.scss';
 
 const StudentToolsDrawer = () => {
   const intl = useIntl();
   const [isOpen, setIsOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState('calculator');
+  const [activeTab, setActiveTab] = useState('videoProgress');
 
   const handleToggleDrawer = () => {
     setIsOpen(!isOpen);
@@ -32,6 +34,13 @@ const StudentToolsDrawer = () => {
   };
 
   const tools = [
+    {
+      key: 'videoProgress',
+      title: intl.formatMessage(messages.videoProgressTitle),
+      icon: Tv,
+      component: <VideoProgressTool />,
+      shake: true, // Thêm hiệu ứng rung lắc
+    },
     {
       key: 'calculator',
       title: intl.formatMessage(messages.calculatorTitle),
@@ -105,8 +114,11 @@ const StudentToolsDrawer = () => {
                   key={tool.key}
                   eventKey={tool.key}
                   title={(
-                    <span className="d-flex align-items-center">
-                      <Icon src={tool.icon} className="mr-2" />
+                    <span className={`d-flex align-items-center ${tool.shake ? 'shake-tab' : ''}`}>
+                      <Icon
+                        src={tool.icon}
+                        className={`mr-2 ${tool.key === 'videoProgress' ? 'video-progress-icon' : ''}`}
+                      />
                       {tool.title}
                     </span>
                   )}
