@@ -506,15 +506,22 @@ const VideoProgressTool = () => {
                   </div>
                   <div className="progress-stats-row">
                     <div className="stat-box">
-                      <span className="stat-label">Thời gian</span>
+                      <span className="stat-label">Thời gian xem</span>
                       <span className="stat-value">
-                        {Math.floor(currentContentDetail.video_progress.current_time / 60)}:{String(Math.floor(currentContentDetail.video_progress.current_time % 60)).padStart(2, '0')}
-                        {' / '}
-                        {Math.floor(currentContentDetail.video_progress.duration / 60)}:{String(Math.floor(currentContentDetail.video_progress.duration % 60)).padStart(2, '0')}
+                        {(() => {
+                          const duration = currentContentDetail.video_progress.duration;
+                          const percent = currentContentDetail.video_progress.progress_percent;
+                          const watchedTime = Math.floor((duration * percent) / 100);
+                          const watchedMin = Math.floor(watchedTime / 60);
+                          const watchedSec = Math.floor(watchedTime % 60);
+                          const totalMin = Math.floor(duration / 60);
+                          const totalSec = Math.floor(duration % 60);
+                          return `${watchedMin}:${String(watchedSec).padStart(2, '0')} / ${totalMin}:${String(totalSec).padStart(2, '0')}`;
+                        })()}
                       </span>
                     </div>
                     <div className="stat-box">
-                      <span className="stat-label">Phần trăm</span>
+                      <span className="stat-label">Phần trăm đã xem</span>
                       <span className="stat-value highlight">{Math.round(currentContentDetail.video_progress.progress_percent)}%</span>
                     </div>
                   </div>
@@ -880,15 +887,22 @@ const VideoProgressTool = () => {
                       </div>
                       <div className="progress-stats-row">
                         <div className="stat-box">
-                          <span className="stat-label">Thời gian</span>
+                          <span className="stat-label">Thời gian xem</span>
                           <span className="stat-value">
-                            {Math.floor(currentContentDetail.video_progress.current_time / 60)}:{String(Math.floor(currentContentDetail.video_progress.current_time % 60)).padStart(2, '0')}
-                            {' / '}
-                            {Math.floor(currentContentDetail.video_progress.duration / 60)}:{String(Math.floor(currentContentDetail.video_progress.duration % 60)).padStart(2, '0')}
+                            {(() => {
+                              const duration = currentContentDetail.video_progress.duration;
+                              const percent = currentContentDetail.video_progress.progress_percent;
+                              const watchedTime = Math.floor((duration * percent) / 100);
+                              const watchedMin = Math.floor(watchedTime / 60);
+                              const watchedSec = Math.floor(watchedTime % 60);
+                              const totalMin = Math.floor(duration / 60);
+                              const totalSec = Math.floor(duration % 60);
+                              return `${watchedMin}:${String(watchedSec).padStart(2, '0')} / ${totalMin}:${String(totalSec).padStart(2, '0')}`;
+                            })()}
                           </span>
                         </div>
                         <div className="stat-box">
-                          <span className="stat-label">Phần trăm</span>
+                          <span className="stat-label">Phần trăm đã xem</span>
                           <span className="stat-value highlight">{Math.round(currentContentDetail.video_progress.progress_percent)}%</span>
                         </div>
                       </div>
