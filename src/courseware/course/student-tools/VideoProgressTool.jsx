@@ -43,30 +43,65 @@ const VideoProgressTool = () => {
   const extractH5PContentId = () => {
     try {
       const mainIframe = document.getElementById('unit-iframe');
+      console.log('🔍 [H5P Extract] Main iframe:', mainIframe);
+
       if (!mainIframe) {
+        console.log('❌ [H5P Extract] Main iframe not found');
         return null;
       }
+
+      console.log('📍 [H5P Extract] Main iframe src:', mainIframe.src);
 
       // Try to access iframe document (same-origin)
       try {
         const iframeDoc = mainIframe.contentDocument || mainIframe.contentWindow.document;
+        console.log('📄 [H5P Extract] Iframe document:', iframeDoc);
+
         if (iframeDoc) {
           // Find H5P iframes in the document
           const h5pIframes = iframeDoc.querySelectorAll('iframe[src*="h5p"]');
+          console.log(`🎯 [H5P Extract] Found ${h5pIframes.length} H5P iframe(s)`);
+
           if (h5pIframes.length > 0) {
+            h5pIframes.forEach((iframe, index) => {
+              console.log(`   [${index}] H5P iframe src:`, iframe.src);
+            });
+
             const src = h5pIframes[0].src;
             const match = src.match(/[?&]id=(\d+)/);
-            return match ? match[1] : null;
+            const contentId = match ? match[1] : null;
+            console.log('✅ [H5P Extract] Content ID extracted:', contentId);
+            return contentId;
+          } else {
+            console.log('⚠️ [H5P Extract] No H5P iframes found in document');
+
+            // Try to find in HTML source
+            const bodyHTML = iframeDoc.body?.innerHTML || '';
+            console.log('📝 [H5P Extract] Body HTML length:', bodyHTML.length);
+            console.log('📝 [H5P Extract] Body HTML preview:', bodyHTML.substring(0, 500));
+
+            // Search for h5p in HTML
+            const h5pMatches = bodyHTML.match(/h5p/gi);
+            console.log('🔎 [H5P Extract] "h5p" found in HTML:', h5pMatches?.length || 0, 'times');
+
+            // Try regex search for H5P content ID
+            const idRegex = /id=(\d+)/g;
+            let idMatch;
+            const foundIds = [];
+            while ((idMatch = idRegex.exec(bodyHTML)) !== null) {
+              foundIds.push(idMatch[1]);
+            }
+            console.log('🔢 [H5P Extract] IDs found in HTML:', foundIds);
           }
         }
       } catch (crossOriginError) {
-        // Cross-origin, cannot access
-        // console.log('Cannot access iframe (cross-origin)');
+        console.log('❌ [H5P Extract] Cross-origin error:', crossOriginError.message);
+        console.log('💡 [H5P Extract] Cannot access iframe document (different origin)');
       }
 
       return null;
     } catch (error) {
-      // console.error('Error extracting H5P content ID:', error);
+      console.error('💥 [H5P Extract] Error:', error);
       return null;
     }
   };
@@ -154,32 +189,42 @@ const VideoProgressTool = () => {
   useEffect(() => {
     const extractAndFetchContentDetail = async () => {
       if (!userData?.id) {
+        console.log('⏸️ [H5P Extract] Waiting for user data...');
         return;
       }
 
+      console.log('🚀 [H5P Extract] Starting extraction after 2s delay...');
+
       // Try to extract H5P content ID after a delay (wait for iframe to load)
       const timeoutId = setTimeout(() => {
+        console.log('⏰ [H5P Extract] Timeout triggered, extracting now...');
         const contentId = extractH5PContentId();
+
         if (contentId && contentId !== h5pContentId) {
+          console.log(`✅ [H5P Extract] New content ID found: ${contentId}`);
           setH5pContentId(contentId);
 
           // Fetch content detail
+          console.log(`📡 [H5P Fetch] Fetching detail for content ${contentId}...`);
           setContentDetailLoading(true);
           fetchContentDetail(userData.id, contentId)
             .then(detail => {
+              console.log('✅ [H5P Fetch] Content detail received:', detail);
               setCurrentContentDetail(detail);
             })
             .catch(err => {
-              // console.error('Error fetching content detail:', err);
+              console.error('❌ [H5P Fetch] Error fetching content detail:', err);
               setCurrentContentDetail(null);
             })
             .finally(() => {
               setContentDetailLoading(false);
             });
         } else if (!contentId) {
-          // No H5P content found
+          console.log('❌ [H5P Extract] No H5P content ID found');
           setH5pContentId(null);
           setCurrentContentDetail(null);
+        } else {
+          console.log(`ℹ️ [H5P Extract] Content ID ${contentId} already set`);
         }
       }, 2000); // Wait 2 seconds for iframe to load
 
@@ -189,17 +234,22 @@ const VideoProgressTool = () => {
     extractAndFetchContentDetail();
 
     // Also try to extract on interval (in case iframe loads slowly)
+    console.log('🔄 [H5P Extract] Setting up interval check every 3s...');
     const intervalId = setInterval(() => {
       if (!h5pContentId && userData?.id) {
+        console.log('🔄 [H5P Extract] Interval check - trying to extract...');
         const contentId = extractH5PContentId();
         if (contentId) {
+          console.log(`✅ [H5P Extract] Content ID found in interval: ${contentId}`);
           setH5pContentId(contentId);
           setContentDetailLoading(true);
           fetchContentDetail(userData.id, contentId)
             .then(detail => {
+              console.log('✅ [H5P Fetch] Content detail received (interval):', detail);
               setCurrentContentDetail(detail);
             })
-            .catch(() => {
+            .catch(err => {
+              console.error('❌ [H5P Fetch] Error (interval):', err);
               setCurrentContentDetail(null);
             })
             .finally(() => {
@@ -209,7 +259,10 @@ const VideoProgressTool = () => {
       }
     }, 3000);
 
-    return () => clearInterval(intervalId);
+    return () => {
+      console.log('🛑 [H5P Extract] Cleaning up interval');
+      clearInterval(intervalId);
+    };
   }, [userData, h5pContentId]);
 
   // Initial data load
