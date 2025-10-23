@@ -561,8 +561,21 @@ const VideoProgressTool = () => {
                 <div className="unit-progress-item">
                   <div className="progress-item-header">
                     <Icon src={VideoLibrary} className="progress-icon video" />
-                    <span className="progress-label">Tiến độ video</span>
-                    <span className="progress-value">{Math.round(currentContentDetail.video_progress.progress_percent)}%</span>
+                    <span className="progress-label">Tiến độ xem video</span>
+                  </div>
+                  <div className="progress-stats-row">
+                    <div className="stat-box">
+                      <span className="stat-label">Thời gian</span>
+                      <span className="stat-value">
+                        {Math.floor(currentContentDetail.video_progress.current_time / 60)}:{String(Math.floor(currentContentDetail.video_progress.current_time % 60)).padStart(2, '0')}
+                        {' / '}
+                        {Math.floor(currentContentDetail.video_progress.duration / 60)}:{String(Math.floor(currentContentDetail.video_progress.duration % 60)).padStart(2, '0')}
+                      </span>
+                    </div>
+                    <div className="stat-box">
+                      <span className="stat-label">Phần trăm</span>
+                      <span className="stat-value highlight">{Math.round(currentContentDetail.video_progress.progress_percent)}%</span>
+                    </div>
                   </div>
                   <div className="progress-bar-mini">
                     <div
@@ -571,11 +584,6 @@ const VideoProgressTool = () => {
                     />
                   </div>
                   <div className="progress-meta">
-                    <span className="meta-text">
-                      {Math.floor(currentContentDetail.video_progress.current_time / 60)}:{String(Math.floor(currentContentDetail.video_progress.current_time % 60)).padStart(2, '0')}
-                      {' / '}
-                      {Math.floor(currentContentDetail.video_progress.duration / 60)}:{String(Math.floor(currentContentDetail.video_progress.duration % 60)).padStart(2, '0')}
-                    </span>
                     <span className={`status-badge ${currentContentDetail.video_progress.status}`}>
                       {currentContentDetail.video_progress.status === 'completed' ? 'Hoàn thành' :
                        currentContentDetail.video_progress.status === 'in_progress' ? 'Đang xem' : 'Chưa bắt đầu'}
@@ -589,10 +597,19 @@ const VideoProgressTool = () => {
                 <div className="unit-progress-item">
                   <div className="progress-item-header">
                     <Icon src={Assessment} className="progress-icon score" />
-                    <span className="progress-label">Điểm bài tập</span>
-                    <span className="progress-value">
-                      {currentContentDetail.score.score}/{currentContentDetail.score.max_score} ({Math.round(currentContentDetail.score.percentage)}%)
-                    </span>
+                    <span className="progress-label">Điểm bài tập tương tác</span>
+                  </div>
+                  <div className="progress-stats-row">
+                    <div className="stat-box">
+                      <span className="stat-label">Điểm số</span>
+                      <span className="stat-value">
+                        {currentContentDetail.score.score}/{currentContentDetail.score.max_score}
+                      </span>
+                    </div>
+                    <div className="stat-box">
+                      <span className="stat-label">Phần trăm</span>
+                      <span className="stat-value highlight">{Math.round(currentContentDetail.score.percentage)}%</span>
+                    </div>
                   </div>
                   <div className="progress-bar-mini">
                     <div

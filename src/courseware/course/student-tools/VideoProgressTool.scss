@@ -371,7 +371,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
 
             .progress-icon {
               width: 20px;
@@ -398,6 +398,42 @@
               font-size: 0.875rem;
               font-weight: 700;
               color: #667eea;
+            }
+          }
+
+          .progress-stats-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+
+            .stat-box {
+              background: #f8f9fa;
+              padding: 0.75rem;
+              border-radius: 8px;
+              border: 1px solid #e9ecef;
+
+              .stat-label {
+                display: block;
+                font-size: 0.7rem;
+                color: #6c757d;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 0.25rem;
+                font-weight: 600;
+              }
+
+              .stat-value {
+                display: block;
+                font-size: 1rem;
+                font-weight: 700;
+                color: #2d3748;
+
+                &.highlight {
+                  color: #667eea;
+                  font-size: 1.125rem;
+                }
+              }
             }
           }
 
