@@ -8,12 +8,17 @@ import {
   ChevronRight,
   Help,
   Report,
+  ShowChart,
+  Fullscreen,
+  FullscreenExit,
 } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { useToolsDrawer } from '../navigation-sidebar/CourseLayout';
 import ModernCalculator from './ModernCalculator';
 import QuickNotes from './QuickNotes';
 import SupportForm from './SupportForm';
 import ContentReport from './ContentReport';
+import VideoProgressTool from './VideoProgressTool';
 import messages from './messages';
 import './ToolsPanel.scss';
 
@@ -21,12 +26,24 @@ const ToolsPanel = () => {
   const intl = useIntl();
   const [isOpen, setIsOpen] = useState(false);
   const [activeTool, setActiveTool] = useState('calculator');
-  const [drawerWidth, setDrawerWidth] = useState(400);
+  const [localDrawerWidth, setLocalDrawerWidth] = useState(400);
   const [isResizing, setIsResizing] = useState(false);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+  const [isMaximized, setIsMaximized] = useState(false);
+  const [savedWidth, setSavedWidth] = useState(400);
   const drawerRef = useRef(null);
 
+  // Use context to communicate with CourseLayout
+  const { setIsDrawerOpen, setDrawerWidth } = useToolsDrawer();
+
   const tools = [
+    {
+      id: 'video-progress',
+      name: intl.formatMessage(messages.videoProgressTitle),
+      icon: ShowChart,
+      component: VideoProgressTool,
+      shake: true, // Hiệu ứng rung lắc
+    },
     {
       id: 'calculator',
       name: intl.formatMessage(messages.calculatorTitle),
@@ -56,17 +73,58 @@ const ToolsPanel = () => {
   const handleToolClick = (toolId) => {
     if (activeTool === toolId && isOpen) {
       setIsOpen(false);
+      setIsDrawerOpen(false);
     } else {
       setActiveTool(toolId);
       setIsOpen(true);
+      setIsDrawerOpen(true);
     }
   };
 
   const handleToggleDrawer = () => {
-    setIsOpen(!isOpen);
+    const newOpenState = !isOpen;
+    setIsOpen(newOpenState);
+    setIsDrawerOpen(newOpenState);
   };
 
-  // Resize functionality
+  // Sync drawer state with context
+  useEffect(() => {
+    setIsDrawerOpen(isOpen);
+    if (isOpen) {
+      setDrawerWidth(localDrawerWidth);
+    }
+  }, [isOpen, localDrawerWidth, setIsDrawerOpen, setDrawerWidth]);
+
+  // Maximize/Restore functionality
+  const handleToggleMaximize = () => {
+    if (isMaximized) {
+      // Restore to saved width
+      setLocalDrawerWidth(savedWidth);
+      setDrawerWidth(savedWidth);
+      setIsMaximized(false);
+    } else {
+      // Maximize to 80% of window width
+      setSavedWidth(localDrawerWidth);
+      const maxWidth = Math.floor(window.innerWidth * 0.8);
+      setLocalDrawerWidth(maxWidth);
+      setDrawerWidth(maxWidth);
+      setIsMaximized(true);
+    }
+  };
+
+  // Resize functionality - Click to toggle between preset sizes
+  const handleResizeClick = () => {
+    const presetSizes = [300, 400, 500, 600, 700];
+    const currentIndex = presetSizes.findIndex(size => Math.abs(size - localDrawerWidth) < 50);
+    const nextIndex = (currentIndex + 1) % presetSizes.length;
+    const newWidth = presetSizes[nextIndex];
+
+    setLocalDrawerWidth(newWidth);
+    setDrawerWidth(newWidth);
+    setIsMaximized(false);
+  };
+
+  // Mouse drag resize (optional, for users who prefer dragging)
   const handleMouseDown = (e) => {
     e.preventDefault();
     setIsResizing(true);
@@ -81,7 +139,9 @@ const ToolsPanel = () => {
       const maxWidth = window.innerWidth * 0.8;
 
       if (newWidth >= minWidth && newWidth <= maxWidth) {
+        setLocalDrawerWidth(newWidth);
         setDrawerWidth(newWidth);
+        setIsMaximized(false); // Exit maximized mode when manually resizing
       }
     };
 
@@ -98,23 +158,25 @@ const ToolsPanel = () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isResizing]);
+  }, [isResizing, setDrawerWidth]);
 
   // Save drawer width and sidebar visibility to localStorage
   useEffect(() => {
     const savedWidth = localStorage.getItem('tools-drawer-width');
     const savedVisible = localStorage.getItem('tools-sidebar-visible');
     if (savedWidth) {
-      setDrawerWidth(parseInt(savedWidth, 10));
+      const width = parseInt(savedWidth, 10);
+      setLocalDrawerWidth(width);
+      setDrawerWidth(width);
     }
     if (savedVisible !== null) {
       setIsSidebarVisible(savedVisible === 'true');
     }
-  }, []);
+  }, [setDrawerWidth]);
 
   useEffect(() => {
-    localStorage.setItem('tools-drawer-width', drawerWidth.toString());
-  }, [drawerWidth]);
+    localStorage.setItem('tools-drawer-width', localDrawerWidth.toString());
+  }, [localDrawerWidth]);
 
   useEffect(() => {
     localStorage.setItem('tools-sidebar-visible', isSidebarVisible.toString());
@@ -147,7 +209,7 @@ const ToolsPanel = () => {
           <button
             key={tool.id}
             type="button"
-            className={`tool-button ${activeTool === tool.id && isOpen ? 'active' : ''}`}
+            className={`tool-button ${activeTool === tool.id && isOpen ? 'active' : ''} ${tool.shake ? 'shake-button' : ''}`}
             onClick={() => handleToolClick(tool.id)}
             title={tool.name}
           >
@@ -162,16 +224,23 @@ const ToolsPanel = () => {
         <div
           ref={drawerRef}
           className="tools-drawer"
-          style={{ width: `${drawerWidth}px` }}
+          style={{ width: `${localDrawerWidth}px` }}
         >
-          {/* Resize handle */}
+          {/* Resize handle - supports both click and drag */}
           <button
             type="button"
-            className="resize-handle"
+            className={`resize-handle ${isResizing ? 'resizing' : ''}`}
             onMouseDown={handleMouseDown}
+            onClick={(e) => {
+              // Only trigger click if not dragging
+              if (!isResizing) {
+                handleResizeClick();
+              }
+            }}
+            title="Click để thay đổi kích thước, hoặc kéo để tùy chỉnh"
             aria-label="Resize drawer"
           >
-            {/* Resize handle */}
+            <span className="resize-indicator">⋮⋮</span>
           </button>
 
           {/* Drawer header */}
@@ -180,14 +249,24 @@ const ToolsPanel = () => {
               <Icon src={tools.find(t => t.id === activeTool)?.icon} className="mr-2" />
               {tools.find(t => t.id === activeTool)?.name}
             </div>
-            <button
-              type="button"
-              className="close-button"
-              onClick={handleToggleDrawer}
-              title="Thu gọn"
-            >
-              <Icon src={ChevronRight} />
-            </button>
+            <div className="header-actions">
+              <button
+                type="button"
+                className="action-button maximize-button"
+                onClick={handleToggleMaximize}
+                title={isMaximized ? 'Thu nhỏ' : 'Phóng to'}
+              >
+                <Icon src={isMaximized ? FullscreenExit : Fullscreen} />
+              </button>
+              <button
+                type="button"
+                className="action-button close-button"
+                onClick={handleToggleDrawer}
+                title="Thu gọn"
+              >
+                <Icon src={ChevronRight} />
+              </button>
+            </div>
           </div>
 
           {/* Drawer content */}
