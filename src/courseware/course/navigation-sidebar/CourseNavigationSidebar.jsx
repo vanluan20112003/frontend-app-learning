@@ -160,9 +160,9 @@ const CourseNavigationSidebar = ({
       <style jsx>{`
         .course-nav-sidebar {
           position: fixed;
-          top: 0;
+          top: 60px;
           left: 0;
-          height: 100vh;
+          height: calc(100vh - 60px);
           background: white;
           border-right: 1px solid #e5e5e5;
           transition: all 0.3s ease;
