@@ -63,8 +63,7 @@ const CourseLayout = ({
             min-width: 0; /* Allows flex item to shrink below content size */
             padding: 1.5rem;
             background: #fff;
-            transition: margin-left 0.3s ease, margin-right 0.3s ease;
-            margin-left: ${isSidebarCollapsed ? '60px' : '320px'};
+            transition: margin-right 0.3s ease;
             margin-right: ${isDrawerOpen ? `${drawerWidth}px` : '0'};
           }
 
@@ -72,7 +71,6 @@ const CourseLayout = ({
             .course-content-area {
               padding: 1rem;
               width: 100%;
-              margin-left: 0 !important; /* No push on mobile, sidebar is overlay */
               margin-right: 0 !important; /* No push on mobile, use overlay instead */
             }
 
@@ -94,7 +92,7 @@ const CourseLayout = ({
 
           @media (min-width: 769px) {
             .course-content-area {
-              max-width: calc(100% - ${isSidebarCollapsed ? '60px' : '320px'}); /* Account for sidebar width */
+              max-width: calc(100% - 60px); /* Account for collapsed sidebar */
             }
           }
         `}
