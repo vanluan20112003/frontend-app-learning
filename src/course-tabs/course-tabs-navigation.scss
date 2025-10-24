@@ -1,5 +1,10 @@
 .course-tabs-navigation {
-  position: relative;
+  position: fixed;
+  top: 60px;
+  left: 0;
+  right: 0;
+  z-index: 998;
+  background: white;
   border-bottom: solid 1px #eaeaea;
 
   .nav a,

@@ -43,7 +43,7 @@ iframe[id^="webpack-dev-server-client-overlay"] {
   }
 
   main {
-    margin-top: 60px; // Offset for fixed header
+    margin-top: 110px; // Offset for fixed header + tabs navigation (60px + 50px)
   }
 
   footer {
