@@ -159,15 +159,16 @@ const CourseNavigationSidebar = ({
     <div className={`course-nav-sidebar ${isCollapsed ? 'collapsed' : 'expanded'}`}>
       <style jsx>{`
         .course-nav-sidebar {
-          position: sticky;
-          top: 0;
-          height: 100vh;
+          position: fixed;
+          top: 60px;
+          left: 0;
+          height: calc(100vh - 60px);
           background: white;
           border-right: 1px solid #e5e5e5;
           transition: all 0.3s ease;
           overflow-y: auto;
           overflow-x: hidden;
-          flex-shrink: 0;
+          z-index: 999;
         }
 
         .course-nav-sidebar.expanded {

@@ -21,6 +21,12 @@ iframe[id^="webpack-dev-server-client-overlay"] {
 
   header {
     flex: 0 0 auto;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: white;
 
     .logo {
       display: block;
@@ -34,6 +40,10 @@ iframe[id^="webpack-dev-server-client-overlay"] {
         height: 100%;
       }
     }
+  }
+
+  main {
+    margin-top: 60px; // Offset for fixed header
   }
 
   footer {
