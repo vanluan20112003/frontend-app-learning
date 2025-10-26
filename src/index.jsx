@@ -27,6 +27,8 @@ import DatesTab from './course-home/dates-tab';
 import GoalUnsubscribe from './course-home/goal-unsubscribe';
 import ProgressTab from './course-home/progress-tab/ProgressTab';
 import { TabContainer } from './tab-page';
+import MicroUnitsContainer from './micro-units/MicroUnitsContainer';
+import AllMicroUnitsPage from './micro-units/AllMicroUnitsPage';
 
 import {
   fetchDatesTab, fetchOutlineTab, fetchProgressTab, fetchLeaderboardTab,
@@ -62,6 +64,7 @@ subscribe(APP_READY, () => {
             <Routes>
               <Route path={ROUTES.UNSUBSCRIBE} element={<PageWrap><GoalUnsubscribe /></PageWrap>} />
               <Route path={ROUTES.REDIRECT} element={<PageWrap><CoursewareRedirectLandingPage /></PageWrap>} />
+              <Route path={ROUTES.LEARNER_MICRO_UNITS} element={<PageWrap><AllMicroUnitsPage /></PageWrap>} />
               <Route
                 path={DECODE_ROUTES.ACCESS_DENIED}
                 element={<DecodePageRoute><CourseAccessErrorPage /></DecodePageRoute>}
@@ -151,6 +154,17 @@ subscribe(APP_READY, () => {
                   element={(
                     <DecodePageRoute>
                       <CoursewareContainer />
+                    </DecodePageRoute>
+                  )}
+                />
+              ))}
+              {DECODE_ROUTES.MICRO_UNITS.map((route) => (
+                <Route
+                  key={route}
+                  path={route}
+                  element={(
+                    <DecodePageRoute>
+                      <MicroUnitsContainer />
                     </DecodePageRoute>
                   )}
                 />

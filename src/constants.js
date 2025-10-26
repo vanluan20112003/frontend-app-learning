@@ -15,6 +15,11 @@ export const DECODE_ROUTES = {
     '/course/:courseId/:sequenceId',
     '/course/:courseId',
   ],
+  MICRO_UNITS: [
+    '/micro-units/:courseId/:microUnitId/:unitId',
+    '/micro-units/:courseId/:microUnitId',
+    '/micro-units/:courseId',
+  ],
   REDIRECT_HOME: 'home/:courseId',
   REDIRECT_SURVEY: 'survey/:courseId',
 };
@@ -25,6 +30,7 @@ export const ROUTES = {
   DASHBOARD: 'dashboard',
   ENTERPRISE_LEARNER_DASHBOARD: 'enterprise-learner-dashboard',
   CONSENT: 'consent',
+  LEARNER_MICRO_UNITS: '/learner-dashboard/micro-unit',
 };
 
 export const REDIRECT_MODES = {

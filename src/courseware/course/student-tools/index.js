@@ -4,3 +4,4 @@ export { default as SimpleCalculator } from './SimpleCalculator';
 export { default as ModernCalculator } from './ModernCalculator';
 export { default as QuickNotes } from './QuickNotes';
 export { default as ToolsPanel } from './ToolsPanel';
+export { default as MicroUnitsList } from './MicroUnitsList';

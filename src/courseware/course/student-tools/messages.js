@@ -386,6 +386,116 @@ const messages = defineMessages({
     defaultMessage: 'Lưu ý: Dữ liệu được cập nhật theo thời gian thực khi bạn tương tác với các video trong khóa học.',
     description: 'Note about data update',
   },
+  microUnitsTitle: {
+    id: 'learn.course.studentTools.microUnits.title',
+    defaultMessage: 'Micro Units',
+    description: 'Title for micro units tool',
+  },
+  microUnitsDescription: {
+    id: 'learn.course.studentTools.microUnits.description',
+    defaultMessage: 'Khám phá {count} micro learning units được thiết kế để học nhanh và hiệu quả',
+    description: 'Description for micro units list',
+  },
+  microUnitsLoading: {
+    id: 'learn.course.studentTools.microUnits.loading',
+    defaultMessage: 'Đang tải danh sách micro units...',
+    description: 'Loading message for micro units',
+  },
+  microUnitsError: {
+    id: 'learn.course.studentTools.microUnits.error',
+    defaultMessage: 'Không thể tải micro units',
+    description: 'Error message for micro units',
+  },
+  microUnitsEmpty: {
+    id: 'learn.course.studentTools.microUnits.empty',
+    defaultMessage: 'Chưa có micro units',
+    description: 'Empty state title',
+  },
+  microUnitsEmptyDescription: {
+    id: 'learn.course.studentTools.microUnits.emptyDescription',
+    defaultMessage: 'Khóa học này chưa có micro learning units nào.',
+    description: 'Empty state description',
+  },
+  microUnitsMinutes: {
+    id: 'learn.course.studentTools.microUnits.minutes',
+    defaultMessage: 'phút',
+    description: 'Minutes label',
+  },
+  microUnitsBlocks: {
+    id: 'learn.course.studentTools.microUnits.blocks',
+    defaultMessage: 'bài học',
+    description: 'Blocks label',
+  },
+  microUnitsEasy: {
+    id: 'learn.course.studentTools.microUnits.difficulty.easy',
+    defaultMessage: 'Dễ',
+    description: 'Easy difficulty label',
+  },
+  microUnitsMedium: {
+    id: 'learn.course.studentTools.microUnits.difficulty.medium',
+    defaultMessage: 'Trung bình',
+    description: 'Medium difficulty label',
+  },
+  microUnitsHard: {
+    id: 'learn.course.studentTools.microUnits.difficulty.hard',
+    defaultMessage: 'Khó',
+    description: 'Hard difficulty label',
+  },
+  microUnitsInactive: {
+    id: 'learn.course.studentTools.microUnits.inactive',
+    defaultMessage: 'Chưa kích hoạt',
+    description: 'Inactive status label',
+  },
+  microUnitsActive: {
+    id: 'learn.course.studentTools.microUnits.active',
+    defaultMessage: 'Đang hoạt động',
+    description: 'Active status label',
+  },
+  microUnitsAll: {
+    id: 'learn.course.studentTools.microUnits.all',
+    defaultMessage: 'Tất cả',
+    description: 'All filter label',
+  },
+  microUnitsSearchPlaceholder: {
+    id: 'learn.course.studentTools.microUnits.searchPlaceholder',
+    defaultMessage: 'Tìm kiếm micro units...',
+    description: 'Search placeholder',
+  },
+  microUnitsFiltered: {
+    id: 'learn.course.studentTools.microUnits.filtered',
+    defaultMessage: 'đã lọc',
+    description: 'Filtered results label',
+  },
+  microUnitsNoResults: {
+    id: 'learn.course.studentTools.microUnits.noResults',
+    defaultMessage: 'Không tìm thấy kết quả',
+    description: 'No results title',
+  },
+  microUnitsNoResultsDescription: {
+    id: 'learn.course.studentTools.microUnits.noResultsDescription',
+    defaultMessage: 'Không có micro units nào phù hợp với bộ lọc của bạn. Hãy thử điều chỉnh bộ lọc.',
+    description: 'No results description',
+  },
+  microUnitsBannerTitle: {
+    id: 'learn.course.studentTools.microUnits.banner.title',
+    defaultMessage: 'Học thông minh hơn với Micro Learning',
+    description: 'Banner title for micro units',
+  },
+  microUnitsBannerDescription: {
+    id: 'learn.course.studentTools.microUnits.banner.description',
+    defaultMessage: 'Khóa học quá dài? Chọn ngay các chủ đề riêng biệt mà bạn quan tâm để học hiệu quả hơn!',
+    description: 'Banner description for micro units',
+  },
+  microUnitsCompleted: {
+    id: 'learn.course.studentTools.microUnits.completed',
+    defaultMessage: 'Hoàn thành',
+    description: 'Completed badge label',
+  },
+  microUnitsProgressLabel: {
+    id: 'learn.course.studentTools.microUnits.progressLabel',
+    defaultMessage: '{completed}/{total} hoàn thành',
+    description: 'Progress label showing completed vs total blocks',
+  },
 });
 
 export default messages;

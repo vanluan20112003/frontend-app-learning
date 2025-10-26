@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { Icon } from '@openedx/paragon';
 import {
@@ -11,6 +12,7 @@ import {
   ShowChart,
   Fullscreen,
   FullscreenExit,
+  School,
 } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useToolsDrawer } from '../navigation-sidebar';
@@ -19,11 +21,13 @@ import QuickNotes from './QuickNotes';
 import SupportForm from './SupportForm';
 import ContentReport from './ContentReport';
 import VideoProgressTool from './VideoProgressTool';
+import MicroUnitsList from './MicroUnitsList';
 import messages from './messages';
 import './ToolsPanel.scss';
 
 const ToolsPanel = () => {
   const intl = useIntl();
+  const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
   const [activeTool, setActiveTool] = useState('calculator');
   const [localDrawerWidth, setLocalDrawerWidth] = useState(400);
@@ -36,7 +40,10 @@ const ToolsPanel = () => {
   // Use context to communicate with CourseLayout
   const { setIsDrawerOpen, setDrawerWidth } = useToolsDrawer();
 
-  const tools = [
+  // Check if we're on micro-units page
+  const isOnMicroUnitsPage = location.pathname.includes('/micro-units/');
+
+  const allTools = [
     {
       id: 'video-progress',
       name: intl.formatMessage(messages.videoProgressTitle),
@@ -68,7 +75,22 @@ const ToolsPanel = () => {
       icon: Report,
       component: ContentReport,
     },
+    {
+      id: 'micro-units',
+      name: intl.formatMessage(messages.microUnitsTitle),
+      icon: School,
+      component: MicroUnitsList,
+      showOnlyInCourseware: true, // Only show in normal courseware, not in micro-units page
+    },
   ];
+
+  // Filter tools based on current page
+  const tools = allTools.filter(tool => {
+    if (tool.showOnlyInCourseware && isOnMicroUnitsPage) {
+      return false;
+    }
+    return true;
+  });
 
   const handleToolClick = (toolId) => {
     if (activeTool === toolId && isOpen) {

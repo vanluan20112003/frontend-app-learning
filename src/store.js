@@ -8,6 +8,7 @@ import { reducer as toursReducer } from './product-tours/data';
 import { reducer as modelsReducer } from './generic/model-store';
 import { reducer as pluginsReducer } from './generic/plugin-store';
 import { leaderboardReducer } from './leaderboard/data';
+import { reducer as microUnitsReducer } from './micro-units/data';
 
 export default function initializeStore() {
   return configureStore({
@@ -21,6 +22,7 @@ export default function initializeStore() {
       tours: toursReducer,
       plugins: pluginsReducer,
       leaderboard: leaderboardReducer,
+      microUnits: microUnitsReducer,
     },
     // temporarily solutions to disable serializable check for plugin actions
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({
