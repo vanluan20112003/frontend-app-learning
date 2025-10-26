@@ -5,7 +5,6 @@ import { ArrowBack, ArrowForward } from '@openedx/paragon/icons';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { getConfig } from '@edx/frontend-platform';
-import { fetchMicroUnits, fetchMicroUnitBlocks } from './data/thunks';
 import { markUnitComplete } from './data/slice';
 
 const MicroUnitPlayer = ({
@@ -41,35 +40,6 @@ const MicroUnitPlayer = ({
     setIsLoading(false);
   };
 
-  // Auto-mark completion after 5 seconds of viewing the unit
-  // BUT: Do NOT auto-complete graded units or units with scores
-  useEffect(() => {
-    if (!unitId || unit?.complete) {
-      return undefined;
-    }
-
-    // Skip auto-completion for graded units or units with scores
-    // These should only be marked complete when user actually completes them
-    if (unit?.graded || unit?.hasScore) {
-      return undefined;
-    }
-
-    const timer = setTimeout(async () => {
-      // Mark as complete locally first
-      dispatch(markUnitComplete({ unitId }));
-
-      // Refresh data from server to sync completion status
-      // This will get the updated completion from the course units API
-      if (microUnitId && courseId) {
-        setTimeout(() => {
-          dispatch(fetchMicroUnitBlocks(microUnitId, courseId));
-        }, 1000); // Refresh after 1 second to give server time to process
-      }
-    }, 5000); // Mark complete after 5 seconds
-
-    return () => clearTimeout(timer);
-  }, [unitId, unit?.complete, unit?.graded, unit?.hasScore, microUnitId, courseId, dispatch]);
-
   const handlePrevious = () => {
     if (previousUnit) {
       const url = microUnitId
@@ -98,11 +68,12 @@ const MicroUnitPlayer = ({
 
   // Handle completion events from iframe
   const handleCompletionEvent = useCallback(() => {
-    // Refresh micro units data to get updated completion status
-    if (courseId) {
-      dispatch(fetchMicroUnits(courseId));
+    // Only mark unit as complete locally
+    // Don't refresh data immediately to avoid page reload
+    if (unitId) {
+      dispatch(markUnitComplete({ unitId }));
     }
-  }, [courseId, dispatch]);
+  }, [unitId, dispatch]);
 
   // Listen for events from iframe (completion, progress, etc.)
   useEffect(() => {
@@ -393,11 +364,6 @@ const MicroUnitPlayer = ({
                 {unit.graded && (
                   <span className="unit-badge badge-graded">
                     Bài kiểm tra
-                  </span>
-                )}
-                {unit.complete && (
-                  <span className="unit-badge badge-complete">
-                    Đã hoàn thành
                   </span>
                 )}
                 {unit.format && (
