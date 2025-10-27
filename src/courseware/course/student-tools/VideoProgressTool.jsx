@@ -30,7 +30,7 @@ import './VideoProgressTool.scss';
 
 const VideoProgressTool = () => {
   const intl = useIntl();
-  const { courseId, sequenceId, unitId } = useParams();
+  const { courseId, unitId } = useParams();
   const course = useModel('coursewareMeta', courseId);
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
@@ -81,7 +81,7 @@ const VideoProgressTool = () => {
       }
 
       return null;
-    } catch (error) {
+    } catch (err) {
       return null;
     }
   };
@@ -152,7 +152,7 @@ const VideoProgressTool = () => {
       }
 
       return null;
-    } catch (error) {
+    } catch (err) {
       return null;
     }
   };
