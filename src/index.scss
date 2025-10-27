@@ -305,10 +305,6 @@ iframe[id^="webpack-dev-server-client-overlay"] {
   max-width: 1024px;
   margin-left: auto;
   margin-right: auto;
-  contain: layout style paint; // Strict containment to prevent reflow
-  isolation: isolate; // Create stacking context
-  position: relative; // Create positioning context
-  will-change: contents; // Optimize for content changes
 
   @media (min-width: map-get($grid-breakpoints, "sm")) {
     padding-left: $grid-gutter-width;
@@ -336,12 +332,8 @@ iframe[id^="webpack-dev-server-client-overlay"] {
   margin-bottom: 2rem;
 
   // Prevent layout shift from iframe resizing
-  min-height: 600px; // Match iframe min-height
-  height: auto; // Allow natural expansion
-  contain: layout style paint; // Strict containment for layout, style and paint
-  isolation: isolate; // Prevent external influences
-  transform: translateZ(0); // Create GPU layer
-  backface-visibility: hidden; // Optimize rendering
+  min-height: 400px;
+  contain: layout style; // Contain layout and style changes
 
   @media (min-width: 830px) {
     margin: 0 0 2rem;
@@ -352,28 +344,19 @@ iframe[id^="webpack-dev-server-client-overlay"] {
   width: 100%;
   border: none;
   display: block;
-  min-height: 600px; // Higher minimum height to reduce layout shift
-  height: 600px; // Default height before resize
+  min-height: 400px; // Minimum height to reduce layout shift
   will-change: height; // Optimize for height changes
-  contain: layout paint; // Contain layout and paint changes to prevent reflow
-  transition: height 0.2s ease-out; // Smooth height transitions to reduce jarring
-  transform: translateZ(0); // Create separate GPU layer
-  backface-visibility: hidden; // Optimize rendering
+  contain: layout; // Contain layout changes to prevent reflow
 }
 
 .unit-navigation {
   display: flex;
   justify-content: center;
   max-width: 640px;
-  margin: 2rem auto; // Add margin top/bottom
-  padding: 1rem 0; // Add padding for spacing
-  transform: translate3d(0, 0, 0); // Create separate GPU layer
-  will-change: transform; // Optimize for transform changes
+  margin: 0 auto;
+  transform: translateZ(0); // Create separate layer to prevent reflow from iframe
+  will-change: auto; // Let browser optimize
   backface-visibility: hidden; // Optimize rendering
-  position: relative; // Create positioning context
-  isolation: isolate; // Create stacking context to prevent external interference
-  contain: layout style; // Contain layout changes within navigation
-  z-index: 10; // Ensure navigation stays on top
 
   @media (max-width: -1 + map-get($grid-breakpoints, "sm")) {
     flex-direction: column;
@@ -383,9 +366,6 @@ iframe[id^="webpack-dev-server-client-overlay"] {
   .previous-button,
   .next-button {
     border-radius: 4px;
-    will-change: transform; // Optimize button rendering
-    transform: translateZ(0); // Create GPU layer for buttons
-    backface-visibility: hidden;
 
     &:focus:before {
       border-radius: 6px;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Card,
@@ -18,6 +18,8 @@ import {
   CheckCircle,
   ExpandMore,
   ExpandLess,
+  AspectRatio,
+  ViewColumn,
 } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
@@ -36,6 +38,8 @@ const MicroUnitsList = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [difficultyFilter, setDifficultyFilter] = useState('all');
   const [expandedMicroUnits, setExpandedMicroUnits] = useState(new Set());
+  const [isWideView, setIsWideView] = useState(false);
+  const [expandedDescriptions, setExpandedDescriptions] = useState(new Set());
 
   // Fetch completion status from units API
   useEffect(() => {
@@ -62,6 +66,7 @@ const MicroUnitsList = () => {
           setCompletedUnits(completed);
         }
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error('Error fetching completion status:', err);
         // Don't set error state here, just log it
         // We still want to show micro units even if completion fetch fails
@@ -106,6 +111,7 @@ const MicroUnitsList = () => {
         const activeMicroUnits = allMicroUnits.filter(unit => unit.is_active === true);
         setMicroUnits(activeMicroUnits);
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error('Error fetching micro units:', err);
         setError(err.message || 'Failed to load micro units');
         setMicroUnits([]);
@@ -142,6 +148,23 @@ const MicroUnitsList = () => {
       }
       return newSet;
     });
+  };
+
+  const toggleDescription = (microUnitId, event) => {
+    event.stopPropagation();
+    setExpandedDescriptions(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(microUnitId)) {
+        newSet.delete(microUnitId);
+      } else {
+        newSet.add(microUnitId);
+      }
+      return newSet;
+    });
+  };
+
+  const toggleWideView = () => {
+    setIsWideView(prev => !prev);
   };
 
   const handleUnitClick = (microUnit, block, event) => {
@@ -264,16 +287,28 @@ const MicroUnitsList = () => {
   }
 
   return (
-    <div className="micro-units-list">
+    <div className={`micro-units-list ${isWideView ? 'wide-view' : ''}`}>
       <div className="micro-units-list-header">
-        <h4>
-          <Icon src={School} />
-          {intl.formatMessage(messages.microUnitsTitle)}
-        </h4>
-        <p>
-          {microUnits.length} {intl.formatMessage(messages.microUnitsBlocks)}
-          {filteredMicroUnits.length !== microUnits.length && ` • ${filteredMicroUnits.length} ${intl.formatMessage(messages.microUnitsFiltered)}`}
-        </p>
+        <div className="header-content">
+          <div className="header-text">
+            <h4>
+              <Icon src={School} />
+              {intl.formatMessage(messages.microUnitsTitle)}
+            </h4>
+            <p>
+              {microUnits.length} {intl.formatMessage(messages.microUnitsBlocks)}
+              {filteredMicroUnits.length !== microUnits.length && ` • ${filteredMicroUnits.length} ${intl.formatMessage(messages.microUnitsFiltered)}`}
+            </p>
+          </div>
+          <button
+            type="button"
+            className="view-toggle-button"
+            onClick={toggleWideView}
+            title={isWideView ? 'Chế độ xem thường' : 'Chế độ xem rộng'}
+          >
+            <Icon src={isWideView ? ViewColumn : AspectRatio} />
+          </button>
+        </div>
       </div>
 
       <div className="micro-units-banner">
@@ -343,6 +378,8 @@ const MicroUnitsList = () => {
               const completion = calculateCompletion(microUnit);
               const isExpanded = expandedMicroUnits.has(microUnit.id);
               const hasBlocks = microUnit.blocks && microUnit.blocks.length > 0;
+              const isDescriptionExpanded = expandedDescriptions.has(microUnit.id);
+              const hasLongDescription = microUnit.description && microUnit.description.length > 100;
 
               return (
                 <Card
@@ -387,7 +424,20 @@ const MicroUnitsList = () => {
                         </div>
 
                         {microUnit.description && (
-                        <p className="micro-unit-description">{microUnit.description}</p>
+                        <div className="micro-unit-description-wrapper">
+                          <p className={`micro-unit-description ${isDescriptionExpanded ? 'expanded' : ''}`}>
+                            {microUnit.description}
+                          </p>
+                          {hasLongDescription && (
+                          <button
+                            type="button"
+                            className="description-toggle"
+                            onClick={(e) => toggleDescription(microUnit.id, e)}
+                          >
+                            {isDescriptionExpanded ? 'Thu gọn' : 'Xem thêm'}
+                          </button>
+                          )}
+                        </div>
                         )}
 
                         <div className="micro-unit-meta">
