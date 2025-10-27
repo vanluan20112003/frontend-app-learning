@@ -305,6 +305,8 @@ iframe[id^="webpack-dev-server-client-overlay"] {
   max-width: 1024px;
   margin-left: auto;
   margin-right: auto;
+  contain: layout style; // Prevent external layout changes from affecting unit
+  isolation: isolate; // Create stacking context
 
   @media (min-width: map-get($grid-breakpoints, "sm")) {
     padding-left: $grid-gutter-width;
@@ -332,8 +334,10 @@ iframe[id^="webpack-dev-server-client-overlay"] {
   margin-bottom: 2rem;
 
   // Prevent layout shift from iframe resizing
-  min-height: 400px;
+  min-height: 600px; // Match iframe min-height
+  height: auto; // Allow natural expansion
   contain: layout style; // Contain layout and style changes
+  isolation: isolate; // Prevent external influences
 
   @media (min-width: 830px) {
     margin: 0 0 2rem;
@@ -344,19 +348,24 @@ iframe[id^="webpack-dev-server-client-overlay"] {
   width: 100%;
   border: none;
   display: block;
-  min-height: 400px; // Minimum height to reduce layout shift
+  min-height: 600px; // Higher minimum height to reduce layout shift
+  height: 600px; // Default height before resize
   will-change: height; // Optimize for height changes
   contain: layout; // Contain layout changes to prevent reflow
+  transition: height 0.2s ease-out; // Smooth height transitions to reduce jarring
 }
 
 .unit-navigation {
   display: flex;
   justify-content: center;
   max-width: 640px;
-  margin: 0 auto;
-  transform: translateZ(0); // Create separate layer to prevent reflow from iframe
-  will-change: auto; // Let browser optimize
+  margin: 2rem auto; // Add margin top/bottom
+  padding: 1rem 0; // Add padding for spacing
+  transform: translate3d(0, 0, 0); // Create separate GPU layer
+  will-change: auto; // Let browser decide optimization
   backface-visibility: hidden; // Optimize rendering
+  position: relative; // Create positioning context
+  isolation: isolate; // Create stacking context to prevent external interference
 
   @media (max-width: -1 + map-get($grid-breakpoints, "sm")) {
     flex-direction: column;
