@@ -265,12 +265,8 @@ const ToolsPanel = () => {
             <span className="resize-indicator">⋮⋮</span>
           </button>
 
-          {/* Drawer header */}
-          <div className="drawer-header">
-            <div className="drawer-title">
-              <Icon src={tools.find(t => t.id === activeTool)?.icon} className="mr-2" />
-              {tools.find(t => t.id === activeTool)?.name}
-            </div>
+          {/* Minimal header with only action buttons */}
+          <div className="drawer-header-minimal">
             <div className="header-actions">
               <button
                 type="button"

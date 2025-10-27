@@ -1,11 +1,19 @@
 .course-tabs-navigation {
   position: fixed;
-  top: 60px;
+  top: var(--header-height, 60px);
   left: 0;
   right: 0;
   z-index: 998;
   background: white;
   border-bottom: solid 1px #eaeaea;
+  height: var(--tabs-navigation-height, 60px);
+  display: flex;
+  align-items: center;
+
+  // Add padding for content below to prevent overlap
+  + * {
+    margin-top: var(--tabs-navigation-height, 60px);
+  }
 
   .nav a,
   .nav button {

@@ -479,6 +479,14 @@ const VideoProgressTool = () => {
         </div>
       </div>
 
+      {/* IMPORTANT: Incognito Warning - Placed at top for maximum visibility */}
+      <div className="global-warning-banner">
+        <div className="warning-content">
+          <span className="warning-icon">⚠️</span>
+          <span className="warning-text">Hạn chế dùng tab ẩn danh trong quá trình xem video tương tác</span>
+        </div>
+      </div>
+
       {/* Tabs for switching between Current Unit and Overall Course */}
       <Tabs
         activeKey={activeTab}
@@ -689,22 +697,6 @@ const VideoProgressTool = () => {
                   className="compact-progress-fill"
                   style={{ width: `${progressData.courseCompletionRate}%` }}
                 />
-              </div>
-            </div>
-
-            {/* Important Notices in Compact View */}
-            <div className="compact-notices">
-              <div className="compact-notice warning">
-                <span className="notice-icon">⭐</span>
-                <span className="notice-text">Bấm nút ngôi sao ở cuối video để hoàn thành</span>
-              </div>
-              <div className="compact-notice warning">
-                <span className="notice-icon">📝</span>
-                <span className="notice-text">Nhớ bấm &quot;Nộp bài&quot; để kết quả được ghi nhận</span>
-              </div>
-              <div className="compact-notice danger">
-                <span className="notice-icon">⚠️</span>
-                <span className="notice-text">Không dùng tab ẩn danh khi làm bài tập</span>
               </div>
             </div>
           </div>
@@ -1071,22 +1063,6 @@ const VideoProgressTool = () => {
                     className="compact-progress-fill"
                     style={{ width: `${progressData.courseCompletionRate}%` }}
                   />
-                </div>
-              </div>
-
-              {/* Important Notices in Compact View */}
-              <div className="compact-notices">
-                <div className="compact-notice warning">
-                  <span className="notice-icon">⭐</span>
-                  <span className="notice-text">Bấm nút ngôi sao ở cuối video để hoàn thành</span>
-                </div>
-                <div className="compact-notice warning">
-                  <span className="notice-icon">📝</span>
-                  <span className="notice-text">Nhớ bấm &quot;Nộp bài&quot; để kết quả được ghi nhận</span>
-                </div>
-                <div className="compact-notice danger">
-                  <span className="notice-icon">⚠️</span>
-                  <span className="notice-text">Không dùng tab ẩn danh khi làm bài tập</span>
                 </div>
               </div>
             </div>

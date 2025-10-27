@@ -15,8 +15,8 @@
 .sidebar-toggle-btn {
   position: fixed;
   right: 0;
-  top: 100px;
-  z-index: 1001;
+  top: calc(var(--header-height, 60px) + var(--tabs-navigation-height, 60px) + 20px); // Below header + tabs + margin
+  z-index: 997; // Same level as drawer
   background: white;
   border: none;
   border-radius: 8px 0 0 8px;
@@ -53,8 +53,8 @@
 .tools-sidebar {
   position: fixed;
   right: 0;
-  top: 150px;
-  z-index: 1000;
+  top: calc(var(--header-height, 60px) + var(--tabs-navigation-height, 60px) + 70px); // Below header + tabs + toggle button
+  z-index: 997; // Same level as drawer
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -162,14 +162,15 @@
 .tools-drawer {
   position: fixed;
   right: 0;
-  top: 0;
-  height: 100vh;
+  top: calc(var(--header-height, 60px) + var(--tabs-navigation-height, 60px)); // Start below header AND tabs
+  height: calc(100vh - var(--header-height, 60px) - var(--tabs-navigation-height, 60px)); // Adjust height
   background: white;
   box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
-  z-index: 999;
+  z-index: 996; // Below header (1000) and course tabs (998), but above content
   display: flex;
   flex-direction: column;
   animation: slideIn 0.3s ease;
+  overflow: visible; // Ensure nothing is clipped
 
   @keyframes slideIn {
     from {
@@ -229,76 +230,64 @@
     }
   }
 
-  .drawer-header {
+  // Minimal header with only action buttons (no title)
+  .drawer-header-minimal {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 16px 20px;
+    justify-content: flex-end;
+    padding: 10px 14px;
     border-bottom: 1px solid #e5e7eb;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-
-    .drawer-title {
-      display: flex;
-      align-items: center;
-      font-size: 18px;
-      font-weight: 600;
-      color: white;
-
-      .pgn__icon {
-        width: 20px;
-        height: 20px;
-      }
-    }
+    background: #f9fafb;
+    flex-shrink: 0;
+    min-height: 50px;
 
     .header-actions {
       display: flex;
       align-items: center;
       gap: 8px;
-    }
 
-    .action-button {
-      background: rgba(255, 255, 255, 0.2);
-      border: none;
-      border-radius: 6px;
-      padding: 8px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      .action-button {
+        background: #ffffff;
+        border: 1px solid #d1d5db;
+        border-radius: 6px;
+        padding: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        color: #6b7280;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 36px;
+        min-height: 36px;
 
-      &:hover {
-        background: rgba(255, 255, 255, 0.3);
-        transform: scale(1.05);
-      }
+        &:hover {
+          background: #f3f4f6;
+          border-color: rgba(0, 0, 0, 0.2);
+          transform: scale(1.05);
+        }
 
-      &.maximize-button:hover {
-        background: rgba(16, 185, 129, 0.3);
-      }
+        &.maximize-button {
+          color: #10b981;
 
-      .pgn__icon {
-        width: 20px;
-        height: 20px;
-      }
-    }
+          &:hover {
+            background: rgba(16, 185, 129, 0.1);
+            border-color: #10b981;
+          }
+        }
 
-    .close-button {
-      background: rgba(255, 255, 255, 0.2);
-      border: none;
-      padding: 8px;
-      border-radius: 6px;
-      cursor: pointer;
-      color: white;
-      transition: all 0.2s;
+        &.close-button {
+          color: #ef4444;
 
-      &:hover {
-        background: rgba(255, 255, 255, 0.3);
-      }
+          &:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
+          }
+        }
 
-      .pgn__icon {
-        width: 20px;
-        height: 20px;
+        .pgn__icon {
+          width: 20px;
+          height: 20px;
+        }
       }
     }
   }
@@ -431,20 +420,38 @@
       }
     }
 
-    .drawer-header {
+    .drawer-header-minimal {
       background: #111827;
       border-bottom-color: #374151;
 
-      .drawer-title {
-        color: #f9fafb;
-      }
+      .header-actions {
+        .action-button {
+          background: rgba(255, 255, 255, 0.05);
+          border-color: rgba(255, 255, 255, 0.1);
+          color: #9ca3af;
 
-      .close-button {
-        color: #9ca3af;
+          &:hover {
+            background: #374151;
+            border-color: rgba(255, 255, 255, 0.2);
+          }
 
-        &:hover {
-          background: #374151;
-          color: #f9fafb;
+          &.maximize-button {
+            color: #34d399;
+
+            &:hover {
+              background: rgba(52, 211, 153, 0.2);
+              border-color: #34d399;
+            }
+          }
+
+          &.close-button {
+            color: #f87171;
+
+            &:hover {
+              background: rgba(248, 113, 113, 0.2);
+              border-color: #f87171;
+            }
+          }
         }
       }
     }

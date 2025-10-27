@@ -11,6 +11,9 @@ iframe[id^="webpack-dev-server-client-overlay"] {
 }
 
 #root {
+  --header-height: 60px;
+  --tabs-navigation-height: 60px;
+
   display: flex;
   flex-direction: column;
   min-height: 100vh;
@@ -27,6 +30,7 @@ iframe[id^="webpack-dev-server-client-overlay"] {
     right: 0;
     z-index: 1000;
     background: white;
+    height: var(--header-height);
 
     .logo {
       display: block;
@@ -43,7 +47,7 @@ iframe[id^="webpack-dev-server-client-overlay"] {
   }
 
   main {
-    margin-top: 110px; // Offset for fixed header + tabs navigation (60px + 50px)
+    margin-top: calc(var(--header-height) + var(--tabs-navigation-height));
   }
 
   footer {
