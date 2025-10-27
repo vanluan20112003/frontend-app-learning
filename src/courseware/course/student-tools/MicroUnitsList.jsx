@@ -409,14 +409,14 @@ const MicroUnitsList = () => {
                         <div className="micro-unit-progress">
                           <div className="progress-header">
                             <span className="progress-text">
-                          {intl.formatMessage(messages.microUnitsProgressLabel, {
-                            completed: completion.completed,
-                            total: completion.total,
-                          })}
-                        </span>
+                              {intl.formatMessage(messages.microUnitsProgressLabel, {
+                                completed: completion.completed,
+                                total: completion.total,
+                              })}
+                            </span>
                             <span className="progress-percentage">
-                          {completion.percentage}%
-                        </span>
+                              {completion.percentage}%
+                            </span>
                           </div>
                           <ProgressBar
                             now={completion.percentage}
@@ -453,18 +453,18 @@ const MicroUnitsList = () => {
                           const isCompleted = completedUnits.has(block.block_usage_key);
                           return (
                             <li key={block.id || index} className="unit-item">
-                          <button
-                            type="button"
-                            className={`unit-button ${isCompleted ? 'completed' : ''}`}
-                            onClick={(e) => handleUnitClick(microUnit, block, e)}
-                          >
-                            <Icon
-                              src={isCompleted ? CheckCircle : Schedule}
-                              className="unit-icon"
-                            />
-                            <span className="unit-name">{block.display_name}</span>
-                          </button>
-                        </li>
+                              <button
+                                type="button"
+                                className={`unit-button ${isCompleted ? 'completed' : ''}`}
+                                onClick={(e) => handleUnitClick(microUnit, block, e)}
+                              >
+                                <Icon
+                                  src={isCompleted ? CheckCircle : Schedule}
+                                  className="unit-icon"
+                                />
+                                <span className="unit-name">{block.display_name}</span>
+                              </button>
+                            </li>
                           );
                         })}
                       </ul>
