@@ -35,6 +35,41 @@ const useIFrameBehavior = ({
   const [showError, setShowError] = useKeyedState(stateKeys.showError, false);
   const [windowTopOffset, setWindowTopOffset] = useKeyedState(stateKeys.windowTopOffset, null);
 
+  // Throttle iframe height updates to prevent shaking
+  const throttleTimerRef = React.useRef(null);
+  const lastHeightRef = React.useRef(0);
+  const pendingHeightRef = React.useRef(null);
+
+  // Throttled function to update iframe height
+  const throttledSetHeight = React.useCallback((newHeight) => {
+    // Ignore if height hasn't changed significantly (less than 5px difference)
+    if (Math.abs(newHeight - lastHeightRef.current) < 5) {
+      return;
+    }
+
+    // Store the pending height
+    pendingHeightRef.current = newHeight;
+
+    // If there's no pending update, schedule one
+    if (!throttleTimerRef.current) {
+      throttleTimerRef.current = setTimeout(() => {
+        if (pendingHeightRef.current !== null) {
+          setIframeHeight(pendingHeightRef.current);
+          lastHeightRef.current = pendingHeightRef.current;
+          pendingHeightRef.current = null;
+        }
+        throttleTimerRef.current = null;
+      }, 150); // Throttle to max 1 update per 150ms
+    }
+  }, [setIframeHeight]);
+
+  // Cleanup throttle timer on unmount
+  React.useEffect(() => () => {
+    if (throttleTimerRef.current) {
+      clearTimeout(throttleTimerRef.current);
+    }
+  }, []);
+
   React.useEffect(() => {
     const frame = document.getElementById(elementId);
     const { hash } = window.location;
@@ -48,7 +83,8 @@ const useIFrameBehavior = ({
   const receiveMessage = React.useCallback(({ data }) => {
     const { type, payload } = data;
     if (type === messageTypes.resize) {
-      setIframeHeight(payload.height);
+      // Use throttled height update to prevent shaking
+      throttledSetHeight(payload.height);
 
       if (!hasLoaded && iframeHeight === 0 && payload.height > 0) {
         setHasLoaded(true);
@@ -77,7 +113,7 @@ const useIFrameBehavior = ({
     hasLoaded,
     setHasLoaded,
     iframeHeight,
-    setIframeHeight,
+    throttledSetHeight,
     windowTopOffset,
     setWindowTopOffset,
   ]);
