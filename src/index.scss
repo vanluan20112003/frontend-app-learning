@@ -331,6 +331,10 @@ iframe[id^="webpack-dev-server-client-overlay"] {
 
   margin-bottom: 2rem;
 
+  // Prevent layout shift from iframe resizing
+  min-height: 400px;
+  contain: layout style; // Contain layout and style changes
+
   @media (min-width: 830px) {
     margin: 0 0 2rem;
   }
@@ -340,6 +344,9 @@ iframe[id^="webpack-dev-server-client-overlay"] {
   width: 100%;
   border: none;
   display: block;
+  min-height: 400px; // Minimum height to reduce layout shift
+  will-change: height; // Optimize for height changes
+  contain: layout; // Contain layout changes to prevent reflow
 }
 
 .unit-navigation {
@@ -347,6 +354,9 @@ iframe[id^="webpack-dev-server-client-overlay"] {
   justify-content: center;
   max-width: 640px;
   margin: 0 auto;
+  transform: translateZ(0); // Create separate layer to prevent reflow from iframe
+  will-change: auto; // Let browser optimize
+  backface-visibility: hidden; // Optimize rendering
 
   @media (max-width: -1 + map-get($grid-breakpoints, "sm")) {
     flex-direction: column;
@@ -382,6 +392,8 @@ iframe[id^="webpack-dev-server-client-overlay"] {
 .top-unit-navigation {
   max-width: 100%;
   justify-content: flex-end;
+  transform: translateZ(0); // Create separate layer
+  backface-visibility: hidden; // Optimize rendering
 
   .next-button,
   .previous-button {
