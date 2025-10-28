@@ -532,7 +532,7 @@ const CourseNavigationSidebar = ({
       </div>
 
       <div className="sidebar-content">
-        {sections.map((section, sectionIndex) => {
+        {sections.map((section) => {
           if (!section) { return null; }
 
           const isExpanded = expandedSections.has(section.id);
@@ -566,7 +566,7 @@ const CourseNavigationSidebar = ({
                 </span>
                 <div className="section-info">
                   <div className="section-title">
-                    {sectionIndex + 1}. {section.title}
+                    {section.title}
                   </div>
                   {!isCollapsed && (
                     <div className={`section-progress ${isCompleted ? 'completed' : ''}`}>
@@ -581,7 +581,7 @@ const CourseNavigationSidebar = ({
 
               {isExpanded && (
                 <ul className="sequences-list">
-                  {sequences.map((sequence, seqIndex) => {
+                  {sequences.map((sequence) => {
                     if (!sequence) { return null; }
 
                     const isActive = sequence.id === currentSequenceId;
@@ -616,7 +616,7 @@ const CourseNavigationSidebar = ({
                             <Icon src={sequenceIcon} />
                           </span>
                           <span className="sequence-title">
-                            {sectionIndex + 1}.{seqIndex + 1} {sequence.title}
+                            {sequence.title}
                           </span>
                           {hasUnits && !isCollapsed && (
                             <span className="sequence-expand-icon">
@@ -627,7 +627,7 @@ const CourseNavigationSidebar = ({
 
                         {isSequenceExpanded && hasUnits && (
                           <ul className="units-list">
-                            {units.map((unit, unitIndex) => {
+                            {units.map((unit) => {
                               if (!unit) { return null; }
 
                               const isUnitActive = unit.id === currentUnitId;
@@ -645,7 +645,7 @@ const CourseNavigationSidebar = ({
                                     <Icon src={unitIconSrc} />
                                   </span>
                                   <span className="unit-title">
-                                    {sectionIndex + 1}.{seqIndex + 1}.{unitIndex + 1} {unit.title}
+                                    {unit.title}
                                   </span>
                                 </button>
                               );

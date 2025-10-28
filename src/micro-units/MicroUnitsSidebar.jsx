@@ -106,7 +106,7 @@ const MicroUnitsSidebar = ({
           height: 100%;
           display: flex;
           flex-direction: column;
-          background: #ffffff;
+          background: white;
         }
 
         .sidebar-header {
@@ -115,7 +115,7 @@ const MicroUnitsSidebar = ({
           color: white;
           margin: 0;
           border-radius: 0;
-          box-shadow: 0 2px 8px rgba(102, 126, 234, 0.2);
+          border-bottom: 2px solid #e5e5e5;
           flex-shrink: 0;
         }
 
@@ -148,11 +148,11 @@ const MicroUnitsSidebar = ({
         }
 
         .micro-unit-info {
-          padding: 0.75rem 0.875rem;
+          padding: 0.75rem 1rem;
         }
 
         .micro-unit-title {
-          font-size: 0.875rem;
+          font-size: 0.95rem;
           font-weight: 700;
           margin: 0 0 0.375rem 0;
           line-height: 1.3;
@@ -206,127 +206,71 @@ const MicroUnitsSidebar = ({
 
         .units-list {
           list-style: none;
-          padding: 0.375rem 0.5rem;
+          padding: 0.75rem 0;
           margin: 0;
           overflow-y: auto;
           flex: 1;
           scroll-behavior: smooth;
           scroll-padding-top: 20px;
+          background: #fafafa;
         }
 
         .unit-item {
-          padding: 0.4rem 0.5rem;
-          margin-bottom: 0.15rem;
+          padding: 0.75rem 1rem;
+          margin: 0.125rem 0.5rem;
           border-radius: 6px;
           cursor: pointer;
-          transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+          transition: all 0.2s;
           display: flex;
           align-items: center;
-          gap: 0.5rem;
-          background: #f8f9fa;
-          border: 1.5px solid transparent;
-          width: 100%;
+          gap: 0.625rem;
+          background: transparent;
+          border: none;
+          width: calc(100% - 1rem);
           text-align: left;
           position: relative;
         }
 
-        .unit-item::before {
-          content: '';
-          position: absolute;
-          left: 0;
-          top: 0;
-          bottom: 0;
-          width: 3px;
-          background: transparent;
-          border-radius: 8px 0 0 8px;
-          transition: all 0.15s;
-        }
-
         .unit-item:hover {
-          background: linear-gradient(to right, #f0f4ff 0%, #faf5ff 100%);
-          border-color: rgba(102, 126, 234, 0.25);
-          transform: translateX(3px);
-          box-shadow: 0 1px 4px rgba(102, 126, 234, 0.1);
-        }
-
-        .unit-item:hover::before {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: #f8fafc;
+          transform: translateX(2px);
         }
 
         .unit-item.active {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          border-color: #667eea;
-          box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
-          transform: translateX(4px);
-          position: relative;
-        }
-
-        .unit-item.active::after {
-          content: '';
-          position: absolute;
-          top: -2px;
-          left: -2px;
-          right: -2px;
-          bottom: -2px;
-          border: 2px solid rgba(102, 126, 234, 0.4);
-          border-radius: 8px;
-          pointer-events: none;
-        }
-
-        .unit-item.active::before {
-          background: rgba(255, 255, 255, 0.9);
-          width: 3px;
+          background: #dbeafe;
+          color: #1e40af;
+          font-weight: 600;
         }
 
         .unit-item.active .unit-title {
-          color: white;
-          font-weight: 500;
-        }
-
-        .unit-item.active .unit-icon {
-          color: white;
+          color: #1e40af;
+          font-weight: 600;
         }
 
         .unit-icon {
           flex-shrink: 0;
-          font-size: 0.9375rem;
           display: flex;
           align-items: center;
           justify-content: center;
           width: 18px;
           height: 18px;
+          color: #94a3b8;
+        }
+
+        .unit-item.active .unit-icon {
+          color: #3b82f6;
         }
 
         .unit-item.completed .unit-icon {
-          background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-          border-radius: 50%;
-          padding: 2px;
-          animation: completePulse 0.5s ease-out;
+          color: #10b981;
         }
 
-        @keyframes completePulse {
-          0% {
-            transform: scale(0.8);
-            opacity: 0;
-          }
-          50% {
-            transform: scale(1.2);
-          }
-          100% {
-            transform: scale(1);
-            opacity: 1;
-          }
+        .unit-item.completed:not(.active) {
+          background: #f0fdf4;
         }
 
-        .unit-item.graded .unit-icon {
-          background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);
-          border-radius: 50%;
-          padding: 2px;
-        }
-
-        .unit-item.active.completed .unit-icon,
-        .unit-item.active.graded .unit-icon {
-          background: rgba(255, 255, 255, 0.25);
+        .unit-item.completed:not(.active) .unit-title {
+          color: #059669;
         }
 
         .unit-content {
@@ -335,61 +279,64 @@ const MicroUnitsSidebar = ({
         }
 
         .unit-title {
-          font-size: 0.75rem;
+          font-size: 0.8125rem;
           font-weight: 500;
           margin: 0;
-          color: #1a1a1a;
+          color: #64748b;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
           line-height: 1.3;
         }
 
-        /* Custom scrollbar */
+        /* Custom scrollbar - thanh mỏng, đẹp, hiện đại */
+        .units-list {
+          scrollbar-width: thin;
+          scrollbar-color: rgba(0, 0, 0, 0.15) transparent;
+        }
+
         .units-list::-webkit-scrollbar {
-          width: 6px;
+          width: 5px;
         }
 
         .units-list::-webkit-scrollbar-track {
-          background: #f1f1f1;
-          border-radius: 3px;
+          background: transparent;
         }
 
         .units-list::-webkit-scrollbar-thumb {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          border-radius: 3px;
+          background: rgba(0, 0, 0, 0.15);
+          border-radius: 10px;
         }
 
         .units-list::-webkit-scrollbar-thumb:hover {
-          background: linear-gradient(135deg, #5568d3 0%, #653a8b 100%);
+          background: rgba(0, 0, 0, 0.25);
         }
 
         @media (max-width: 768px) {
-          .sidebar-header {
-            padding: 0.875rem 0.75rem;
+          .micro-unit-info {
+            padding: 0.75rem;
           }
 
-          .sidebar-header h2 {
+          .micro-unit-title {
             font-size: 0.875rem;
           }
 
           .units-list {
-            padding: 0.375rem;
+            padding: 0.5rem 0;
           }
 
           .unit-item {
-            padding: 0.5rem 0.625rem;
-            margin-bottom: 0.25rem;
+            padding: 0.625rem 0.75rem;
+            margin: 0.125rem 0.375rem;
           }
 
           .unit-title {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
           }
 
           .unit-icon {
-            font-size: 0.875rem;
-            width: 18px;
-            height: 18px;
+            width: 16px;
+            height: 16px;
           }
         }
       `}
