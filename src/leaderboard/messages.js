@@ -153,6 +153,78 @@ const messages = defineMessages({
     defaultMessage: 'The leaderboard will be updated when learning progress is tracked.',
     description: 'Description for empty progress state',
   },
+
+  // Discussion Leaderboard
+  discussionLeaderboardTitle: {
+    id: 'leaderboard.discussion.title',
+    defaultMessage: 'Discussion Leaderboard',
+    description: 'Title for discussion leaderboard section',
+  },
+  discussionRankingAll: {
+    id: 'leaderboard.discussion.ranking.all',
+    defaultMessage: 'All Interactions',
+    description: 'Filter for all discussion interactions',
+  },
+  discussionRankingThreads: {
+    id: 'leaderboard.discussion.ranking.threads',
+    defaultMessage: 'Topics',
+    description: 'Filter for discussion topics',
+  },
+  discussionRankingComments: {
+    id: 'leaderboard.discussion.ranking.comments',
+    defaultMessage: 'Comments',
+    description: 'Filter for discussion comments',
+  },
+  discussionRankingQuestions: {
+    id: 'leaderboard.discussion.ranking.questions',
+    defaultMessage: 'Questions',
+    description: 'Filter for discussion questions',
+  },
+  discussionRankingVotes: {
+    id: 'leaderboard.discussion.ranking.votes',
+    defaultMessage: 'Upvotes',
+    description: 'Filter for discussion upvotes',
+  },
+  discussionColumnAll: {
+    id: 'leaderboard.discussion.column.all',
+    defaultMessage: 'Total Interactions',
+    description: 'Column header for total interactions',
+  },
+  discussionColumnThreads: {
+    id: 'leaderboard.discussion.column.threads',
+    defaultMessage: 'Topics Created',
+    description: 'Column header for topics created',
+  },
+  discussionColumnComments: {
+    id: 'leaderboard.discussion.column.comments',
+    defaultMessage: 'Comments Posted',
+    description: 'Column header for comments posted',
+  },
+  discussionColumnQuestions: {
+    id: 'leaderboard.discussion.column.questions',
+    defaultMessage: 'Questions Asked',
+    description: 'Column header for questions asked',
+  },
+  discussionColumnVotes: {
+    id: 'leaderboard.discussion.column.votes',
+    defaultMessage: 'Upvotes Received',
+    description: 'Column header for upvotes received',
+  },
+  userColumn: {
+    id: 'leaderboard.table.user',
+    defaultMessage: 'User',
+    description: 'Column header for user name',
+  },
+  noDiscussionData: {
+    id: 'leaderboard.discussion.empty',
+    defaultMessage: 'No discussion data available yet',
+    description: 'Message when no discussion data exists',
+  },
+  noDiscussionDescription: {
+    id: 'leaderboard.discussion.emptyDescription',
+    defaultMessage: 'The leaderboard will be updated when users participate in discussions.',
+    description: 'Description for empty discussion state',
+  },
 });
 
 export default messages;

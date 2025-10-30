@@ -1,5 +1,5 @@
 import { logError } from '@edx/frontend-platform/logging';
-import { getTopGrades, getTopProgress } from './api';
+import { getTopGrades, getTopProgress, getDiscussionLeaderboard } from './api';
 import {
   fetchTopGradesRequest,
   fetchTopGradesSuccess,
@@ -7,6 +7,9 @@ import {
   fetchTopProgressRequest,
   fetchTopProgressSuccess,
   fetchTopProgressFailure,
+  fetchDiscussionLeaderboardRequest,
+  fetchDiscussionLeaderboardSuccess,
+  fetchDiscussionLeaderboardFailure,
 } from './slice';
 
 /**
@@ -54,6 +57,24 @@ export function fetchTopProgressData(courseId, period = 'all', limit = 10) {
     } catch (error) {
       logError(error);
       dispatch(fetchTopProgressFailure(error.message || 'Failed to fetch top progress'));
+      throw error;
+    }
+  };
+}
+
+/**
+ * Fetch discussion leaderboard
+ */
+export function fetchDiscussionLeaderboardData(courseId, rankingType = 'all', limit = 20) {
+  return async (dispatch) => {
+    dispatch(fetchDiscussionLeaderboardRequest());
+    try {
+      const apiData = await getDiscussionLeaderboard(courseId, rankingType, limit);
+      dispatch(fetchDiscussionLeaderboardSuccess({ data: apiData, rankingType }));
+      return apiData;
+    } catch (error) {
+      logError(error);
+      dispatch(fetchDiscussionLeaderboardFailure(error.message || 'Failed to fetch discussion leaderboard'));
       throw error;
     }
   };

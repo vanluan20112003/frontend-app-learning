@@ -7,6 +7,7 @@ import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { useModel } from '../generic/model-store';
 import TopGradesLeaderboard from './TopGradesLeaderboard';
 import TopProgressLeaderboard from './TopProgressLeaderboard';
+import DiscussionLeaderboard from './DiscussionLeaderboard';
 import messages from './messages';
 import './LeaderboardTab.scss';
 
@@ -67,10 +68,11 @@ const LeaderboardTab = ({ intl }) => {
           ))}
         </div>
 
-        {/* Leaderboards Grid */}
+        {/* Leaderboards Grid - 3 columns */}
         <div className="leaderboard-content">
           <TopGradesLeaderboard courseId={courseId} />
           <TopProgressLeaderboard courseId={courseId} />
+          <DiscussionLeaderboard courseId={courseId} />
         </div>
       </Container>
     </>

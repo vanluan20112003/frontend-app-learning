@@ -8,6 +8,7 @@ import messages from './messages';
 const TopGradesLeaderboard = ({ courseId, intl }) => {
   const dispatch = useDispatch();
   const [limit, setLimit] = useState(10);
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const { data, status, error } = useSelector((state) => state.leaderboard.topGrades);
 
   useEffect(() => {
@@ -32,40 +33,56 @@ const TopGradesLeaderboard = ({ courseId, intl }) => {
   };
 
   return (
-    <div className="leaderboard-section">
+    <div className={`leaderboard-section ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="section-header">
         <div className="header-top">
           <h2>
             <span className="icon">🏆</span>
             {intl.formatMessage(messages.gradesLeaderboardTitle)}
           </h2>
-          <button
-            type="button"
-            className="refresh-btn"
-            onClick={handleRefresh}
-            disabled={status === 'loading'}
-          >
-            🔄 {intl.formatMessage(messages.refreshButton)}
-          </button>
-        </div>
-        <div className="header-controls">
-          <label htmlFor="grades-limit">
-            {intl.formatMessage(messages.displayLabel)}
-            <select
-              id="grades-limit"
-              value={limit}
-              onChange={handleLimitChange}
+          <div className="header-actions">
+            <button
+              type="button"
+              className="collapse-btn"
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              title={isCollapsed ? 'Expand' : 'Collapse'}
+            >
+              {isCollapsed ? '▼' : '▲'}
+            </button>
+            <button
+              type="button"
+              className="refresh-btn"
+              onClick={handleRefresh}
               disabled={status === 'loading'}
             >
-              <option value={10}>{intl.formatMessage(messages.top10)}</option>
-              <option value={20}>{intl.formatMessage(messages.top20)}</option>
-              <option value={50}>{intl.formatMessage(messages.top50)}</option>
-              <option value={100}>{intl.formatMessage(messages.top100)}</option>
-            </select>
-          </label>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
+              </svg>
+              <span>Refresh</span>
+            </button>
+          </div>
         </div>
+        {!isCollapsed && (
+          <div className="header-controls">
+            <label htmlFor="grades-limit">
+              {intl.formatMessage(messages.displayLabel)}
+              <select
+                id="grades-limit"
+                value={limit}
+                onChange={handleLimitChange}
+                disabled={status === 'loading'}
+              >
+                <option value={10}>{intl.formatMessage(messages.top10)}</option>
+                <option value={20}>{intl.formatMessage(messages.top20)}</option>
+                <option value={50}>{intl.formatMessage(messages.top50)}</option>
+                <option value={100}>{intl.formatMessage(messages.top100)}</option>
+              </select>
+            </label>
+          </div>
+        )}
       </div>
 
+      {!isCollapsed && (
       <div className="section-body">
         {status === 'loading' && (
           <div className="loading-state">
@@ -123,6 +140,7 @@ const TopGradesLeaderboard = ({ courseId, intl }) => {
           </div>
         )}
       </div>
+      )}
     </div>
   );
 };

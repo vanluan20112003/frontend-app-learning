@@ -14,6 +14,7 @@ const TopProgressLeaderboard = ({ courseId, intl }) => {
   const dispatch = useDispatch();
   const [limit, setLimit] = useState(10);
   const [selectedPeriod, setSelectedPeriod] = useState('all');
+  const [isCollapsed, setIsCollapsed] = useState(false);
   const { data, status, error } = useSelector((state) => state.leaderboard.topProgress);
 
   useEffect(() => {
@@ -31,22 +32,36 @@ const TopProgressLeaderboard = ({ courseId, intl }) => {
   };
 
   return (
-    <div className="leaderboard-section">
+    <div className={`leaderboard-section ${isCollapsed ? 'collapsed' : ''}`}>
       <div className="section-header">
         <div className="header-top">
           <h2>
             <span className="icon">⚡</span>
             {intl.formatMessage(messages.progressLeaderboardTitle)}
           </h2>
-          <button
-            type="button"
-            className="refresh-btn"
-            onClick={handleRefresh}
-            disabled={status === 'loading'}
-          >
-            🔄 {intl.formatMessage(messages.refreshButton)}
-          </button>
+          <div className="header-actions">
+            <button
+              type="button"
+              className="collapse-btn"
+              onClick={() => setIsCollapsed(!isCollapsed)}
+              title={isCollapsed ? 'Expand' : 'Collapse'}
+            >
+              {isCollapsed ? '▼' : '▲'}
+            </button>
+            <button
+              type="button"
+              className="refresh-btn"
+              onClick={handleRefresh}
+              disabled={status === 'loading'}
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
+              </svg>
+              <span>Refresh</span>
+            </button>
+          </div>
         </div>
+        {!isCollapsed && (
         <div className="header-controls">
           <div className="period-buttons">
             {PERIOD_OPTIONS.map((option) => (
@@ -74,8 +89,10 @@ const TopProgressLeaderboard = ({ courseId, intl }) => {
             </select>
           </label>
         </div>
+        )}
       </div>
 
+      {!isCollapsed && (
       <div className="section-body">
         {status === 'loading' && (
           <div className="loading-state">
@@ -129,6 +146,7 @@ const TopProgressLeaderboard = ({ courseId, intl }) => {
           </div>
         )}
       </div>
+      )}
     </div>
   );
 };

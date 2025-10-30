@@ -15,6 +15,12 @@ const slice = createSlice({
       error: null,
       period: 'all',
     },
+    discussion: {
+      status: 'idle',
+      data: null,
+      error: null,
+      rankingType: 'all',
+    },
   },
   reducers: {
     // Top Grades actions
@@ -48,6 +54,22 @@ const slice = createSlice({
       state.topProgress.error = payload;
     },
 
+    // Discussion Leaderboard actions
+    fetchDiscussionLeaderboardRequest: (state) => {
+      state.discussion.status = 'loading';
+      state.discussion.error = null;
+    },
+    fetchDiscussionLeaderboardSuccess: (state, { payload }) => {
+      state.discussion.status = 'succeeded';
+      state.discussion.data = payload.data;
+      state.discussion.rankingType = payload.rankingType;
+      state.discussion.error = null;
+    },
+    fetchDiscussionLeaderboardFailure: (state, { payload }) => {
+      state.discussion.status = 'failed';
+      state.discussion.error = payload;
+    },
+
     // Reset actions
     resetLeaderboard: (state) => {
       state.topGrades = {
@@ -61,6 +83,12 @@ const slice = createSlice({
         error: null,
         period: 'all',
       };
+      state.discussion = {
+        status: 'idle',
+        data: null,
+        error: null,
+        rankingType: 'all',
+      };
     },
   },
 });
@@ -72,6 +100,9 @@ export const {
   fetchTopProgressRequest,
   fetchTopProgressSuccess,
   fetchTopProgressFailure,
+  fetchDiscussionLeaderboardRequest,
+  fetchDiscussionLeaderboardSuccess,
+  fetchDiscussionLeaderboardFailure,
   resetLeaderboard,
 } = slice.actions;
 
