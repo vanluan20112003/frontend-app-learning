@@ -687,6 +687,7 @@ const VideoProgressTool = () => {
               </div>
             </div>
 
+            {/* Temporarily hidden - Course progress bar
             <div className="compact-progress-bar">
               <div className="compact-progress-label">
                 <span>Tiến độ khóa học</span>
@@ -699,6 +700,7 @@ const VideoProgressTool = () => {
                 />
               </div>
             </div>
+            */}
           </div>
           )}
 
@@ -734,7 +736,7 @@ const VideoProgressTool = () => {
             </div>
 
             <div className="stats-grid">
-              {/* Overall Course Completion - Large Card */}
+              {/* Temporarily hidden - Overall Course Completion - Large Card
               <div className="stat-card large-card">
                 <div className="card-header">
                   <Icon src={Assessment} className="card-icon" />
@@ -762,6 +764,7 @@ const VideoProgressTool = () => {
                 </div>
                 <p className="stat-description">Hoàn thành khóa học</p>
               </div>
+              */}
 
               {/* Video Statistics */}
               <div className="stat-card">
@@ -1053,6 +1056,7 @@ const VideoProgressTool = () => {
                 </div>
               </div>
 
+              {/* Temporarily hidden - Course progress bar
               <div className="compact-progress-bar">
                 <div className="compact-progress-label">
                   <span>Tiến độ khóa học</span>
@@ -1065,6 +1069,7 @@ const VideoProgressTool = () => {
                   />
                 </div>
               </div>
+              */}
             </div>
           )}
 
@@ -1100,7 +1105,7 @@ const VideoProgressTool = () => {
               </div>
 
               <div className="stats-grid">
-                {/* Overall Course Completion - Large Card */}
+                {/* Temporarily hidden - Overall Course Completion - Large Card
                 <div className="stat-card large-card">
                   <div className="card-header">
                     <Icon src={Assessment} className="card-icon" />
@@ -1128,6 +1133,7 @@ const VideoProgressTool = () => {
                   </div>
                   <p className="stat-description">Hoàn thành khóa học</p>
                 </div>
+                */}
 
                 {/* Video Statistics */}
                 <div className="stat-card">
