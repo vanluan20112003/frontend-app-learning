@@ -5,6 +5,7 @@ import {
   Button,
   Tabs,
   Tab,
+  Form,
 } from '@openedx/paragon';
 import {
   Person,
@@ -19,6 +20,9 @@ import {
   Refresh,
   School,
   Article,
+  Warning,
+  Error,
+  RemoveCircleOutline,
 } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
@@ -43,6 +47,10 @@ const VideoProgressTool = () => {
   const [h5pContentId, setH5pContentId] = useState(null);
   const [activeTab, setActiveTab] = useState('all'); // 'current', 'overall', or 'all'
   const h5pContentIdRef = useRef(null); // Use ref to avoid re-creating interval
+  const [incompleteContents, setIncompleteContents] = useState(null);
+  const [incompleteLoading, setIncompleteLoading] = useState(false);
+  const [incompleteFilter, setIncompleteFilter] = useState('all'); // all, not_started, video, score, both
+  const [incompleteSortBy, setIncompleteSortBy] = useState('priority'); // priority, name, folder
 
   // Fetch and extract H5P from URL
   const fetchH5PFromURL = async (url) => {
@@ -236,11 +244,29 @@ const VideoProgressTool = () => {
     return mappedData;
   };
 
+  // Fetch incomplete contents from API
+  const fetchIncompleteContents = async (userId, limit = 20, includeUnstarted = true) => {
+    const H5P_API_BASE = 'https://h5p.itp.vn/wp-json/mooc/v1';
+    const apiUrl = `${H5P_API_BASE}/incomplete-contents/${userId}/${courseId}/priority?limit=${limit}&include_unstarted=${includeUnstarted}`;
+
+    const response = await fetch(apiUrl);
+
+    if (!response.ok) {
+      if (response.status === 404) {
+        return null; // No incomplete contents
+      }
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  };
+
   // Extract H5P content ID and fetch content detail when unit changes
   useEffect(() => {
     const extractAndFetchContentDetail = async () => {
       if (!userData?.id) {
-        return;
+        return undefined;
       }
 
       // Reset state when unit changes
@@ -291,9 +317,7 @@ const VideoProgressTool = () => {
       if (currentH5pId && userData?.id) {
         // Only fetch content detail if we already have H5P content ID
         fetchContentDetail(userData.id, currentH5pId)
-          .then(detail => {
-            setCurrentContentDetail(detail);
-          })
+          .then(detail => setCurrentContentDetail(detail))
           .catch(() => {
             // Silently fail, don't show error
           });
@@ -345,6 +369,30 @@ const VideoProgressTool = () => {
     loadData();
   }, [courseId]);
 
+  // Load incomplete contents when user data is available
+  useEffect(() => {
+    const loadIncompleteContents = async () => {
+      if (!userData?.id) {
+        return;
+      }
+
+      try {
+        setIncompleteLoading(true);
+        // Load fewer items in compact view (5), more in full view (20)
+        const limit = isCompactView ? 5 : 20;
+        const incomplete = await fetchIncompleteContents(userData.id, limit);
+        setIncompleteContents(incomplete);
+      } catch (err) {
+        // console.error('Error loading incomplete contents:', err);
+        setIncompleteContents(null);
+      } finally {
+        setIncompleteLoading(false);
+      }
+    };
+
+    loadIncompleteContents();
+  }, [userData, isCompactView, courseId]);
+
   // Refresh data function
   const handleRefresh = async () => {
     if (!userData?.id) {
@@ -372,6 +420,18 @@ const VideoProgressTool = () => {
           setContentDetailLoading(false);
         }
       }
+
+      // Refresh incomplete contents (both compact and full view)
+      setIncompleteLoading(true);
+      try {
+        const limit = isCompactView ? 5 : 20;
+        const incomplete = await fetchIncompleteContents(userData.id, limit);
+        setIncompleteContents(incomplete);
+      } catch (incompleteErr) {
+        setIncompleteContents(null);
+      } finally {
+        setIncompleteLoading(false);
+      }
     } catch (err) {
       // console.error('Error refreshing data:', err);
       setError('Không thể cập nhật dữ liệu. Vui lòng thử lại.');
@@ -392,6 +452,36 @@ const VideoProgressTool = () => {
   const scoreRate = progressData?.maxPossibleScore > 0
     ? Math.round((progressData.currentScore / progressData.maxPossibleScore) * 100)
     : 0;
+
+  // Filter and sort incomplete contents
+  const getFilteredAndSortedContents = () => {
+    if (!incompleteContents?.priority_contents) {
+      return [];
+    }
+
+    let filtered = [...incompleteContents.priority_contents];
+
+    // Apply filter
+    if (incompleteFilter !== 'all') {
+      filtered = filtered.filter(content => content.incomplete_type === incompleteFilter);
+    }
+
+    // Apply sort
+    if (incompleteSortBy === 'name') {
+      filtered.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
+    } else if (incompleteSortBy === 'folder') {
+      filtered.sort((a, b) => {
+        const folderA = a.folder_info?.folder_name || '';
+        const folderB = b.folder_info?.folder_name || '';
+        return folderA.localeCompare(folderB);
+      });
+    }
+    // Default is already sorted by priority from API
+
+    return filtered;
+  };
+
+  const filteredIncompleteContents = getFilteredAndSortedContents();
 
   if (loading) {
     return (
@@ -562,8 +652,10 @@ const VideoProgressTool = () => {
                   </div>
                   <div className="progress-meta">
                     <span className={`status-badge ${currentContentDetail.video_progress.status}`}>
-                      {currentContentDetail.video_progress.status === 'completed' ? 'Hoàn thành'
-                        : currentContentDetail.video_progress.status === 'in_progress' ? 'Đang xem' : 'Chưa bắt đầu'}
+                      {currentContentDetail.video_progress.status === 'completed' && 'Hoàn thành'}
+                      {currentContentDetail.video_progress.status === 'in_progress' && 'Đang xem'}
+                      {currentContentDetail.video_progress.status !== 'completed'
+                        && currentContentDetail.video_progress.status !== 'in_progress' && 'Chưa bắt đầu'}
                     </span>
                   </div>
                 </div>
@@ -701,6 +793,73 @@ const VideoProgressTool = () => {
               </div>
             </div>
             */}
+
+            {/* Compact Incomplete Contents */}
+            <div className="compact-incomplete-section">
+              <div className="compact-incomplete-header">
+                <Icon src={Warning} className="compact-incomplete-icon" />
+                <span className="compact-incomplete-title">Cần hoàn thiện</span>
+                {incompleteContents?.priority_contents?.length > 0 && (
+                  <span className="compact-incomplete-badge">
+                    {incompleteContents.priority_contents.length}
+                  </span>
+                )}
+              </div>
+
+              {incompleteLoading && (
+                <div className="compact-incomplete-loading">
+                  <Spinner animation="border" size="sm" />
+                </div>
+              )}
+
+              {!incompleteLoading && (!incompleteContents || incompleteContents.priority_contents?.length === 0) && (
+                <div className="compact-no-incomplete">
+                  <Icon src={CheckCircle} className="compact-check-icon" />
+                  <span>Đã hoàn thành tất cả!</span>
+                </div>
+              )}
+
+              {!incompleteLoading && incompleteContents?.priority_contents?.length > 0 && (
+                <div className="compact-incomplete-list">
+                  {incompleteContents.priority_contents.map((content) => (
+                    <div key={content.content_id} className="compact-incomplete-item">
+                      <div className="compact-incomplete-item-header">
+                        <Icon
+                          src={(() => {
+                            if (content.incomplete_type === 'both') { return Error; }
+                            if (content.incomplete_type === 'not_started') { return RemoveCircleOutline; }
+                            return Warning;
+                          })()}
+                          className={`compact-incomplete-type-icon ${content.incomplete_type}`}
+                        />
+                        <span className="compact-incomplete-item-title">
+                          {content.title || `Content #${content.content_id}`}
+                        </span>
+                      </div>
+                      <div className="compact-incomplete-item-stats">
+                        {content.incomplete_type === 'not_started' && (
+                          <div className="compact-stat-mini not-started">
+                            <span>Chưa bắt đầu</span>
+                          </div>
+                        )}
+                        {content.incomplete_type !== 'not_started' && content.video_progress?.has_progress && (
+                          <div className="compact-stat-mini">
+                            <Icon src={VideoLibrary} className="compact-stat-mini-icon video" />
+                            <span>{Math.round(content.video_progress.progress_percent)}%</span>
+                          </div>
+                        )}
+                        {content.incomplete_type !== 'not_started' && content.score?.has_score && (
+                          <div className="compact-stat-mini">
+                            <Icon src={Assessment} className="compact-stat-mini-icon score" />
+                            <span>{Math.round(content.score.percentage)}%</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
           )}
 
@@ -828,7 +987,7 @@ const VideoProgressTool = () => {
 
                     <div className="score-detail-item warning-note">
                       <span className="detail-note">
-                        ⭐ <strong>Quan trọng:</strong> Bấm vào nút ngôi sao ở cuối video để hoàn thành xem video
+                        ⭐ <strong>Quan trọng:</strong> Bấm nút ngôi sao ở cuối video để hoàn thành
                       </span>
                     </div>
 
@@ -860,6 +1019,168 @@ const VideoProgressTool = () => {
                 </div>
               </div>
             </div>
+
+            {/* Incomplete Contents Section - Only in Full View */}
+            {!isCompactView && (
+              <div className="incomplete-contents-section">
+                <div className="incomplete-header">
+                  <div className="incomplete-title-row">
+                    <Icon src={Warning} className="incomplete-icon" />
+                    <h4 className="incomplete-title">Nội dung cần hoàn thiện</h4>
+                  </div>
+                  {incompleteContents?.priority_contents?.length > 0 && (
+                    <span className="incomplete-count-badge">
+                      {filteredIncompleteContents.length}/{incompleteContents.priority_contents.length} bài
+                    </span>
+                  )}
+                </div>
+
+                {/* Filter and Sort Controls */}
+                {!incompleteLoading && incompleteContents?.priority_contents?.length > 0 && (
+                  <div className="incomplete-filters">
+                    <div className="filter-group">
+                      <label htmlFor="incomplete-filter" className="filter-label">Lọc:</label>
+                      <Form.Control
+                        as="select"
+                        id="incomplete-filter"
+                        value={incompleteFilter}
+                        onChange={(e) => setIncompleteFilter(e.target.value)}
+                        className="filter-select"
+                      >
+                        <option value="all">Tất cả</option>
+                        <option value="not_started">Chưa bắt đầu</option>
+                        <option value="video">Video chưa xong</option>
+                        <option value="score">Điểm chưa đạt</option>
+                        <option value="both">Cả video & điểm</option>
+                      </Form.Control>
+                    </div>
+
+                    <div className="sort-group">
+                      <label htmlFor="incomplete-sort" className="filter-label">Sắp xếp:</label>
+                      <Form.Control
+                        as="select"
+                        id="incomplete-sort"
+                        value={incompleteSortBy}
+                        onChange={(e) => setIncompleteSortBy(e.target.value)}
+                        className="filter-select"
+                      >
+                        <option value="priority">Ưu tiên</option>
+                        <option value="name">Tên A-Z</option>
+                        <option value="folder">Theo Folder</option>
+                      </Form.Control>
+                    </div>
+                  </div>
+                )}
+
+                {incompleteLoading && (
+                  <div className="incomplete-loading">
+                    <Spinner animation="border" size="sm" />
+                    <span className="loading-text">Đang tải danh sách...</span>
+                  </div>
+                )}
+
+                {!incompleteLoading && (!incompleteContents || incompleteContents.priority_contents?.length === 0) && (
+                  <div className="no-incomplete">
+                    <Icon src={CheckCircle} className="no-incomplete-icon" />
+                    <p className="no-incomplete-text">Tuyệt vời! Bạn đã hoàn thành tất cả nội dung</p>
+                  </div>
+                )}
+
+                {!incompleteLoading && filteredIncompleteContents.length > 0 && (
+                  <div className="incomplete-list">
+                    {filteredIncompleteContents.map((content) => (
+                      <div key={content.content_id} className="incomplete-item">
+                        <div className="incomplete-item-header">
+                          <div className="incomplete-item-title-row">
+                            <Icon
+                              src={(() => {
+                                if (content.incomplete_type === 'both') { return Error; }
+                                if (content.incomplete_type === 'not_started') { return RemoveCircleOutline; }
+                                return Warning;
+                              })()}
+                              className={`incomplete-type-icon ${content.incomplete_type}`}
+                            />
+                            <span className="incomplete-item-title">{content.title || `Content #${content.content_id}`}</span>
+                          </div>
+                          <span className={`priority-badge priority-${Math.floor(content.priority / 25)}`}>
+                            {content.incomplete_type === 'not_started' ? 'Chưa bắt đầu' : `Ưu tiên: ${Math.round(content.priority)}%`}
+                          </span>
+                        </div>
+
+                        {content.folder_info && (
+                          <div className="incomplete-item-folder">
+                            <Icon src={Article} className="folder-icon-mini" />
+                            <span className="folder-name-mini">{content.folder_info.folder_name}</span>
+                          </div>
+                        )}
+
+                        <div className="incomplete-item-progress">
+                          {content.incomplete_type === 'not_started' && (
+                            <div className="incomplete-not-started-message">
+                              <Icon src={RemoveCircleOutline} className="not-started-icon" />
+                              <span>Nội dung này chưa được bắt đầu học</span>
+                            </div>
+                          )}
+                          {content.incomplete_type !== 'not_started' && content.video_progress?.has_progress && (
+                            <div className="incomplete-progress-row">
+                              <div className="incomplete-progress-label">
+                                <Icon src={VideoLibrary} className="progress-mini-icon video" />
+                                <span>Video: {Math.round(content.video_progress.progress_percent)}%</span>
+                              </div>
+                              <div className="incomplete-mini-bar">
+                                <div
+                                  className="incomplete-mini-fill video"
+                                  style={{ width: `${content.video_progress.progress_percent}%` }}
+                                />
+                              </div>
+                              {content.video_progress.remaining_time > 0 && (
+                                <span className="remaining-text">
+                                  Còn {Math.ceil(content.video_progress.remaining_time / 60)} phút
+                                </span>
+                              )}
+                            </div>
+                          )}
+
+                          {content.incomplete_type !== 'not_started' && content.score?.has_score && (
+                            <div className="incomplete-progress-row">
+                              <div className="incomplete-progress-label">
+                                <Icon src={Assessment} className="progress-mini-icon score" />
+                                <span>
+                                  Điểm: {content.score.score}/{content.score.max_score}
+                                  {' '}({Math.round(content.score.percentage)}%)
+                                </span>
+                              </div>
+                              <div className="incomplete-mini-bar">
+                                <div
+                                  className="incomplete-mini-fill score"
+                                  style={{ width: `${content.score.percentage}%` }}
+                                />
+                              </div>
+                              {content.score.remaining_score > 0 && (
+                                <span className="remaining-text">
+                                  Còn thiếu {content.score.remaining_score} điểm
+                                </span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="incomplete-item-footer">
+                          <span className={`incomplete-type-badge ${content.incomplete_type}`}>
+                            {content.incomplete_type === 'both' && 'Cả video & điểm'}
+                            {content.incomplete_type === 'video' && 'Video chưa xong'}
+                            {content.incomplete_type === 'not_started' && 'Chưa bắt đầu'}
+                            {content.incomplete_type !== 'both'
+                              && content.incomplete_type !== 'video'
+                              && content.incomplete_type !== 'not_started' && 'Điểm chưa đạt'}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
           </>
           )}
         </Tab>
@@ -933,8 +1254,10 @@ const VideoProgressTool = () => {
                       </div>
                       <div className="progress-meta">
                         <span className={`status-badge ${currentContentDetail.video_progress.status}`}>
-                          {currentContentDetail.video_progress.status === 'completed' ? 'Hoàn thành'
-                            : currentContentDetail.video_progress.status === 'in_progress' ? 'Đang xem' : 'Chưa bắt đầu'}
+                          {currentContentDetail.video_progress.status === 'completed' && 'Hoàn thành'}
+                          {currentContentDetail.video_progress.status === 'in_progress' && 'Đang xem'}
+                          {currentContentDetail.video_progress.status !== 'completed'
+                            && currentContentDetail.video_progress.status !== 'in_progress' && 'Chưa bắt đầu'}
                         </span>
                       </div>
                     </div>
@@ -1070,6 +1393,73 @@ const VideoProgressTool = () => {
                 </div>
               </div>
               */}
+
+              {/* Compact Incomplete Contents - Duplicate for "Xem tất cả" tab */}
+              <div className="compact-incomplete-section">
+                <div className="compact-incomplete-header">
+                  <Icon src={Warning} className="compact-incomplete-icon" />
+                  <span className="compact-incomplete-title">Cần hoàn thiện</span>
+                  {incompleteContents?.priority_contents?.length > 0 && (
+                    <span className="compact-incomplete-badge">
+                      {incompleteContents.priority_contents.length}
+                    </span>
+                  )}
+                </div>
+
+                {incompleteLoading && (
+                  <div className="compact-incomplete-loading">
+                    <Spinner animation="border" size="sm" />
+                  </div>
+                )}
+
+                {!incompleteLoading && (!incompleteContents || incompleteContents.priority_contents?.length === 0) && (
+                  <div className="compact-no-incomplete">
+                    <Icon src={CheckCircle} className="compact-check-icon" />
+                    <span>Đã hoàn thành tất cả!</span>
+                  </div>
+                )}
+
+                {!incompleteLoading && incompleteContents?.priority_contents?.length > 0 && (
+                  <div className="compact-incomplete-list">
+                    {incompleteContents.priority_contents.map((content) => (
+                      <div key={content.content_id} className="compact-incomplete-item">
+                        <div className="compact-incomplete-item-header">
+                          <Icon
+                            src={(() => {
+                              if (content.incomplete_type === 'both') { return Error; }
+                              if (content.incomplete_type === 'not_started') { return RemoveCircleOutline; }
+                              return Warning;
+                            })()}
+                            className={`compact-incomplete-type-icon ${content.incomplete_type}`}
+                          />
+                          <span className="compact-incomplete-item-title">
+                            {content.title || `Content #${content.content_id}`}
+                          </span>
+                        </div>
+                        <div className="compact-incomplete-item-stats">
+                          {content.incomplete_type === 'not_started' && (
+                            <div className="compact-stat-mini not-started">
+                              <span>Chưa bắt đầu</span>
+                            </div>
+                          )}
+                          {content.incomplete_type !== 'not_started' && content.video_progress?.has_progress && (
+                            <div className="compact-stat-mini">
+                              <Icon src={VideoLibrary} className="compact-stat-mini-icon video" />
+                              <span>{Math.round(content.video_progress.progress_percent)}%</span>
+                            </div>
+                          )}
+                          {content.incomplete_type !== 'not_started' && content.score?.has_score && (
+                            <div className="compact-stat-mini">
+                              <Icon src={Assessment} className="compact-stat-mini-icon score" />
+                              <span>{Math.round(content.score.percentage)}%</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           )}
 
@@ -1191,7 +1581,8 @@ const VideoProgressTool = () => {
                     <div className="score-details">
                       <div className="score-detail-item info-note">
                         <span className="detail-note">
-                          💡 Điểm quá trình bao gồm điểm tương tác video và bài tập trong khóa học (không bao gồm điểm thi)
+                          💡 Điểm quá trình bao gồm điểm tương tác video và bài tập
+                          (không bao gồm điểm thi)
                         </span>
                       </div>
 
@@ -1230,6 +1621,168 @@ const VideoProgressTool = () => {
                 </div>
               </div>
             </>
+          )}
+
+          {/* Incomplete Contents Section - Duplicate for "Xem tất cả" tab */}
+          {!isCompactView && (
+            <div className="incomplete-contents-section">
+              <div className="incomplete-header">
+                <div className="incomplete-title-row">
+                  <Icon src={Warning} className="incomplete-icon" />
+                  <h4 className="incomplete-title">Nội dung cần hoàn thiện</h4>
+                </div>
+                {incompleteContents?.priority_contents?.length > 0 && (
+                  <span className="incomplete-count-badge">
+                    {filteredIncompleteContents.length}/{incompleteContents.priority_contents.length} bài
+                  </span>
+                )}
+              </div>
+
+              {/* Filter and Sort Controls */}
+              {!incompleteLoading && incompleteContents?.priority_contents?.length > 0 && (
+                <div className="incomplete-filters">
+                  <div className="filter-group">
+                    <label htmlFor="incomplete-filter-all" className="filter-label">Lọc:</label>
+                    <Form.Control
+                      as="select"
+                      id="incomplete-filter-all"
+                      value={incompleteFilter}
+                      onChange={(e) => setIncompleteFilter(e.target.value)}
+                      className="filter-select"
+                    >
+                      <option value="all">Tất cả</option>
+                      <option value="not_started">Chưa bắt đầu</option>
+                      <option value="video">Video chưa xong</option>
+                      <option value="score">Điểm chưa đạt</option>
+                      <option value="both">Cả video & điểm</option>
+                    </Form.Control>
+                  </div>
+
+                  <div className="sort-group">
+                    <label htmlFor="incomplete-sort-all" className="filter-label">Sắp xếp:</label>
+                    <Form.Control
+                      as="select"
+                      id="incomplete-sort-all"
+                      value={incompleteSortBy}
+                      onChange={(e) => setIncompleteSortBy(e.target.value)}
+                      className="filter-select"
+                    >
+                      <option value="priority">Ưu tiên</option>
+                      <option value="name">Tên A-Z</option>
+                      <option value="folder">Theo Folder</option>
+                    </Form.Control>
+                  </div>
+                </div>
+              )}
+
+              {incompleteLoading && (
+                <div className="incomplete-loading">
+                  <Spinner animation="border" size="sm" />
+                  <span className="loading-text">Đang tải danh sách...</span>
+                </div>
+              )}
+
+              {!incompleteLoading && (!incompleteContents || incompleteContents.priority_contents?.length === 0) && (
+                <div className="no-incomplete">
+                  <Icon src={CheckCircle} className="no-incomplete-icon" />
+                  <p className="no-incomplete-text">Tuyệt vời! Bạn đã hoàn thành tất cả nội dung</p>
+                </div>
+              )}
+
+              {!incompleteLoading && filteredIncompleteContents.length > 0 && (
+                <div className="incomplete-list">
+                  {filteredIncompleteContents.map((content) => (
+                    <div key={content.content_id} className="incomplete-item">
+                      <div className="incomplete-item-header">
+                        <div className="incomplete-item-title-row">
+                          <Icon
+                            src={(() => {
+                              if (content.incomplete_type === 'both') { return Error; }
+                              if (content.incomplete_type === 'not_started') { return RemoveCircleOutline; }
+                              return Warning;
+                            })()}
+                            className={`incomplete-type-icon ${content.incomplete_type}`}
+                          />
+                          <span className="incomplete-item-title">{content.title || `Content #${content.content_id}`}</span>
+                        </div>
+                        <span className={`priority-badge priority-${Math.floor(content.priority / 25)}`}>
+                          {content.incomplete_type === 'not_started' ? 'Chưa bắt đầu' : `Ưu tiên: ${Math.round(content.priority)}%`}
+                        </span>
+                      </div>
+
+                      {content.folder_info && (
+                        <div className="incomplete-item-folder">
+                          <Icon src={Article} className="folder-icon-mini" />
+                          <span className="folder-name-mini">{content.folder_info.folder_name}</span>
+                        </div>
+                      )}
+
+                      <div className="incomplete-item-progress">
+                        {content.incomplete_type === 'not_started' && (
+                          <div className="incomplete-not-started-message">
+                            <Icon src={RemoveCircleOutline} className="not-started-icon" />
+                            <span>Nội dung này chưa được bắt đầu học</span>
+                          </div>
+                        )}
+                        {content.incomplete_type !== 'not_started' && content.video_progress?.has_progress && (
+                          <div className="incomplete-progress-row">
+                            <div className="incomplete-progress-label">
+                              <Icon src={VideoLibrary} className="progress-mini-icon video" />
+                              <span>Video: {Math.round(content.video_progress.progress_percent)}%</span>
+                            </div>
+                            <div className="incomplete-mini-bar">
+                              <div
+                                className="incomplete-mini-fill video"
+                                style={{ width: `${content.video_progress.progress_percent}%` }}
+                              />
+                            </div>
+                            {content.video_progress.remaining_time > 0 && (
+                              <span className="remaining-text">
+                                Còn {Math.ceil(content.video_progress.remaining_time / 60)} phút
+                              </span>
+                            )}
+                          </div>
+                        )}
+
+                        {content.incomplete_type !== 'not_started' && content.score?.has_score && (
+                          <div className="incomplete-progress-row">
+                            <div className="incomplete-progress-label">
+                              <Icon src={Assessment} className="progress-mini-icon score" />
+                              <span>
+                                Điểm: {content.score.score}/{content.score.max_score}
+                                {' '}({Math.round(content.score.percentage)}%)
+                              </span>
+                            </div>
+                            <div className="incomplete-mini-bar">
+                              <div
+                                className="incomplete-mini-fill score"
+                                style={{ width: `${content.score.percentage}%` }}
+                              />
+                            </div>
+                            {content.score.remaining_score > 0 && (
+                              <span className="remaining-text">
+                                Còn thiếu {content.score.remaining_score} điểm
+                              </span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="incomplete-item-footer">
+                        <span className={`incomplete-type-badge ${content.incomplete_type}`}>
+                          {content.incomplete_type === 'both' && 'Cả video & điểm'}
+                          {content.incomplete_type === 'video' && 'Video chưa xong'}
+                          {content.incomplete_type === 'not_started' && 'Chưa bắt đầu'}
+                          {content.incomplete_type !== 'both'
+                            && content.incomplete_type !== 'video'
+                            && content.incomplete_type !== 'not_started' && 'Điểm chưa đạt'}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           )}
         </Tab>
       </Tabs>

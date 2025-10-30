@@ -580,6 +580,205 @@ curl "https://h5p.itp.vn/wp-json/mooc/v1/content-detail/4/course-v1:DHQG-HCM+FM1
 
 ---
 
+## 8. INCOMPLETE CONTENTS API (MỚI)
+API để lấy danh sách content chưa hoàn thành của user trong course.
+
+**Lưu ý:** API này khác với endpoint cũ `/scores/{user_id}/{course_id}/incomplete`:
+- Endpoint cũ: Chỉ xem xét scores (bảng `wp_mooc_scores`)
+- Endpoint mới: Kết hợp cả scores VÀ video progress (bảng `wp_mooc_scores` + `wp_video_progress`)
+- Endpoint mới có tính năng priority sorting và nhiều thông tin chi tiết hơn
+
+### 8.1. Lấy tất cả content chưa hoàn thành
+```
+GET /incomplete-contents/{user_id}/{course_id}
+GET /incomplete-contents/{user_id}/{course_id}?include_unstarted=true
+```
+
+**Parameters:**
+- `include_unstarted` (optional): `true` hoặc `false` (mặc định: `false`)
+  - `false`: Chỉ lấy content đã có bản ghi (user đã tương tác)
+  - `true`: Bao gồm cả content chưa bắt đầu (chưa có bản ghi)
+
+**Ví dụ:**
+```bash
+# Chỉ content đã có bản ghi (mặc định)
+curl "https://h5p.itp.vn/wp-json/mooc/v1/incomplete-contents/4/course-v1:DHQG-HCM+FM101+2025_S2"
+
+# Bao gồm cả content chưa bắt đầu
+curl "https://h5p.itp.vn/wp-json/mooc/v1/incomplete-contents/4/course-v1:DHQG-HCM+FM101+2025_S2?include_unstarted=true"
+```
+
+**Response:**
+```json
+{
+  "user_id": "4",
+  "course_id": "course-v1:DHQG-HCM+FM101+2025_S2",
+  "include_unstarted": false,
+  "summary": {
+    "total_incomplete": 15,
+    "incomplete_videos": 8,
+    "incomplete_scores": 10,
+    "both_incomplete": 3,
+    "not_started": 0
+  },
+  "incomplete_contents": [
+    {
+      "content_id": 259,
+      "title": "Bài tập chương 1",
+      "library_id": 15,
+      "folder_info": {
+        "folder_id": 52,
+        "folder_name": "Chương 1"
+      },
+      "incomplete_type": "both",
+      "video_progress": {
+        "has_progress": true,
+        "progress_percent": 85.5,
+        "current_time": 498.48,
+        "duration": 510.49,
+        "remaining_time": 12.01,
+        "remaining_percent": 2.35,
+        "status": "in_progress",
+        "last_updated": "2025-10-09 23:49:14"
+      },
+      "score": {
+        "has_score": true,
+        "score": 4,
+        "max_score": 6,
+        "percentage": 66.67,
+        "remaining_score": 2,
+        "finished": false,
+        "opened": true,
+        "time_spent": 904,
+        "last_updated": "2025-10-27 04:44:36"
+      },
+      "priority": 76.09
+    }
+  ]
+}
+```
+
+**Thông tin trả về:**
+
+**`summary`** - Thống kê tổng quan:
+- `total_incomplete`: Tổng số content chưa hoàn thành
+- `incomplete_videos`: Số content có video chưa hoàn thành (≤95%)
+- `incomplete_scores`: Số content có điểm chưa hoàn thành (chưa finished hoặc chưa đạt max_score)
+- `both_incomplete`: Số content chưa hoàn thành cả video và điểm
+- `not_started`: Số content chưa bắt đầu (không có bản ghi nào) - chỉ xuất hiện khi `include_unstarted=true`
+
+**`incomplete_contents`** - Danh sách content chưa hoàn thành:
+- `content_id`: ID của H5P content
+- `title`: Tiêu đề content
+- `library_id`: ID thư viện H5P
+- `folder_info`: Thông tin folder chứa content
+- `incomplete_type`: Loại chưa hoàn thành (`video`, `score`, `both`, `not_started`)
+- `video_progress`: Thông tin tiến độ video
+  - `has_progress`: `true` nếu có bản ghi, `false` nếu chưa bắt đầu
+  - `progress_percent`: % đã xem (0-100)
+  - `remaining_time`: Thời gian còn lại (giây)
+  - `remaining_percent`: % còn lại
+  - `status`: Trạng thái (`not_started`, `in_progress`, `completed`)
+- `score`: Thông tin điểm
+  - `has_score`: `true` nếu có bản ghi, `false` nếu chưa bắt đầu
+  - `score`: Điểm hiện tại
+  - `max_score`: Điểm tối đa
+  - `percentage`: % điểm
+  - `remaining_score`: Điểm còn thiếu
+  - `finished`: Đã hoàn thành chưa
+- `priority`: Điểm ưu tiên (0-100, cao hơn = gần hoàn thành hơn)
+
+**Lưu ý:**
+- **Mặc định (`include_unstarted=false`):** Chỉ hiển thị content đã có bản ghi trong hệ thống (user đã tương tác)
+- **Với `include_unstarted=true`:** Hiển thị cả content chưa bắt đầu (chưa có bản ghi nào)
+  - Content chưa bắt đầu có `incomplete_type = "not_started"`
+  - `video_progress.has_progress = false` và `score.has_score = false`
+  - `priority = 0` (ưu tiên thấp nhất)
+- Content được sắp xếp theo priority (content gần hoàn thành nhất ở đầu)
+- Video được coi là chưa hoàn thành nếu progress_percent ≤ 95%
+- Score được coi là chưa hoàn thành nếu finished = 0 HOẶC score < max_score
+
+### 8.2. Lấy content chưa hoàn thành theo folder
+```
+GET /incomplete-contents/{user_id}/{course_id}/by-folder
+```
+
+**Response:**
+```json
+{
+  "user_id": "4",
+  "course_id": "course-v1:DHQG-HCM+FM101+2025_S2",
+  "folders": [
+    {
+      "folder_id": 52,
+      "folder_name": "Chương 1",
+      "total_contents": 25,
+      "incomplete_count": 8,
+      "completion_rate": 68.0,
+      "incomplete_contents": [
+        {
+          "content_id": 259,
+          "title": "Bài tập 1",
+          "video_progress": 85.5,
+          "score_percentage": 66.67,
+          "finished": false
+        }
+      ]
+    }
+  ]
+}
+```
+
+**Thông tin trả về:**
+- `folder_id`: ID folder
+- `folder_name`: Tên folder
+- `total_contents`: Tổng số content trong folder
+- `incomplete_count`: Số content chưa hoàn thành
+- `completion_rate`: Tỷ lệ hoàn thành folder (%)
+- `incomplete_contents`: Danh sách content chưa hoàn thành trong folder
+
+### 8.3. Lấy content ưu tiên (gần hoàn thành nhất)
+```
+GET /incomplete-contents/{user_id}/{course_id}/priority?limit=10
+```
+
+**Parameters:**
+- `limit` (optional): Số lượng content trả về (mặc định: 10)
+
+**Response:**
+```json
+{
+  "user_id": "4",
+  "course_id": "course-v1:DHQG-HCM+FM101+2025_S2",
+  "limit": 10,
+  "priority_contents": [
+    {
+      "content_id": 259,
+      "title": "Bài tập chương 1",
+      "incomplete_type": "both",
+      "priority": 92.5,
+      "video_progress": {
+        "progress_percent": 97.0,
+        "remaining_time": 15.3
+      },
+      "score": {
+        "percentage": 88.0,
+        "remaining_score": 1
+      }
+    }
+  ]
+}
+```
+
+**Use cases:**
+- Hiển thị danh sách "Cần hoàn thành" trên dashboard
+- Gợi ý học viên hoàn thiện content gần xong
+- Tracking tiến độ học tập chi tiết
+- Gamification: hiển thị nhiệm vụ sắp hoàn thành
+- Thông báo nhắc nhở học viên
+
+---
+
 ## Ví dụ sử dụng
 
 ### JavaScript/Fetch API
@@ -600,6 +799,25 @@ async function getVideoProgress(userId, courseId) {
   );
   const data = await response.json();
   return data;
+}
+
+// Lấy content chưa hoàn thành
+async function getIncompleteContents(userId, courseId) {
+  const response = await fetch(
+    `https://h5p.itp.vn/wp-json/mooc/v1/incomplete-contents/${userId}/${courseId}`
+  );
+  const data = await response.json();
+  console.log(`Tổng content chưa hoàn thành: ${data.summary.total_incomplete}`);
+  return data;
+}
+
+// Lấy top 5 content ưu tiên (gần hoàn thành nhất)
+async function getPriorityContents(userId, courseId, limit = 5) {
+  const response = await fetch(
+    `https://h5p.itp.vn/wp-json/mooc/v1/incomplete-contents/${userId}/${courseId}/priority?limit=${limit}`
+  );
+  const data = await response.json();
+  return data.priority_contents;
 }
 ```
 
