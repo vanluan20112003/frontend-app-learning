@@ -72,16 +72,131 @@ const useIFrameBehavior = ({
 
   React.useEffect(() => {
     const frame = document.getElementById(elementId);
+    if (!frame) return;
+
     const { hash } = window.location;
     if (hash) {
       // The url hash will be sent to LMS-served iframe in order to find the location of the
       // hash within the iframe.
       frame.contentWindow.postMessage({ hashName: hash }, `${getConfig().LMS_BASE_URL}`);
     }
-  }, [id, onLoaded, iframeHeight, hasLoaded]);
 
-  const receiveMessage = React.useCallback(({ data }) => {
+    // Inject bridge script into LMS iframe to forward H5P messages
+    const injectBridgeScript = () => {
+      try {
+        const iframeDoc = frame.contentDocument || frame.contentWindow.document;
+
+        // Check if bridge already injected
+        if (iframeDoc.getElementById('h5p-bridge-script')) {
+          return;
+        }
+
+        const script = iframeDoc.createElement('script');
+        script.id = 'h5p-bridge-script';
+        script.textContent = `
+          (function() {
+            // Forward H5P → Frontend React App
+            window.addEventListener('message', function(event) {
+              if (event.origin === 'https://h5p.itp.vn' &&
+                  event.data && event.data.type === 'mooc_get_user_id') {
+                window.parent.postMessage(event.data, '*');
+              }
+            });
+
+            // Forward Frontend React App → H5P
+            window.addEventListener('message', function(event) {
+              if (event.data && event.data.type === 'mooc_user_id_response') {
+                var h5pIframes = document.querySelectorAll('iframe[src*="h5p.itp.vn"]');
+                h5pIframes.forEach(function(iframe) {
+                  if (iframe.contentWindow) {
+                    iframe.contentWindow.postMessage(event.data, 'https://h5p.itp.vn');
+                  }
+                });
+              }
+            });
+          })();
+        `;
+
+        iframeDoc.body.appendChild(script);
+      } catch (error) {
+        // Cross-origin restriction - cannot inject
+        // Silent fail as this is expected for cross-origin iframes
+      }
+    };
+
+    // Try to inject bridge after iframe loads
+    const timeoutId = setTimeout(() => {
+      if (frame && frame.contentWindow) {
+        injectBridgeScript();
+      }
+    }, 1500); // Wait for iframe to load
+
+    return () => clearTimeout(timeoutId);
+  }, [id, onLoaded, iframeHeight, hasLoaded, elementId]);
+
+  const receiveMessage = React.useCallback((event) => {
+    let { data } = event;
+
+    // Handle H5P messages that come as JSON strings
+    if (typeof data === 'string') {
+      try {
+        data = JSON.parse(data);
+      } catch (e) {
+        // Not JSON, ignore
+        return;
+      }
+    }
+
     const { type, payload } = data;
+
+    // Handle H5P mooc_get_user_id request
+    // According to HUONG_DAN_MOOC_POSTMESSAGE.md spec
+    if (type === 'mooc_get_user_id' || type === messageTypes.h5pGetUserId) {
+      // Accept from both h5p.itp.vn AND LMS origin
+      const h5pOrigin = 'https://h5p.itp.vn';
+      const lmsOrigin = getConfig().LMS_BASE_URL;
+
+      if (event.origin !== h5pOrigin && event.origin !== lmsOrigin) {
+        return;
+      }
+
+      // Fetch user ID from API
+      fetch('/api/custom/v1/users/me/', {
+        method: 'GET',
+        credentials: 'include',
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`API returned status ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((responseData) => {
+          // Extract user_id from response
+          const userId = responseData.success && responseData.data && responseData.data.id
+            ? responseData.data.id
+            : null;
+
+          // Send response back to H5P iframe using event.source
+          event.source.postMessage({
+            type: 'mooc_user_id_response',
+            user_id: userId,
+            timestamp: Date.now(),
+          }, h5pOrigin);
+        })
+        .catch((error) => {
+          // Send error response with null user_id
+          event.source.postMessage({
+            type: 'mooc_user_id_response',
+            user_id: null,
+            error: error.message,
+            timestamp: Date.now(),
+          }, h5pOrigin);
+        });
+
+      return; // Early return after handling
+    }
+
     if (type === messageTypes.resize) {
       // Use throttled height update to prevent shaking
       throttledSetHeight(payload.height);
@@ -116,6 +231,7 @@ const useIFrameBehavior = ({
     throttledSetHeight,
     windowTopOffset,
     setWindowTopOffset,
+    elementId,
   ]);
 
   useEventListener('message', receiveMessage);
