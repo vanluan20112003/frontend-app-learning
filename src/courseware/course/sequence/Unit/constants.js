@@ -16,7 +16,6 @@ export const messageTypes = StrictDict({
   modal: 'plugin.modal',
   resize: 'plugin.resize',
   videoFullScreen: 'plugin.videoFullScreen',
-  h5pGetUserId: 'mooc_get_user_id',
 });
 
 export default StrictDict({
