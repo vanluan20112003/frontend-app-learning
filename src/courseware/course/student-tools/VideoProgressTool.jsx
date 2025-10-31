@@ -51,6 +51,7 @@ const VideoProgressTool = () => {
   const [incompleteLoading, setIncompleteLoading] = useState(false);
   const [incompleteFilter, setIncompleteFilter] = useState('all'); // all, not_started, video, score, both
   const [incompleteSortBy, setIncompleteSortBy] = useState('priority'); // priority, name, folder
+  const incompleteSectionRef = useRef(null); // Ref to scroll to incomplete section
 
   // Fetch and extract H5P from URL
   const fetchH5PFromURL = async (url) => {
@@ -483,6 +484,20 @@ const VideoProgressTool = () => {
 
   const filteredIncompleteContents = getFilteredAndSortedContents();
 
+  // Handler to expand view and scroll to incomplete section
+  const handleViewAllIncomplete = () => {
+    setIsCompactView(false);
+    // Use setTimeout to ensure DOM is updated before scrolling
+    setTimeout(() => {
+      if (incompleteSectionRef.current) {
+        incompleteSectionRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }
+    }, 100);
+  };
+
   if (loading) {
     return (
       <div className="video-progress-loading">
@@ -820,8 +835,19 @@ const VideoProgressTool = () => {
               )}
 
               {!incompleteLoading && incompleteContents?.priority_contents?.length > 0 && (
-                <div className="compact-incomplete-list">
-                  {incompleteContents.priority_contents.map((content) => (
+                <>
+                  <div className="compact-incomplete-actions">
+                    <Button
+                      variant="link"
+                      size="sm"
+                      onClick={handleViewAllIncomplete}
+                      className="view-all-incomplete-btn"
+                    >
+                      Xem tất cả ({incompleteContents.priority_contents.length} bài) →
+                    </Button>
+                  </div>
+                  <div className="compact-incomplete-list">
+                    {incompleteContents.priority_contents.map((content) => (
                     <div key={content.content_id} className="compact-incomplete-item">
                       <div className="compact-incomplete-item-header">
                         <Icon
@@ -857,7 +883,8 @@ const VideoProgressTool = () => {
                       </div>
                     </div>
                   ))}
-                </div>
+                  </div>
+                </>
               )}
             </div>
           </div>
@@ -1022,7 +1049,7 @@ const VideoProgressTool = () => {
 
             {/* Incomplete Contents Section - Only in Full View */}
             {!isCompactView && (
-              <div className="incomplete-contents-section">
+              <div className="incomplete-contents-section" ref={incompleteSectionRef}>
                 <div className="incomplete-header">
                   <div className="incomplete-title-row">
                     <Icon src={Warning} className="incomplete-icon" />
@@ -1420,8 +1447,19 @@ const VideoProgressTool = () => {
                 )}
 
                 {!incompleteLoading && incompleteContents?.priority_contents?.length > 0 && (
-                  <div className="compact-incomplete-list">
-                    {incompleteContents.priority_contents.map((content) => (
+                  <>
+                    <div className="compact-incomplete-actions">
+                      <Button
+                        variant="link"
+                        size="sm"
+                        onClick={handleViewAllIncomplete}
+                        className="view-all-incomplete-btn"
+                      >
+                        Xem tất cả ({incompleteContents.priority_contents.length} bài) →
+                      </Button>
+                    </div>
+                    <div className="compact-incomplete-list">
+                      {incompleteContents.priority_contents.map((content) => (
                       <div key={content.content_id} className="compact-incomplete-item">
                         <div className="compact-incomplete-item-header">
                           <Icon
@@ -1457,7 +1495,8 @@ const VideoProgressTool = () => {
                         </div>
                       </div>
                     ))}
-                  </div>
+                    </div>
+                  </>
                 )}
               </div>
             </div>
