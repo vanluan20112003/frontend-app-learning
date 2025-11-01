@@ -52,6 +52,7 @@ const VideoProgressTool = () => {
   const [incompleteFilter, setIncompleteFilter] = useState('all'); // all, not_started, video, score, both
   const [incompleteSortBy, setIncompleteSortBy] = useState('priority'); // priority, name, folder
   const incompleteSectionRef = useRef(null); // Ref to scroll to incomplete section
+  const [showAllIncomplete, setShowAllIncomplete] = useState(false); // State to show all incomplete contents
 
   // Fetch and extract H5P from URL
   const fetchH5PFromURL = async (url) => {
@@ -379,8 +380,11 @@ const VideoProgressTool = () => {
 
       try {
         setIncompleteLoading(true);
-        // Load fewer items in compact view (5), more in full view (20)
-        const limit = isCompactView ? 5 : 20;
+        // Load fewer items in compact view (5), more in full view (20 or all)
+        let limit = 5;
+        if (!isCompactView) {
+          limit = showAllIncomplete ? 999999 : 20;
+        }
         const incomplete = await fetchIncompleteContents(userData.id, limit);
         setIncompleteContents(incomplete);
       } catch (err) {
@@ -392,7 +396,7 @@ const VideoProgressTool = () => {
     };
 
     loadIncompleteContents();
-  }, [userData, isCompactView, courseId]);
+  }, [userData, isCompactView, courseId, showAllIncomplete]);
 
   // Refresh data function
   const handleRefresh = async () => {
@@ -425,7 +429,10 @@ const VideoProgressTool = () => {
       // Refresh incomplete contents (both compact and full view)
       setIncompleteLoading(true);
       try {
-        const limit = isCompactView ? 5 : 20;
+        let limit = 5;
+        if (!isCompactView) {
+          limit = showAllIncomplete ? 999999 : 20;
+        }
         const incomplete = await fetchIncompleteContents(userData.id, limit);
         setIncompleteContents(incomplete);
       } catch (incompleteErr) {
@@ -848,41 +855,41 @@ const VideoProgressTool = () => {
                   </div>
                   <div className="compact-incomplete-list">
                     {incompleteContents.priority_contents.map((content) => (
-                    <div key={content.content_id} className="compact-incomplete-item">
-                      <div className="compact-incomplete-item-header">
-                        <Icon
-                          src={(() => {
-                            if (content.incomplete_type === 'both') { return Error; }
-                            if (content.incomplete_type === 'not_started') { return RemoveCircleOutline; }
-                            return Warning;
-                          })()}
-                          className={`compact-incomplete-type-icon ${content.incomplete_type}`}
-                        />
-                        <span className="compact-incomplete-item-title">
-                          {content.title || `Content #${content.content_id}`}
-                        </span>
+                      <div key={content.content_id} className="compact-incomplete-item">
+                        <div className="compact-incomplete-item-header">
+                          <Icon
+                            src={(() => {
+                              if (content.incomplete_type === 'both') { return Error; }
+                              if (content.incomplete_type === 'not_started') { return RemoveCircleOutline; }
+                              return Warning;
+                            })()}
+                            className={`compact-incomplete-type-icon ${content.incomplete_type}`}
+                          />
+                          <span className="compact-incomplete-item-title">
+                            {content.title || `Content #${content.content_id}`}
+                          </span>
+                        </div>
+                        <div className="compact-incomplete-item-stats">
+                          {content.incomplete_type === 'not_started' && (
+                            <div className="compact-stat-mini not-started">
+                              <span>Chưa bắt đầu</span>
+                            </div>
+                          )}
+                          {content.incomplete_type !== 'not_started' && content.video_progress?.has_progress && (
+                            <div className="compact-stat-mini">
+                              <Icon src={VideoLibrary} className="compact-stat-mini-icon video" />
+                              <span>{Math.round(content.video_progress.progress_percent)}%</span>
+                            </div>
+                          )}
+                          {content.incomplete_type !== 'not_started' && content.score?.has_score && (
+                            <div className="compact-stat-mini">
+                              <Icon src={Assessment} className="compact-stat-mini-icon score" />
+                              <span>{Math.round(content.score.percentage)}%</span>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                      <div className="compact-incomplete-item-stats">
-                        {content.incomplete_type === 'not_started' && (
-                          <div className="compact-stat-mini not-started">
-                            <span>Chưa bắt đầu</span>
-                          </div>
-                        )}
-                        {content.incomplete_type !== 'not_started' && content.video_progress?.has_progress && (
-                          <div className="compact-stat-mini">
-                            <Icon src={VideoLibrary} className="compact-stat-mini-icon video" />
-                            <span>{Math.round(content.video_progress.progress_percent)}%</span>
-                          </div>
-                        )}
-                        {content.incomplete_type !== 'not_started' && content.score?.has_score && (
-                          <div className="compact-stat-mini">
-                            <Icon src={Assessment} className="compact-stat-mini-icon score" />
-                            <span>{Math.round(content.score.percentage)}%</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+                    ))}
                   </div>
                 </>
               )}
@@ -1114,97 +1121,113 @@ const VideoProgressTool = () => {
                 )}
 
                 {!incompleteLoading && filteredIncompleteContents.length > 0 && (
-                  <div className="incomplete-list">
-                    {filteredIncompleteContents.map((content) => (
-                      <div key={content.content_id} className="incomplete-item">
-                        <div className="incomplete-item-header">
-                          <div className="incomplete-item-title-row">
-                            <Icon
-                              src={(() => {
-                                if (content.incomplete_type === 'both') { return Error; }
-                                if (content.incomplete_type === 'not_started') { return RemoveCircleOutline; }
-                                return Warning;
-                              })()}
-                              className={`incomplete-type-icon ${content.incomplete_type}`}
-                            />
-                            <span className="incomplete-item-title">{content.title || `Content #${content.content_id}`}</span>
+                  <>
+                    <div className="incomplete-list">
+                      {filteredIncompleteContents.map((content) => (
+                        <div key={content.content_id} className="incomplete-item">
+                          <div className="incomplete-item-header">
+                            <div className="incomplete-item-title-row">
+                              <Icon
+                                src={(() => {
+                                  if (content.incomplete_type === 'both') { return Error; }
+                                  if (content.incomplete_type === 'not_started') { return RemoveCircleOutline; }
+                                  return Warning;
+                                })()}
+                                className={`incomplete-type-icon ${content.incomplete_type}`}
+                              />
+                              <span className="incomplete-item-title">{content.title || `Content #${content.content_id}`}</span>
+                            </div>
+                            <span className={`priority-badge priority-${Math.floor(content.priority / 25)}`}>
+                              {content.incomplete_type === 'not_started' ? 'Chưa bắt đầu' : `Ưu tiên: ${Math.round(content.priority)}%`}
+                            </span>
                           </div>
-                          <span className={`priority-badge priority-${Math.floor(content.priority / 25)}`}>
-                            {content.incomplete_type === 'not_started' ? 'Chưa bắt đầu' : `Ưu tiên: ${Math.round(content.priority)}%`}
-                          </span>
-                        </div>
 
-                        {content.folder_info && (
-                          <div className="incomplete-item-folder">
-                            <Icon src={Article} className="folder-icon-mini" />
-                            <span className="folder-name-mini">{content.folder_info.folder_name}</span>
+                          {content.folder_info && (
+                            <div className="incomplete-item-folder">
+                              <Icon src={Article} className="folder-icon-mini" />
+                              <span className="folder-name-mini">{content.folder_info.folder_name}</span>
+                            </div>
+                          )}
+
+                          <div className="incomplete-item-progress">
+                            {content.incomplete_type === 'not_started' && (
+                              <div className="incomplete-not-started-message">
+                                <Icon src={RemoveCircleOutline} className="not-started-icon" />
+                                <span>Nội dung này chưa được bắt đầu học</span>
+                              </div>
+                            )}
+                            {content.incomplete_type !== 'not_started' && content.video_progress?.has_progress && (
+                              <div className="incomplete-progress-row">
+                                <div className="incomplete-progress-label">
+                                  <Icon src={VideoLibrary} className="progress-mini-icon video" />
+                                  <span>Video: {Math.round(content.video_progress.progress_percent)}%</span>
+                                </div>
+                                <div className="incomplete-mini-bar">
+                                  <div
+                                    className="incomplete-mini-fill video"
+                                    style={{ width: `${content.video_progress.progress_percent}%` }}
+                                  />
+                                </div>
+                                {content.video_progress.remaining_time > 0 && (
+                                  <span className="remaining-text">
+                                    Còn {Math.ceil(content.video_progress.remaining_time / 60)} phút
+                                  </span>
+                                )}
+                              </div>
+                            )}
+
+                            {content.incomplete_type !== 'not_started' && content.score?.has_score && (
+                              <div className="incomplete-progress-row">
+                                <div className="incomplete-progress-label">
+                                  <Icon src={Assessment} className="progress-mini-icon score" />
+                                  <span>
+                                    Điểm: {content.score.score}/{content.score.max_score}
+                                    {' '}({Math.round(content.score.percentage)}%)
+                                  </span>
+                                </div>
+                                <div className="incomplete-mini-bar">
+                                  <div
+                                    className="incomplete-mini-fill score"
+                                    style={{ width: `${content.score.percentage}%` }}
+                                  />
+                                </div>
+                                {content.score.remaining_score > 0 && (
+                                  <span className="remaining-text">
+                                    Còn thiếu {content.score.remaining_score} điểm
+                                  </span>
+                                )}
+                              </div>
+                            )}
                           </div>
-                        )}
 
-                        <div className="incomplete-item-progress">
-                          {content.incomplete_type === 'not_started' && (
-                            <div className="incomplete-not-started-message">
-                              <Icon src={RemoveCircleOutline} className="not-started-icon" />
-                              <span>Nội dung này chưa được bắt đầu học</span>
-                            </div>
-                          )}
-                          {content.incomplete_type !== 'not_started' && content.video_progress?.has_progress && (
-                            <div className="incomplete-progress-row">
-                              <div className="incomplete-progress-label">
-                                <Icon src={VideoLibrary} className="progress-mini-icon video" />
-                                <span>Video: {Math.round(content.video_progress.progress_percent)}%</span>
-                              </div>
-                              <div className="incomplete-mini-bar">
-                                <div
-                                  className="incomplete-mini-fill video"
-                                  style={{ width: `${content.video_progress.progress_percent}%` }}
-                                />
-                              </div>
-                              {content.video_progress.remaining_time > 0 && (
-                                <span className="remaining-text">
-                                  Còn {Math.ceil(content.video_progress.remaining_time / 60)} phút
-                                </span>
-                              )}
-                            </div>
-                          )}
-
-                          {content.incomplete_type !== 'not_started' && content.score?.has_score && (
-                            <div className="incomplete-progress-row">
-                              <div className="incomplete-progress-label">
-                                <Icon src={Assessment} className="progress-mini-icon score" />
-                                <span>
-                                  Điểm: {content.score.score}/{content.score.max_score}
-                                  {' '}({Math.round(content.score.percentage)}%)
-                                </span>
-                              </div>
-                              <div className="incomplete-mini-bar">
-                                <div
-                                  className="incomplete-mini-fill score"
-                                  style={{ width: `${content.score.percentage}%` }}
-                                />
-                              </div>
-                              {content.score.remaining_score > 0 && (
-                                <span className="remaining-text">
-                                  Còn thiếu {content.score.remaining_score} điểm
-                                </span>
-                              )}
-                            </div>
-                          )}
+                          <div className="incomplete-item-footer">
+                            <span className={`incomplete-type-badge ${content.incomplete_type}`}>
+                              {content.incomplete_type === 'both' && 'Cả video & điểm'}
+                              {content.incomplete_type === 'video' && 'Video chưa xong'}
+                              {content.incomplete_type === 'not_started' && 'Chưa bắt đầu'}
+                              {content.incomplete_type !== 'both'
+                                && content.incomplete_type !== 'video'
+                                && content.incomplete_type !== 'not_started' && 'Điểm chưa đạt'}
+                            </span>
+                          </div>
                         </div>
+                      ))}
+                    </div>
 
-                        <div className="incomplete-item-footer">
-                          <span className={`incomplete-type-badge ${content.incomplete_type}`}>
-                            {content.incomplete_type === 'both' && 'Cả video & điểm'}
-                            {content.incomplete_type === 'video' && 'Video chưa xong'}
-                            {content.incomplete_type === 'not_started' && 'Chưa bắt đầu'}
-                            {content.incomplete_type !== 'both'
-                              && content.incomplete_type !== 'video'
-                              && content.incomplete_type !== 'not_started' && 'Điểm chưa đạt'}
-                          </span>
-                        </div>
+                    {/* Show "Load All" button if not showing all and there are more items */}
+                    {!showAllIncomplete && incompleteContents?.total_count > 20 && (
+                      <div className="incomplete-load-all-container">
+                        <Button
+                          variant="primary"
+                          size="md"
+                          onClick={() => setShowAllIncomplete(true)}
+                          className="load-all-incomplete-btn"
+                        >
+                          Xem tất cả ({incompleteContents.total_count} bài)
+                        </Button>
                       </div>
-                    ))}
-                  </div>
+                    )}
+                  </>
                 )}
               </div>
             )}
@@ -1460,41 +1483,41 @@ const VideoProgressTool = () => {
                     </div>
                     <div className="compact-incomplete-list">
                       {incompleteContents.priority_contents.map((content) => (
-                      <div key={content.content_id} className="compact-incomplete-item">
-                        <div className="compact-incomplete-item-header">
-                          <Icon
-                            src={(() => {
-                              if (content.incomplete_type === 'both') { return Error; }
-                              if (content.incomplete_type === 'not_started') { return RemoveCircleOutline; }
-                              return Warning;
-                            })()}
-                            className={`compact-incomplete-type-icon ${content.incomplete_type}`}
-                          />
-                          <span className="compact-incomplete-item-title">
-                            {content.title || `Content #${content.content_id}`}
-                          </span>
+                        <div key={content.content_id} className="compact-incomplete-item">
+                          <div className="compact-incomplete-item-header">
+                            <Icon
+                              src={(() => {
+                                if (content.incomplete_type === 'both') { return Error; }
+                                if (content.incomplete_type === 'not_started') { return RemoveCircleOutline; }
+                                return Warning;
+                              })()}
+                              className={`compact-incomplete-type-icon ${content.incomplete_type}`}
+                            />
+                            <span className="compact-incomplete-item-title">
+                              {content.title || `Content #${content.content_id}`}
+                            </span>
+                          </div>
+                          <div className="compact-incomplete-item-stats">
+                            {content.incomplete_type === 'not_started' && (
+                              <div className="compact-stat-mini not-started">
+                                <span>Chưa bắt đầu</span>
+                              </div>
+                            )}
+                            {content.incomplete_type !== 'not_started' && content.video_progress?.has_progress && (
+                              <div className="compact-stat-mini">
+                                <Icon src={VideoLibrary} className="compact-stat-mini-icon video" />
+                                <span>{Math.round(content.video_progress.progress_percent)}%</span>
+                              </div>
+                            )}
+                            {content.incomplete_type !== 'not_started' && content.score?.has_score && (
+                              <div className="compact-stat-mini">
+                                <Icon src={Assessment} className="compact-stat-mini-icon score" />
+                                <span>{Math.round(content.score.percentage)}%</span>
+                              </div>
+                            )}
+                          </div>
                         </div>
-                        <div className="compact-incomplete-item-stats">
-                          {content.incomplete_type === 'not_started' && (
-                            <div className="compact-stat-mini not-started">
-                              <span>Chưa bắt đầu</span>
-                            </div>
-                          )}
-                          {content.incomplete_type !== 'not_started' && content.video_progress?.has_progress && (
-                            <div className="compact-stat-mini">
-                              <Icon src={VideoLibrary} className="compact-stat-mini-icon video" />
-                              <span>{Math.round(content.video_progress.progress_percent)}%</span>
-                            </div>
-                          )}
-                          {content.incomplete_type !== 'not_started' && content.score?.has_score && (
-                            <div className="compact-stat-mini">
-                              <Icon src={Assessment} className="compact-stat-mini-icon score" />
-                              <span>{Math.round(content.score.percentage)}%</span>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))}
+                      ))}
                     </div>
                   </>
                 )}
@@ -1729,97 +1752,113 @@ const VideoProgressTool = () => {
               )}
 
               {!incompleteLoading && filteredIncompleteContents.length > 0 && (
-                <div className="incomplete-list">
-                  {filteredIncompleteContents.map((content) => (
-                    <div key={content.content_id} className="incomplete-item">
-                      <div className="incomplete-item-header">
-                        <div className="incomplete-item-title-row">
-                          <Icon
-                            src={(() => {
-                              if (content.incomplete_type === 'both') { return Error; }
-                              if (content.incomplete_type === 'not_started') { return RemoveCircleOutline; }
-                              return Warning;
-                            })()}
-                            className={`incomplete-type-icon ${content.incomplete_type}`}
-                          />
-                          <span className="incomplete-item-title">{content.title || `Content #${content.content_id}`}</span>
+                <>
+                  <div className="incomplete-list">
+                    {filteredIncompleteContents.map((content) => (
+                      <div key={content.content_id} className="incomplete-item">
+                        <div className="incomplete-item-header">
+                          <div className="incomplete-item-title-row">
+                            <Icon
+                              src={(() => {
+                                if (content.incomplete_type === 'both') { return Error; }
+                                if (content.incomplete_type === 'not_started') { return RemoveCircleOutline; }
+                                return Warning;
+                              })()}
+                              className={`incomplete-type-icon ${content.incomplete_type}`}
+                            />
+                            <span className="incomplete-item-title">{content.title || `Content #${content.content_id}`}</span>
+                          </div>
+                          <span className={`priority-badge priority-${Math.floor(content.priority / 25)}`}>
+                            {content.incomplete_type === 'not_started' ? 'Chưa bắt đầu' : `Ưu tiên: ${Math.round(content.priority)}%`}
+                          </span>
                         </div>
-                        <span className={`priority-badge priority-${Math.floor(content.priority / 25)}`}>
-                          {content.incomplete_type === 'not_started' ? 'Chưa bắt đầu' : `Ưu tiên: ${Math.round(content.priority)}%`}
-                        </span>
-                      </div>
 
-                      {content.folder_info && (
-                        <div className="incomplete-item-folder">
-                          <Icon src={Article} className="folder-icon-mini" />
-                          <span className="folder-name-mini">{content.folder_info.folder_name}</span>
+                        {content.folder_info && (
+                          <div className="incomplete-item-folder">
+                            <Icon src={Article} className="folder-icon-mini" />
+                            <span className="folder-name-mini">{content.folder_info.folder_name}</span>
+                          </div>
+                        )}
+
+                        <div className="incomplete-item-progress">
+                          {content.incomplete_type === 'not_started' && (
+                            <div className="incomplete-not-started-message">
+                              <Icon src={RemoveCircleOutline} className="not-started-icon" />
+                              <span>Nội dung này chưa được bắt đầu học</span>
+                            </div>
+                          )}
+                          {content.incomplete_type !== 'not_started' && content.video_progress?.has_progress && (
+                            <div className="incomplete-progress-row">
+                              <div className="incomplete-progress-label">
+                                <Icon src={VideoLibrary} className="progress-mini-icon video" />
+                                <span>Video: {Math.round(content.video_progress.progress_percent)}%</span>
+                              </div>
+                              <div className="incomplete-mini-bar">
+                                <div
+                                  className="incomplete-mini-fill video"
+                                  style={{ width: `${content.video_progress.progress_percent}%` }}
+                                />
+                              </div>
+                              {content.video_progress.remaining_time > 0 && (
+                                <span className="remaining-text">
+                                  Còn {Math.ceil(content.video_progress.remaining_time / 60)} phút
+                                </span>
+                              )}
+                            </div>
+                          )}
+
+                          {content.incomplete_type !== 'not_started' && content.score?.has_score && (
+                            <div className="incomplete-progress-row">
+                              <div className="incomplete-progress-label">
+                                <Icon src={Assessment} className="progress-mini-icon score" />
+                                <span>
+                                  Điểm: {content.score.score}/{content.score.max_score}
+                                  {' '}({Math.round(content.score.percentage)}%)
+                                </span>
+                              </div>
+                              <div className="incomplete-mini-bar">
+                                <div
+                                  className="incomplete-mini-fill score"
+                                  style={{ width: `${content.score.percentage}%` }}
+                                />
+                              </div>
+                              {content.score.remaining_score > 0 && (
+                                <span className="remaining-text">
+                                  Còn thiếu {content.score.remaining_score} điểm
+                                </span>
+                              )}
+                            </div>
+                          )}
                         </div>
-                      )}
 
-                      <div className="incomplete-item-progress">
-                        {content.incomplete_type === 'not_started' && (
-                          <div className="incomplete-not-started-message">
-                            <Icon src={RemoveCircleOutline} className="not-started-icon" />
-                            <span>Nội dung này chưa được bắt đầu học</span>
-                          </div>
-                        )}
-                        {content.incomplete_type !== 'not_started' && content.video_progress?.has_progress && (
-                          <div className="incomplete-progress-row">
-                            <div className="incomplete-progress-label">
-                              <Icon src={VideoLibrary} className="progress-mini-icon video" />
-                              <span>Video: {Math.round(content.video_progress.progress_percent)}%</span>
-                            </div>
-                            <div className="incomplete-mini-bar">
-                              <div
-                                className="incomplete-mini-fill video"
-                                style={{ width: `${content.video_progress.progress_percent}%` }}
-                              />
-                            </div>
-                            {content.video_progress.remaining_time > 0 && (
-                              <span className="remaining-text">
-                                Còn {Math.ceil(content.video_progress.remaining_time / 60)} phút
-                              </span>
-                            )}
-                          </div>
-                        )}
-
-                        {content.incomplete_type !== 'not_started' && content.score?.has_score && (
-                          <div className="incomplete-progress-row">
-                            <div className="incomplete-progress-label">
-                              <Icon src={Assessment} className="progress-mini-icon score" />
-                              <span>
-                                Điểm: {content.score.score}/{content.score.max_score}
-                                {' '}({Math.round(content.score.percentage)}%)
-                              </span>
-                            </div>
-                            <div className="incomplete-mini-bar">
-                              <div
-                                className="incomplete-mini-fill score"
-                                style={{ width: `${content.score.percentage}%` }}
-                              />
-                            </div>
-                            {content.score.remaining_score > 0 && (
-                              <span className="remaining-text">
-                                Còn thiếu {content.score.remaining_score} điểm
-                              </span>
-                            )}
-                          </div>
-                        )}
+                        <div className="incomplete-item-footer">
+                          <span className={`incomplete-type-badge ${content.incomplete_type}`}>
+                            {content.incomplete_type === 'both' && 'Cả video & điểm'}
+                            {content.incomplete_type === 'video' && 'Video chưa xong'}
+                            {content.incomplete_type === 'not_started' && 'Chưa bắt đầu'}
+                            {content.incomplete_type !== 'both'
+                              && content.incomplete_type !== 'video'
+                              && content.incomplete_type !== 'not_started' && 'Điểm chưa đạt'}
+                          </span>
+                        </div>
                       </div>
+                    ))}
+                  </div>
 
-                      <div className="incomplete-item-footer">
-                        <span className={`incomplete-type-badge ${content.incomplete_type}`}>
-                          {content.incomplete_type === 'both' && 'Cả video & điểm'}
-                          {content.incomplete_type === 'video' && 'Video chưa xong'}
-                          {content.incomplete_type === 'not_started' && 'Chưa bắt đầu'}
-                          {content.incomplete_type !== 'both'
-                            && content.incomplete_type !== 'video'
-                            && content.incomplete_type !== 'not_started' && 'Điểm chưa đạt'}
-                        </span>
-                      </div>
+                  {/* Show "Load All" button if not showing all and there are more items */}
+                  {!showAllIncomplete && incompleteContents?.total_count > 20 && (
+                    <div className="incomplete-load-all-container">
+                      <Button
+                        variant="primary"
+                        size="md"
+                        onClick={() => setShowAllIncomplete(true)}
+                        className="load-all-incomplete-btn"
+                      >
+                        Xem tất cả ({incompleteContents.total_count} bài)
+                      </Button>
                     </div>
-                  ))}
-                </div>
+                  )}
+                </>
               )}
             </div>
           )}
