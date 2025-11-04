@@ -52,7 +52,6 @@ const VideoProgressTool = () => {
   const [incompleteFilter, setIncompleteFilter] = useState('all'); // all, not_started, video, score, both
   const [incompleteSortBy, setIncompleteSortBy] = useState('priority'); // priority, name, folder
   const incompleteSectionRef = useRef(null); // Ref to scroll to incomplete section
-  const [showAllIncomplete, setShowAllIncomplete] = useState(false); // State to show all incomplete contents
 
   // Fetch and extract H5P from URL
   const fetchH5PFromURL = async (url) => {
@@ -380,10 +379,10 @@ const VideoProgressTool = () => {
 
       try {
         setIncompleteLoading(true);
-        // Load fewer items in compact view (5), more in full view (20 or all)
+        // Load fewer items in compact view (5), load all in full view
         let limit = 5;
         if (!isCompactView) {
-          limit = showAllIncomplete ? 999999 : 20;
+          limit = 999999; // Load all items in full view
         }
         const incomplete = await fetchIncompleteContents(userData.id, limit);
         setIncompleteContents(incomplete);
@@ -396,7 +395,7 @@ const VideoProgressTool = () => {
     };
 
     loadIncompleteContents();
-  }, [userData, isCompactView, courseId, showAllIncomplete]);
+  }, [userData, isCompactView, courseId]);
 
   // Refresh data function
   const handleRefresh = async () => {
@@ -431,7 +430,7 @@ const VideoProgressTool = () => {
       try {
         let limit = 5;
         if (!isCompactView) {
-          limit = showAllIncomplete ? 999999 : 20;
+          limit = 999999; // Load all items in full view
         }
         const incomplete = await fetchIncompleteContents(userData.id, limit);
         setIncompleteContents(incomplete);
@@ -1213,20 +1212,6 @@ const VideoProgressTool = () => {
                         </div>
                       ))}
                     </div>
-
-                    {/* Show "Load All" button if not showing all and there are more items */}
-                    {!showAllIncomplete && incompleteContents?.total_count > 20 && (
-                      <div className="incomplete-load-all-container">
-                        <Button
-                          variant="primary"
-                          size="md"
-                          onClick={() => setShowAllIncomplete(true)}
-                          className="load-all-incomplete-btn"
-                        >
-                          Xem tất cả ({incompleteContents.total_count} bài)
-                        </Button>
-                      </div>
-                    )}
                   </>
                 )}
               </div>
@@ -1844,20 +1829,6 @@ const VideoProgressTool = () => {
                       </div>
                     ))}
                   </div>
-
-                  {/* Show "Load All" button if not showing all and there are more items */}
-                  {!showAllIncomplete && incompleteContents?.total_count > 20 && (
-                    <div className="incomplete-load-all-container">
-                      <Button
-                        variant="primary"
-                        size="md"
-                        onClick={() => setShowAllIncomplete(true)}
-                        className="load-all-incomplete-btn"
-                      >
-                        Xem tất cả ({incompleteContents.total_count} bài)
-                      </Button>
-                    </div>
-                  )}
                 </>
               )}
             </div>
