@@ -1,0 +1,82 @@
+// Course Feedback Modal Styles
+
+.course-feedback-modal {
+  .modal-header {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .modal-title {
+    font-weight: 600;
+    font-size: 1.5rem;
+  }
+
+  .modal-body {
+    padding-top: 0.5rem;
+    
+    .lead {
+      font-size: 1rem;
+    }
+  }
+
+  // Star rating styles
+  .btn-link {
+    text-decoration: none;
+    transition: transform 0.2s ease;
+    
+    &:hover {
+      transform: scale(1.1);
+    }
+    
+    &:focus {
+      outline: 2px solid #0075b4;
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+  }
+
+  // Feedback textarea
+  textarea {
+    resize: vertical;
+    min-height: 100px;
+    
+    &:focus {
+      border-color: #0075b4;
+      box-shadow: 0 0 0 0.2rem rgba(0, 117, 180, 0.25);
+    }
+  }
+
+  // Modal footer
+  .modal-footer {
+    border-top: none;
+    padding-top: 0.5rem;
+  }
+
+  // Success alert
+  .alert-success {
+    border-left: 4px solid #00791c;
+  }
+
+  // Error alert
+  .alert-danger {
+    border-left: 4px solid #d32f2f;
+  }
+
+  // Character count
+  .form-text {
+    font-size: 0.875rem;
+  }
+}
+
+// Responsive adjustments
+@media (max-width: 576px) {
+  .course-feedback-modal {
+    .modal-title {
+      font-size: 1.25rem;
+    }
+
+    .btn-link {
+      padding: 0.5rem;
+    }
+  }
+}
