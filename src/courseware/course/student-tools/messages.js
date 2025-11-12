@@ -496,6 +496,11 @@ const messages = defineMessages({
     defaultMessage: '{completed}/{total} hoàn thành',
     description: 'Progress label showing completed vs total blocks',
   },
+  feedbackTitle: {
+    id: 'learn.course.studentTools.feedback.title',
+    defaultMessage: 'Phản hồi',
+    description: 'Title for feedback tool',
+  },
 });
 
 export default messages;

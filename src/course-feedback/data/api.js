@@ -107,3 +107,52 @@ export async function deleteCourseFeedback(courseId) {
     throw error;
   }
 }
+
+/**
+ * Get all feedback for a specific course (for viewing other users' feedback)
+ * 
+ * @param {string} courseId - The course ID
+ * @param {string} sort - Sort order: 'rating_high', 'rating_low', 'date_new', 'date_old' (default: 'rating_high')
+ * @returns {Promise<Array>} Array of feedback objects from other users
+ */
+export async function getAllCourseFeedback(courseId, sort = 'rating_high') {
+  const url = `${getConfig().LMS_BASE_URL}/api/user_course_feedback/v1/feedback/${courseId}/all/`;
+  
+  try {
+    const { data } = await getAuthenticatedHttpClient().get(url, {
+      params: { sort }
+    });
+    return data.results || [];
+  } catch (error) {
+    console.error('Error fetching all course feedback:', error);
+    return [];
+  }
+}
+
+/**
+ * Get average rating and statistics for a course
+ * 
+ * @param {string} courseId - The course ID
+ * @returns {Promise<Object>} Average rating and statistics
+ */
+export async function getCourseAverageRating(courseId) {
+  const url = `${getConfig().LMS_BASE_URL}/api/user_course_feedback/v1/feedback/${courseId}/average/`;
+  
+  try {
+    const { data } = await getAuthenticatedHttpClient().get(url);
+    return data;
+  } catch (error) {
+    console.error('Error fetching course average rating:', error);
+    return {
+      average_rating: null,
+      total_feedback_count: 0,
+      rating_distribution: {
+        '5': 0,
+        '4': 0,
+        '3': 0,
+        '2': 0,
+        '1': 0,
+      }
+    };
+  }
+}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { checkFeedbackEligibility } from './data/api';
 
 /**
@@ -11,10 +11,31 @@ export const useCourseFeedback = (courseId) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [eligibilityData, setEligibilityData] = useState(null);
   const [isCheckingEligibility, setIsCheckingEligibility] = useState(false);
-  const [hasChecked, setHasChecked] = useState(false);
+
+  // Session storage key for tracking dismissed feedback popup
+  const getSessionStorageKey = (cId) => `feedback_dismissed_${cId}`;
+
+  // Check if feedback modal was already dismissed in this session
+  const wasDismissedInSession = useCallback(() => {
+    if (!courseId) return false;
+    const key = getSessionStorageKey(courseId);
+    return sessionStorage.getItem(key) === 'true';
+  }, [courseId]);
+
+  // Mark feedback modal as dismissed for this session
+  const markDismissedInSession = useCallback(() => {
+    if (!courseId) return;
+    const key = getSessionStorageKey(courseId);
+    sessionStorage.setItem(key, 'true');
+  }, [courseId]);
 
   useEffect(() => {
-    if (!courseId || hasChecked) {
+    if (!courseId) {
+      return;
+    }
+
+    // Check if modal was already dismissed in this session
+    if (wasDismissedInSession()) {
       return;
     }
 
@@ -24,28 +45,32 @@ export const useCourseFeedback = (courseId) => {
         const data = await checkFeedbackEligibility(courseId);
         setEligibilityData(data);
         
-        // Automatically show modal if eligible
+        // Automatically show modal if eligible and not dismissed
         if (data.should_show_popup) {
           // Add a small delay for better UX
           setTimeout(() => {
             setIsModalOpen(true);
           }, 1000);
         }
-        
-        setHasChecked(true);
       } catch (error) {
         console.error('Error checking feedback eligibility:', error);
-        setHasChecked(true);
       } finally {
         setIsCheckingEligibility(false);
       }
     };
 
     checkEligibility();
-  }, [courseId, hasChecked]);
+  }, [courseId, wasDismissedInSession]);
 
   const openModal = () => setIsModalOpen(true);
-  const closeModal = () => setIsModalOpen(false);
+  
+  const closeModal = useCallback((markDismissed = false) => {
+    setIsModalOpen(false);
+    // If user skips/closes the modal, mark it as dismissed for this session
+    if (markDismissed) {
+      markDismissedInSession();
+    }
+  }, [markDismissedInSession]);
 
   return {
     isModalOpen,

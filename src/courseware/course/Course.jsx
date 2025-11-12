@@ -144,7 +144,7 @@ const Course = ({
         <CourseFeedbackModal
           courseId={courseId}
           isOpen={isFeedbackModalOpen}
-          onClose={closeFeedbackModal}
+          onClose={() => closeFeedbackModal(true)}
         />
         <ContentTools course={course} />
         <ToolsPanel />
