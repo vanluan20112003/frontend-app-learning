@@ -60,11 +60,11 @@ const Course = ({
   const shouldDisplayChat = windowWidth >= breakpoints.medium.minWidth;
   const daysPerWeek = course?.courseGoals?.selectedGoal?.daysPerWeek;
   
-  // Course feedback modal hook
+  // Course feedback modal hook - pass sequenceId to trigger check on navigation
   const {
     isModalOpen: isFeedbackModalOpen,
     closeModal: closeFeedbackModal,
-  } = useCourseFeedback(courseId);
+  } = useCourseFeedback(courseId, sequenceId);
 
   useEffect(() => {
     const celebrateFirstSection = celebrations && celebrations.firstSection;

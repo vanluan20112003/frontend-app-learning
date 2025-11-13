@@ -5,9 +5,10 @@ import { checkFeedbackEligibility } from './data/api';
  * Custom hook to manage course feedback modal state and eligibility
  * 
  * @param {string} courseId - The course ID
+ * @param {string} navigationTrigger - Optional trigger (e.g., sequenceId) to re-check eligibility on navigation
  * @returns {Object} - Modal state and handlers
  */
-export const useCourseFeedback = (courseId) => {
+export const useCourseFeedback = (courseId, navigationTrigger = null) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [eligibilityData, setEligibilityData] = useState(null);
   const [isCheckingEligibility, setIsCheckingEligibility] = useState(false);
@@ -60,7 +61,7 @@ export const useCourseFeedback = (courseId) => {
     };
 
     checkEligibility();
-  }, [courseId, wasDismissedInSession]);
+  }, [courseId, navigationTrigger, wasDismissedInSession]);
 
   const openModal = () => setIsModalOpen(true);
   

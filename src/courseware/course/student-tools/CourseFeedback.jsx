@@ -490,18 +490,20 @@ const CourseFeedback = () => {
         </Card>
       ) : (
         <Card className="submit-feedback-card">
-          <Card.Body>
+          <Card.Body className="p-3">
             <h3>Chia sẻ phản hồi của bạn</h3>
             <p>
               Bạn đã hoàn thành {completionPercentage.toFixed(1)}% khóa học. 
               Hãy chia sẻ trải nghiệm của bạn!
             </p>
-            <Button
-              variant="primary"
-              onClick={() => setShowFeedbackModal(true)}
-            >
-              Gửi phản hồi
-            </Button>
+            <div className="d-flex justify-content-center">
+              <Button
+                variant="primary"
+                onClick={() => setShowFeedbackModal(true)}
+              >
+                Gửi phản hồi
+              </Button>
+            </div>
           </Card.Body>
         </Card>
       )}
