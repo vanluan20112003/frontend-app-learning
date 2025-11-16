@@ -7,6 +7,7 @@ import {
   Spinner,
   Icon,
   ModalDialog,
+  Pagination,
 } from '@openedx/paragon';
 import {
   Star,
@@ -39,6 +40,8 @@ const CourseFeedback = () => {
   const [completionPercentage, setCompletionPercentage] = useState(0);
   const [myFeedback, setMyFeedback] = useState(null);
   const [allFeedback, setAllFeedback] = useState([]);
+  const [feedbackPagination, setFeedbackPagination] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
   const [averageRating, setAverageRating] = useState(null);
   const [totalFeedbackCount, setTotalFeedbackCount] = useState(0);
   const [showAllFeedback, setShowAllFeedback] = useState(false);
@@ -78,11 +81,13 @@ const CourseFeedback = () => {
       }
 
       try {
-        const allFeedbackData = await getAllCourseFeedback(courseId, 'date_old');
-        setAllFeedback(allFeedbackData);
+        const feedbackResponse = await getAllCourseFeedback(courseId, 'rating_high', currentPage, 10);
+        setAllFeedback(feedbackResponse.results || []);
+        setFeedbackPagination(feedbackResponse.pagination);
       } catch (err) {
         // Can't load all feedback, that's okay
         setAllFeedback([]);
+        setFeedbackPagination(null);
       }
 
       // Get average rating
@@ -127,6 +132,17 @@ const CourseFeedback = () => {
   const handleFeedbackSubmitted = () => {
     setShowFeedbackModal(false);
     loadFeedbackData(); // Reload data after submission/update
+  };
+
+  const handlePageChange = async (page) => {
+    setCurrentPage(page);
+    try {
+      const feedbackResponse = await getAllCourseFeedback(courseId, 'rating_high', page, 10);
+      setAllFeedback(feedbackResponse.results || []);
+      setFeedbackPagination(feedbackResponse.pagination);
+    } catch (err) {
+      console.error('Error loading page:', err);
+    }
   };
 
   const renderStars = (rating) => {
@@ -278,11 +294,12 @@ const CourseFeedback = () => {
                 onClick={() => setShowAllFeedback(!showAllFeedback)}
               >
                 <Icon src={Visibility} className="mr-1" />
-                {showAllFeedback ? 'Ẩn' : `Xem tất cả (${allFeedback.length})`}
+                {showAllFeedback ? 'Ẩn' : `Xem tất cả (${totalFeedbackCount})`}
               </Button>
             </div>
 
             {showAllFeedback && (
+              <>
               <div className="feedback-list">
                 {allFeedback.map((feedback, index) => (
                   <Card key={index} className="feedback-item mb-3">
@@ -310,6 +327,20 @@ const CourseFeedback = () => {
                   </Card>
                 ))}
               </div>
+              {/* Pagination */}
+              {feedbackPagination && feedbackPagination.num_pages > 1 && (
+                <div className="pagination-wrapper">
+                  <Pagination
+                    paginationLabel="Phân trang phản hồi"
+                    pageCount={feedbackPagination.num_pages}
+                    currentPage={currentPage}
+                    onPageSelect={handlePageChange}
+                    variant="reduced"
+                    size="small"
+                  />
+                </div>
+              )}
+              </>
             )}
           </div>
         )}
@@ -368,6 +399,7 @@ const CourseFeedback = () => {
           </p>
         </Alert>
 
+        
         {/* All Feedback Section */}
         {allFeedback.length > 0 && (
           <div className="all-feedback-section mt-4">
@@ -379,11 +411,12 @@ const CourseFeedback = () => {
                 onClick={() => setShowAllFeedback(!showAllFeedback)}
               >
                 <Icon src={Visibility} className="mr-1" />
-                {showAllFeedback ? 'Ẩn' : `Xem tất cả (${allFeedback.length})`}
+                {showAllFeedback ? 'Ẩn' : `Xem tất cả (${totalFeedbackCount})`}
               </Button>
             </div>
 
             {showAllFeedback && (
+              <>
               <div className="feedback-list">
                 {allFeedback.map((feedback, index) => (
                   <Card key={index} className="feedback-item mb-3">
@@ -412,6 +445,20 @@ const CourseFeedback = () => {
                 ))}
                 
               </div>
+              {/* Pagination */}
+              {feedbackPagination && feedbackPagination.num_pages > 1 && (
+                <div className="pagination-wrapper">
+                  <Pagination
+                    paginationLabel="Phân trang phản hồi"
+                    pageCount={feedbackPagination.num_pages}
+                    currentPage={currentPage}
+                    onPageSelect={handlePageChange}
+                    variant="reduced"
+                    size="small"
+                  />
+                </div>
+              )}
+              </>
             )}
           </div>
         )}
@@ -519,38 +566,54 @@ const CourseFeedback = () => {
               onClick={() => setShowAllFeedback(!showAllFeedback)}
             >
               <Icon src={Visibility} className="mr-1" />
-              {showAllFeedback ? 'Ẩn' : `Xem tất cả (${allFeedback.length})`}
+              {showAllFeedback ? 'Ẩn' : `Xem tất cả (${totalFeedbackCount})`}
             </Button>
           </div>
 
           {showAllFeedback && (
-            <div className="feedback-list">
-              {allFeedback.map((feedback, index) => (
-                <Card key={index} className="feedback-item mb-3">
-                    <Card.Body>
-                      <div className="d-flex justify-content-between align-items-start px-3 py-2">
-                        <div className="flex-grow-1 w-100">
-                          <div className="d-flex align-items-center justify-content-between mb-1">
-                            <strong className="user-name">
-                              {feedback.user_full_name || feedback.username}
-                            </strong>
-                            <span className="text-muted" style={{ fontSize: '0.875rem' }}>
-                              {formatDate(feedback.created_at)}
-                            </span>
+            <>
+              <div className="feedback-list">
+                {allFeedback.map((feedback, index) => (
+                  <Card key={index} className="feedback-item mb-3">
+                      <Card.Body>
+                        <div className="d-flex justify-content-between align-items-start px-3 py-2">
+                          <div className="flex-grow-1 w-100">
+                            <div className="d-flex align-items-center justify-content-between mb-1">
+                              <strong className="user-name">
+                                {feedback.user_full_name || feedback.username}
+                              </strong>
+                              <span className="text-muted" style={{ fontSize: '0.875rem' }}>
+                                {formatDate(feedback.created_at)}
+                              </span>
+                            </div>
+                            {renderStars(feedback.rating)}
+                            {/* {feedback.feedback_text && (
+                              <p className="feedback-text mt-2">{feedback.feedback_text}</p>
+                            )} */}
                           </div>
-                          {renderStars(feedback.rating)}
-                          {/* {feedback.feedback_text && (
-                            <p className="feedback-text mt-2">{feedback.feedback_text}</p>
-                          )} */}
+                          {feedback.feedback_text && (
+                              <p className="feedback-text mt-2 mb-2">{feedback.feedback_text}</p>
+                            )}
                         </div>
-                        {feedback.feedback_text && (
-                            <p className="feedback-text mt-2 mb-2">{feedback.feedback_text}</p>
-                          )}
-                      </div>
-                    </Card.Body>
-                  </Card>
-              ))}
-            </div>
+                      </Card.Body>
+                    </Card>
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {feedbackPagination && feedbackPagination.num_pages > 1 && (
+                <div className="pagination-wrapper">
+                  <Pagination
+                    paginationLabel="Phân trang phản hồi"
+                    pageCount={feedbackPagination.num_pages}
+                    currentPage={currentPage}
+                    onPageSelect={handlePageChange}
+                    variant="reduced"
+                    size="small"
+                  />
+                </div>
+              )}
+            </>
           )}
         </div>
       )}

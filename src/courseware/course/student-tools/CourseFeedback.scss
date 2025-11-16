@@ -366,6 +366,7 @@
     .feedback-list {
       max-height: 600px;
       overflow-y: auto;
+      overflow-x: hidden;
       padding: 0 0.5rem;
       margin-top: 1.5rem;
 
@@ -447,6 +448,16 @@
           font-size: 1rem;
         }
       }
+    }
+    
+    .pagination-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 1rem;
+      padding: 0.5rem;
+      width: 100%;
+      overflow: visible;
     }
   }
 

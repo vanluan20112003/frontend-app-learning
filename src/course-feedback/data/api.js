@@ -113,19 +113,47 @@ export async function deleteCourseFeedback(courseId) {
  * 
  * @param {string} courseId - The course ID
  * @param {string} sort - Sort order: 'rating_high', 'rating_low', 'date_new', 'date_old' (default: 'rating_high')
- * @returns {Promise<Array>} Array of feedback objects from other users
+ * @param {number} page - Page number for pagination (default: 1)
+ * @param {number} pageSize - Number of items per page (default: 10)
+ * @returns {Promise<Object>} Object with feedback array and pagination info
  */
-export async function getAllCourseFeedback(courseId, sort = 'rating_high') {
+export async function getAllCourseFeedback(courseId, sort = 'rating_high', page = 1, pageSize = 10) {
   const url = `${getConfig().LMS_BASE_URL}/api/user_course_feedback/v1/feedback/${courseId}/all/`;
   
   try {
     const { data } = await getAuthenticatedHttpClient().get(url, {
-      params: { sort }
+      params: { 
+        sort,
+        page,
+        page_size: pageSize,
+      }
     });
-    return data.results || [];
+    
+    // Backend returns pagination data in a nested structure
+    const paginationData = data.pagination || {};
+    
+    return {
+      results: data.results || [],
+      pagination: {
+        count: paginationData.count || 0,
+        next: paginationData.next,
+        previous: paginationData.previous,
+        num_pages: paginationData.num_pages || 1,
+        current_page: page,
+      },
+    };
   } catch (error) {
     console.error('Error fetching all course feedback:', error);
-    return [];
+    return {
+      results: [],
+      pagination: {
+        count: 0,
+        next: null,
+        previous: null,
+        num_pages: 1,
+        current_page: 1,
+      },
+    };
   }
 }
 
