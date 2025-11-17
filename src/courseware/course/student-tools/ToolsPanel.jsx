@@ -13,6 +13,7 @@ import {
   Fullscreen,
   FullscreenExit,
   School,
+  RateReview,
 } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { useToolsDrawer } from '../navigation-sidebar';
@@ -22,6 +23,7 @@ import SupportForm from './SupportForm';
 import ContentReport from './ContentReport';
 import VideoProgressTool from './VideoProgressTool';
 import MicroUnitsList from './MicroUnitsList';
+import CourseFeedback from './CourseFeedback';
 import messages from './messages';
 import './ToolsPanel.scss';
 
@@ -64,6 +66,12 @@ const ToolsPanel = () => {
       component: QuickNotes,
     },
     {
+      id: 'feedback',
+      name: intl.formatMessage(messages.feedbackTitle),
+      icon: RateReview,
+      component: CourseFeedback,
+    },
+    {
       id: 'support',
       name: intl.formatMessage(messages.supportTitle),
       icon: Help,
@@ -100,6 +108,16 @@ const ToolsPanel = () => {
       setActiveTool(toolId);
       setIsOpen(true);
       setIsDrawerOpen(true);
+      
+      // Clamp width to max 500 for feedback tool
+      if (toolId === 'feedback') {
+        if (localDrawerWidth > 450) {
+          // If current width exceeds 400px, clamp it to 400px
+          setLocalDrawerWidth(450);
+          setDrawerWidth(450);
+          setIsMaximized(false);
+        }
+      }
     }
   };
 
@@ -125,9 +143,18 @@ const ToolsPanel = () => {
       setDrawerWidth(previousWidth);
       setIsMaximized(false);
     } else {
-      // Maximize to 80% of window width
+      // Maximize based on active tool
       setPreviousWidth(localDrawerWidth);
-      const maxWidth = Math.floor(window.innerWidth * 0.8);
+      let maxWidth;
+      
+      if (activeTool === 'feedback') {
+        // Feedback tool limited to 400px max
+        maxWidth = 450;
+      } else {
+        // Other tools can use 80% of window width
+        maxWidth = Math.floor(window.innerWidth * 0.8);
+      }
+      
       setLocalDrawerWidth(maxWidth);
       setDrawerWidth(maxWidth);
       setIsMaximized(true);
@@ -136,7 +163,13 @@ const ToolsPanel = () => {
 
   // Resize functionality - Click to toggle between preset sizes
   const handleResizeClick = () => {
-    const presetSizes = [300, 400, 500, 600, 700];
+    // Different preset sizes based on active tool
+    const presetSizes = activeTool === 'feedback' 
+      ? [300, 350, 400, 450] // Limited sizes for feedback
+      : [300, 400, 500, 600, 700]; // Full range for other tools
+    
+
+      //  const presetSizes = [300, 400, 500, 600, 700];
     const currentIndex = presetSizes.findIndex(size => Math.abs(size - localDrawerWidth) < 50);
     const nextIndex = (currentIndex + 1) % presetSizes.length;
     const newWidth = presetSizes[nextIndex];
@@ -158,7 +191,12 @@ const ToolsPanel = () => {
 
       const newWidth = window.innerWidth - e.clientX;
       const minWidth = 300;
-      const maxWidth = window.innerWidth * 0.8;
+      
+      // Limit max width to 400px for feedback tool, otherwise 80% of window
+      const maxWidth = activeTool === 'feedback' 
+        ? 450 
+        : window.innerWidth * 0.8;
+      // const maxWidth = window.innerWidth * 0.8;
 
       if (newWidth >= minWidth && newWidth <= maxWidth) {
         setLocalDrawerWidth(newWidth);
@@ -180,7 +218,7 @@ const ToolsPanel = () => {
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isResizing, setDrawerWidth]);
+  }, [isResizing, activeTool, setDrawerWidth]);
 
   // Save drawer width and sidebar visibility to localStorage
   useEffect(() => {

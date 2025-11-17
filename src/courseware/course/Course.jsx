@@ -20,6 +20,7 @@ import ContentTools from './content-tools';
 import Sequence from './sequence';
 import { CourseLayout } from './navigation-sidebar';
 import { ToolsPanel } from './student-tools';
+import { CourseFeedbackModal, useCourseFeedback } from '@src/course-feedback';
 
 const Course = ({
   courseId,
@@ -58,6 +59,12 @@ const Course = ({
   );
   const shouldDisplayChat = windowWidth >= breakpoints.medium.minWidth;
   const daysPerWeek = course?.courseGoals?.selectedGoal?.daysPerWeek;
+  
+  // Course feedback modal hook - pass sequenceId to trigger check on navigation
+  const {
+    isModalOpen: isFeedbackModalOpen,
+    closeModal: closeFeedbackModal,
+  } = useCourseFeedback(courseId, sequenceId);
 
   useEffect(() => {
     const celebrateFirstSection = celebrations && celebrations.firstSection;
@@ -133,6 +140,11 @@ const Course = ({
           daysPerWeek={daysPerWeek}
           isOpen={weeklyGoalCelebrationOpen}
           onClose={() => setWeeklyGoalCelebrationOpen(false)}
+        />
+        <CourseFeedbackModal
+          courseId={courseId}
+          isOpen={isFeedbackModalOpen}
+          onClose={() => closeFeedbackModal(true)}
         />
         <ContentTools course={course} />
         <ToolsPanel />
