@@ -19,8 +19,7 @@ import { useIntl } from '@edx/frontend-platform/i18n';
 import { useToolsDrawer } from '../navigation-sidebar';
 import ModernCalculator from './ModernCalculator';
 import QuickNotes from './QuickNotes';
-import SupportForm from './SupportForm';
-import ContentReport from './ContentReport';
+import SupportAndReportTabs from './SupportAndReportTabs';
 import VideoProgressTool from './VideoProgressTool';
 import MicroUnitsList from './MicroUnitsList';
 import CourseFeedback from './CourseFeedback';
@@ -72,16 +71,10 @@ const ToolsPanel = () => {
       component: CourseFeedback,
     },
     {
-      id: 'support',
-      name: intl.formatMessage(messages.supportTitle),
+      id: 'support-report',
+      name: intl.formatMessage(messages.supportReportTitle),
       icon: Help,
-      component: SupportForm,
-    },
-    {
-      id: 'content-report',
-      name: intl.formatMessage(messages.contentReportTitle),
-      icon: Report,
-      component: ContentReport,
+      component: SupportAndReportTabs,
     },
     {
       id: 'micro-units',
@@ -109,10 +102,13 @@ const ToolsPanel = () => {
       setIsOpen(true);
       setIsDrawerOpen(true);
       
-      // Clamp width to max 500 for feedback tool
+      // Auto-hide sidebar when a tool is selected
+      setIsSidebarVisible(false);
+      
+      // Clamp width to max 450 for feedback tool
       if (toolId === 'feedback') {
         if (localDrawerWidth > 450) {
-          // If current width exceeds 400px, clamp it to 400px
+          // If current width exceeds 450px, clamp it to 450px
           setLocalDrawerWidth(450);
           setDrawerWidth(450);
           setIsMaximized(false);

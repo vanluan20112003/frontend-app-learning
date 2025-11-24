@@ -3,5 +3,7 @@ export { default as DesmosCalculator } from './DesmosCalculator';
 export { default as SimpleCalculator } from './SimpleCalculator';
 export { default as ModernCalculator } from './ModernCalculator';
 export { default as QuickNotes } from './QuickNotes';
+export { default as SupportAndReportTabs } from './SupportAndReportTabs';
+export { default as VideoProgressPanel } from './VideoProgressPanel';
 export { default as ToolsPanel } from './ToolsPanel';
 export { default as MicroUnitsList } from './MicroUnitsList';

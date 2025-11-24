@@ -19,7 +19,7 @@ import CourseBreadcrumbs from './CourseBreadcrumbs';
 import ContentTools from './content-tools';
 import Sequence from './sequence';
 import { CourseLayout } from './navigation-sidebar';
-import { ToolsPanel } from './student-tools';
+import { ToolsPanel, VideoProgressPanel } from './student-tools';
 import { CourseFeedbackModal, useCourseFeedback } from '@src/course-feedback';
 
 const Course = ({
@@ -148,6 +148,7 @@ const Course = ({
         />
         <ContentTools course={course} />
         <ToolsPanel />
+        <VideoProgressPanel />
       </CourseLayout>
     </SidebarProviderComponent>
   );
