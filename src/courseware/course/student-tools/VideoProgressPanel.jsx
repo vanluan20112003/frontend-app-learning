@@ -296,17 +296,25 @@ const VideoProgressPanel = () => {
     return null;
   }
 
-  // Show fake data if no real data or 0% progress
-  const hasRealVideoProgress = contentDetail?.video_progress?.has_progress && contentDetail.video_progress.progress_percent > 0;
-  const hasRealScore = contentDetail?.score?.has_score && contentDetail.score.score > 0;
+  // Use only real data from API, no fake data
+  // const hasRealVideoProgress = contentDetail?.video_progress?.has_progress && contentDetail.video_progress.progress_percent > 0;
+  // const hasRealScore = contentDetail?.score?.has_score && contentDetail.score.score > 0;
   
-  const videoProgress = hasRealVideoProgress
-    ? contentDetail.video_progress 
-    : { has_progress: true, progress_percent: 25, duration: 300, status: 'in_progress' };
+  // const videoProgress = hasRealVideoProgress
+  //   ? contentDetail.video_progress 
+  //   : { has_progress: true, progress_percent: 25, duration: 300, status: 'in_progress' };
     
-  const scoreData = hasRealScore
-    ? contentDetail.score 
-    : { has_score: true, score: 5, max_score: 20, score_percent: 25 };
+  // const scoreData = hasRealScore
+  //   ? contentDetail.score 
+  //   : { has_score: true, score: 5, max_score: 20, score_percent: 25 };
+
+  const videoProgress = contentDetail?.video_progress;
+  const scoreData = contentDetail?.score;
+
+  // Don't render panel if both video progress and score don't exist
+  if (!videoProgress?.has_progress && !scoreData?.has_score) {
+    return null;
+  }
 
   return (
     <>
