@@ -26,6 +26,11 @@ const messages = defineMessages({
     defaultMessage: 'Ghi chú',
     description: 'Title for notes tool',
   },
+  supportReportTitle: {
+    id: 'learn.course.studentTools.supportReport.title',
+    defaultMessage: 'Báo cáo',
+    description: 'Title for merged support and report tool',
+  },
   supportTitle: {
     id: 'learn.course.studentTools.support.title',
     defaultMessage: 'Hỗ trợ',

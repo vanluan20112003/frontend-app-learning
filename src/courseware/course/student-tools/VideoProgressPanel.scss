@@ -1,0 +1,106 @@
+// Video Progress Panel - Floating right side panel
+.video-progress-panel-toggle {
+  position: absolute;
+  right: 0;
+  top: 0;
+  z-index: 1040;
+  background: #0066cc;
+  border: none;
+  border-radius: 8px 0 0 8px;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: -2px 2px 8px rgba(0, 0, 0, 0.15);
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 10px;
+  padding-left: 1px;
+
+  &:hover {
+    background: #0052a3;
+    // padding-right: 0.75rem;
+  }
+
+  &.panel-open {
+    right: auto;
+    transform: translateX(0);
+    border-radius: 0 8px 8px 0;
+    transition: all 0.3s ease;
+  }
+
+  .pgn__icon {
+    color: white;
+    font-size: 1.25rem;
+  }
+
+  @media (max-width: 1199px) {
+    display: none;
+  }
+}
+
+.video-progress-panel-toggle .pgn__icon{
+    width: 15px;
+}
+
+.video-progress-panel {
+  position: fixed;
+  right: 0;
+  top: 80px;
+  background: white;
+  border-left: 1px solid #dee2e6;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+  z-index: 1035;
+  animation: slideInRight 0.3s ease;
+  padding: 1rem;
+  padding-left: 1.3rem;
+  padding-top: 0.7rem;
+    height: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &.panel-close{
+        padding-left: 0;
+        padding-right: 0;
+    }
+  .panel-body {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .progress-item {
+
+    .progress-text {
+      font-size: 0.9rem;
+      color: #495057;
+      white-space: nowrap;
+      
+      strong {
+        color: #0066cc;
+        font-weight: 600;
+      }
+    }
+  }
+
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  @media (max-width: 1199px) {
+    display: none;
+  }
+}
+
+

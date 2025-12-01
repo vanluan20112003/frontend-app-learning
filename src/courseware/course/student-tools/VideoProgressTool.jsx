@@ -52,7 +52,8 @@ const VideoProgressTool = () => {
   const [incompleteFilter, setIncompleteFilter] = useState('all'); // all, not_started, video, score, both
   const [incompleteSortBy, setIncompleteSortBy] = useState('priority'); // priority, name, folder
   const incompleteSectionRef = useRef(null); // Ref to scroll to incomplete section
-
+  const [showAllIncomplete, setShowAllIncomplete] = useState(false); // State to show all incomplete contents
+  console.log("Is there h5p ", h5pContentId)
   // Fetch and extract H5P from URL
   const fetchH5PFromURL = async (url) => {
     try {
