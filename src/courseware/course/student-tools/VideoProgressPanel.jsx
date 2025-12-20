@@ -18,11 +18,16 @@ import './VideoProgressPanel.scss';
 
 const VideoProgressPanel = () => {
   // console.log("🔵 VideoProgressPanel component is rendering");
-  
+
   const intl = useIntl();
   const { courseId, unitId } = useParams();
   const course = useModel('coursewareMeta', courseId);
-  const [isOpen, setIsOpen] = useState(true);
+
+  // Initialize isOpen from sessionStorage, default to true if not set
+  const [isOpen, setIsOpen] = useState(() => {
+    const saved = sessionStorage.getItem('videoProgressPanelOpen');
+    return saved !== null ? saved === 'true' : true;
+  });
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState(null);
   const [contentDetail, setContentDetail] = useState(null);
@@ -30,18 +35,19 @@ const VideoProgressPanel = () => {
   const [refreshing, setRefreshing] = useState(false);
   const h5pContentIdRef = useRef(null);
 
-  // Auto-close panel on small screens (but still render for H5P detection)
+  // Save isOpen state to sessionStorage whenever it changes
+  useEffect(() => {
+    sessionStorage.setItem('videoProgressPanelOpen', isOpen.toString());
+  }, [isOpen]);
+
+  // Auto-close panel on small screens (only on initial load, not overriding user choice)
   useEffect(() => {
     // console.log("💻 Screen size useEffect running");
-    const checkScreenSize = () => {
-      if (window.innerWidth < 1200) {
-        setIsOpen(false);
-      }
-    };
-
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-    return () => window.removeEventListener('resize', checkScreenSize);
+    const saved = sessionStorage.getItem('videoProgressPanelOpen');
+    // Only auto-close if user hasn't made a choice yet
+    if (saved === null && window.innerWidth < 1200) {
+      setIsOpen(false);
+    }
   }, []);
 
   // Fetch and extract H5P from URL
