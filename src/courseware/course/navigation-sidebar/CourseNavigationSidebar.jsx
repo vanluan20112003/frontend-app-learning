@@ -509,6 +509,142 @@ const CourseNavigationSidebar = ({
         .course-nav-sidebar::-webkit-scrollbar-thumb:hover {
           background: rgba(0, 0, 0, 0.25);
         }
+
+        /* Dark mode support - indigo-dark-theme from header toggle */
+        body.indigo-dark-theme .course-nav-sidebar {
+          background: #1f2937;
+          border-right-color: #374151;
+        }
+
+        body.indigo-dark-theme .sidebar-content {
+          background: #111827;
+        }
+
+        body.indigo-dark-theme .section-header {
+          background: #1f2937;
+        }
+
+        body.indigo-dark-theme .section-header:hover {
+          background: #374151;
+        }
+
+        body.indigo-dark-theme .section-header.active {
+          background: #1e3a5f;
+        }
+
+        body.indigo-dark-theme .section-title {
+          color: #f9fafb;
+        }
+
+        body.indigo-dark-theme .section-progress {
+          color: #9ca3af;
+        }
+
+        body.indigo-dark-theme .section-progress.completed {
+          color: #34d399;
+        }
+
+        body.indigo-dark-theme .section-icon {
+          color: #818cf8;
+        }
+
+        body.indigo-dark-theme .section-header.completed .section-icon {
+          color: #34d399;
+        }
+
+        body.indigo-dark-theme .section-expand-icon {
+          color: #9ca3af;
+        }
+
+        body.indigo-dark-theme .sequences-list {
+          background: #111827;
+        }
+
+        body.indigo-dark-theme .sequence-item {
+          color: #d1d5db;
+        }
+
+        body.indigo-dark-theme .sequence-item:hover {
+          background: #374151;
+        }
+
+        body.indigo-dark-theme .sequence-item.active {
+          background: #1e3a5f;
+          color: #93c5fd;
+        }
+
+        body.indigo-dark-theme .sequence-item.completed {
+          color: #34d399;
+        }
+
+        body.indigo-dark-theme .sequence-item.completed:not(.active) {
+          background: rgba(52, 211, 153, 0.1);
+        }
+
+        body.indigo-dark-theme .sequence-icon {
+          color: #6b7280;
+        }
+
+        body.indigo-dark-theme .sequence-item.active .sequence-icon {
+          color: #60a5fa;
+        }
+
+        body.indigo-dark-theme .sequence-item.completed .sequence-icon {
+          color: #34d399;
+        }
+
+        body.indigo-dark-theme .sequence-expand-icon {
+          color: #6b7280;
+        }
+
+        body.indigo-dark-theme .units-list {
+          background: #0f172a;
+        }
+
+        body.indigo-dark-theme .unit-item {
+          color: #9ca3af;
+        }
+
+        body.indigo-dark-theme .unit-item:hover {
+          background: #1f2937;
+        }
+
+        body.indigo-dark-theme .unit-item.active {
+          background: #1e3a5f;
+          color: #93c5fd;
+        }
+
+        body.indigo-dark-theme .unit-item.completed {
+          color: #34d399;
+        }
+
+        body.indigo-dark-theme .unit-item.completed:not(.active) {
+          background: rgba(52, 211, 153, 0.05);
+        }
+
+        body.indigo-dark-theme .unit-icon {
+          color: #6b7280;
+        }
+
+        body.indigo-dark-theme .unit-item.active .unit-icon {
+          color: #60a5fa;
+        }
+
+        body.indigo-dark-theme .unit-item.completed .unit-icon {
+          color: #34d399;
+        }
+
+        body.indigo-dark-theme .course-nav-sidebar {
+          scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+        }
+
+        body.indigo-dark-theme .course-nav-sidebar::-webkit-scrollbar-thumb {
+          background: rgba(255, 255, 255, 0.2);
+        }
+
+        body.indigo-dark-theme .course-nav-sidebar::-webkit-scrollbar-thumb:hover {
+          background: rgba(255, 255, 255, 0.3);
+        }
       `}
       </style>
 

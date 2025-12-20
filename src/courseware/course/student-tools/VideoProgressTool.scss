@@ -1984,3 +1984,360 @@
     }
   }
 }
+
+// Dark mode mixin for VideoProgressTool
+@mixin video-progress-tool-dark-mode {
+  .video-progress-tool-modern {
+    background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+    color: #f9fafb;
+
+    .compact-summary,
+    .stat-card,
+    .unit-detail-card .unit-detail-body {
+      background: #1f2937;
+      color: #f9fafb;
+    }
+
+    .compact-stat-item,
+    .stat-box {
+      background: #374151;
+      border-color: #4b5563;
+    }
+
+    .compact-stat-item:hover,
+    .stat-box:hover {
+      background: #4b5563;
+    }
+
+    .compact-label,
+    .stat-label,
+    .summary-label {
+      color: #9ca3af;
+    }
+
+    .compact-value,
+    .stat-value,
+    .summary-value,
+    .user-name,
+    .section-title {
+      color: #f9fafb;
+    }
+
+    .compact-progress,
+    .progress-bar-modern,
+    .mini-progress,
+    .progress-bar-mini {
+      background: #374151;
+    }
+
+    .summary-bar {
+      background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+      border-color: #374151;
+    }
+
+    .summary-divider {
+      background: #4b5563;
+    }
+
+    .view-toggle-container {
+      border-bottom-color: #374151;
+    }
+
+    .progress-tabs .nav-tabs {
+      border-bottom-color: #374151;
+
+      .nav-link {
+        color: #9ca3af;
+
+        &:hover {
+          color: #818cf8;
+          border-bottom-color: rgba(129, 140, 248, 0.3);
+        }
+
+        &.active {
+          color: #818cf8;
+          border-bottom-color: #818cf8;
+        }
+      }
+    }
+
+    .current-unit-progress {
+      background: #111827;
+
+      .unit-loading,
+      .no-h5p-content {
+        background: #1f2937;
+        border-color: #374151;
+      }
+
+      .no-h5p-content {
+        border-color: #4b5563;
+      }
+
+      .no-content-text {
+        color: #9ca3af;
+      }
+    }
+
+    .unit-detail-card {
+      border-color: #667eea;
+      background: #1f2937;
+
+      .unit-progress-item {
+        .progress-item-header .progress-label {
+          color: #f9fafb;
+        }
+
+        .progress-meta .meta-text {
+          color: #9ca3af;
+        }
+
+        .status-badge {
+          &.completed {
+            background: rgba(52, 211, 153, 0.2);
+            color: #34d399;
+          }
+
+          &.in_progress,
+          &.in-progress {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fbbf24;
+          }
+
+          &.not_started {
+            background: rgba(156, 163, 175, 0.2);
+            color: #9ca3af;
+          }
+        }
+
+        .progress-stats-row .stat-box {
+          background: #374151;
+          border-color: #4b5563;
+
+          .stat-label {
+            color: #9ca3af;
+          }
+
+          .stat-value {
+            color: #f9fafb;
+          }
+        }
+      }
+
+      .unit-summary-footer {
+        border-top-color: #374151;
+
+        .summary-label {
+          color: #9ca3af;
+        }
+
+        .summary-value {
+          color: #f9fafb;
+        }
+      }
+    }
+
+    .stat-card {
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+      .card-header h4 {
+        color: #f9fafb;
+      }
+
+      .stat-description {
+        color: #9ca3af;
+      }
+
+      .circular-progress-wrapper .circular-chart .percentage-large {
+        fill: #f9fafb;
+      }
+
+      .stat-content .stat-label {
+        color: #9ca3af;
+      }
+
+      .stat-content .stat-value {
+        color: #f9fafb;
+      }
+
+      .avg-progress {
+        border-top-color: #374151;
+
+        .avg-label {
+          color: #9ca3af;
+        }
+      }
+
+      .score-content .score-numbers {
+        .score-divider {
+          color: #4b5563;
+        }
+
+        .max-score {
+          color: #6b7280;
+        }
+      }
+
+      .score-details {
+        border-top-color: #374151;
+
+        .score-detail-item .detail-label {
+          color: #9ca3af;
+        }
+      }
+    }
+
+    .video-progress-loading p,
+    .loading-text {
+      color: #9ca3af;
+    }
+
+    .incomplete-contents-section {
+      background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+      border-color: #374151;
+
+      .incomplete-header {
+        background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+        border-bottom-color: #4b5563;
+
+        .incomplete-title {
+          color: #fbbf24;
+        }
+      }
+
+      .incomplete-filters {
+        background: #1f2937;
+        border-bottom-color: #374151;
+
+        .filter-label {
+          color: #fbbf24;
+        }
+
+        .filter-select {
+          background: #374151;
+          border-color: #4b5563;
+          color: #f9fafb;
+
+          &:focus {
+            border-color: #f59e0b;
+          }
+        }
+      }
+
+      .incomplete-list {
+        &::-webkit-scrollbar-track {
+          background: #1f2937;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: #4b5563;
+
+          &:hover {
+            background: #6b7280;
+          }
+        }
+
+        .incomplete-item {
+          background: #1f2937;
+          border-color: #374151;
+
+          &:hover {
+            border-color: #4b5563;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+          }
+
+          .incomplete-item-title {
+            color: #f9fafb;
+          }
+
+          .incomplete-item-folder {
+            background: #374151;
+
+            .folder-name-mini {
+              color: #9ca3af;
+            }
+          }
+
+          .incomplete-progress-row {
+            .incomplete-progress-label {
+              color: #d1d5db;
+            }
+
+            .incomplete-mini-bar {
+              background: #374151;
+            }
+
+            .remaining-text {
+              color: #9ca3af;
+            }
+          }
+
+          .incomplete-not-started-message {
+            background: #374151;
+            border-color: #4b5563;
+            color: #9ca3af;
+          }
+
+          .incomplete-item-footer {
+            border-top-color: #374151;
+          }
+        }
+      }
+
+      .incomplete-load-all-container {
+        background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+        border-top-color: #374151;
+      }
+    }
+
+    .compact-incomplete-section {
+      background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+      border-color: #4b5563;
+
+      .compact-incomplete-header {
+        border-bottom-color: #4b5563;
+
+        .compact-incomplete-title {
+          color: #fbbf24;
+        }
+      }
+
+      .compact-incomplete-list {
+        &::-webkit-scrollbar-track {
+          background: #374151;
+        }
+
+        &::-webkit-scrollbar-thumb {
+          background: #4b5563;
+        }
+
+        .compact-incomplete-item {
+          background: #1f2937;
+          border-color: #4b5563;
+
+          &:hover {
+            border-color: #6b7280;
+          }
+
+          .compact-incomplete-item-title {
+            color: #f9fafb;
+          }
+
+          .compact-stat-mini {
+            color: #9ca3af;
+          }
+        }
+      }
+    }
+  }
+}
+
+// Dark mode support - system preference
+@media (prefers-color-scheme: dark) {
+  @include video-progress-tool-dark-mode;
+}
+
+// Dark mode support - production header toggle (indigo-dark-theme)
+body.indigo-dark-theme {
+  @include video-progress-tool-dark-mode;
+}

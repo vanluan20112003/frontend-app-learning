@@ -523,3 +523,8 @@
 html.dark-mode {
   @include dark-mode-styles;
 }
+
+// Dark mode support - production header toggle (indigo-dark-theme)
+body.indigo-dark-theme {
+  @include dark-mode-styles;
+}

@@ -296,8 +296,8 @@
   }
 }
 
-// Dark mode support
-@media (prefers-color-scheme: dark) {
+// Dark mode mixin for ModernCalculator
+@mixin modern-calculator-dark-mode {
   .modern-calculator {
     background: #1f2937;
     color: #f9fafb;
@@ -376,4 +376,14 @@
       }
     }
   }
+}
+
+// Dark mode support - system preference
+@media (prefers-color-scheme: dark) {
+  @include modern-calculator-dark-mode;
+}
+
+// Dark mode support - production header toggle (indigo-dark-theme)
+body.indigo-dark-theme {
+  @include modern-calculator-dark-mode;
 }

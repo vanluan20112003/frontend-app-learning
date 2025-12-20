@@ -492,8 +492,8 @@
   }
 }
 
-// Dark mode
-@media (prefers-color-scheme: dark) {
+// Dark mode mixin for LeaderboardTab
+@mixin leaderboard-dark-mode {
   .leaderboard-tab {
     background: #111827;
 
@@ -625,24 +625,24 @@
     .ranking-select {
       min-width: 160px;
       padding: 7px 12px;
-      border: 1px solid #d1d5db;
+      border: 1px solid #4b5563;
       border-radius: 6px;
       font-size: 13px;
-      color: #374151;
-      background: white;
+      color: #f9fafb;
+      background: #1f2937;
       cursor: pointer;
       transition: all 0.2s;
       font-weight: 500;
 
       &:hover {
-        border-color: #9ca3af;
-        background: #f9fafb;
+        border-color: #6b7280;
+        background: #374151;
       }
 
       &:focus {
         outline: none;
         border-color: #2563eb;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
       }
 
       &:disabled {
@@ -653,35 +653,34 @@
       option {
         padding: 8px;
         font-size: 13px;
+        background: #1f2937;
       }
     }
 
     .discussion-score {
       .multi-value {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-end;
-        gap: 1px;
-
         .main-value {
-          font-size: 16px;
-          font-weight: 600;
-          color: #111827;
+          color: #f9fafb;
         }
 
         .sub-values {
-          font-size: 10px;
           color: #9ca3af;
-          font-weight: 500;
-          letter-spacing: 0.3px;
         }
       }
 
       .single-value {
-        font-size: 16px;
-        font-weight: 600;
-        color: #2563eb;
+        color: #60a5fa;
       }
     }
   }
+}
+
+// Dark mode support - system preference
+@media (prefers-color-scheme: dark) {
+  @include leaderboard-dark-mode;
+}
+
+// Dark mode support - production header toggle (indigo-dark-theme)
+body.indigo-dark-theme {
+  @include leaderboard-dark-mode;
 }

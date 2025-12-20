@@ -49,14 +49,17 @@ const ToolsPanel = () => {
   const isDevelopment = process.env.NODE_ENV === 'development';
 
   // Apply dark mode class to document for testing
+  // Uses both html.dark-mode and body.indigo-dark-theme to match production behavior
   useEffect(() => {
     if (isDevelopment) {
       if (isDarkMode) {
         document.documentElement.setAttribute('data-theme', 'dark');
         document.documentElement.classList.add('dark-mode');
+        document.body.classList.add('indigo-dark-theme');
       } else {
         document.documentElement.removeAttribute('data-theme');
         document.documentElement.classList.remove('dark-mode');
+        document.body.classList.remove('indigo-dark-theme');
       }
       localStorage.setItem('devDarkMode', isDarkMode.toString());
     }

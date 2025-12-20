@@ -97,6 +97,15 @@ const CourseLayout = ({
               max-width: calc(100% - 60px); /* Account for collapsed sidebar */
             }
           }
+
+          /* Dark mode support - indigo-dark-theme from header toggle */
+          body.indigo-dark-theme .course-content-area {
+            background: #111827;
+          }
+
+          body.indigo-dark-theme .sidebar-overlay.active {
+            background: rgba(0, 0, 0, 0.7);
+          }
         `}
         </style>
 

@@ -589,8 +589,8 @@
   }
 }
 
-// Dark mode support
-@media (prefers-color-scheme: dark) {
+// Dark mode mixin for QuickNotes
+@mixin quick-notes-dark-mode {
   .quick-notes {
     background: #1f2937;
     color: #f9fafb;
@@ -737,4 +737,14 @@
       }
     }
   }
+}
+
+// Dark mode support - system preference
+@media (prefers-color-scheme: dark) {
+  @include quick-notes-dark-mode;
+}
+
+// Dark mode support - production header toggle (indigo-dark-theme)
+body.indigo-dark-theme {
+  @include quick-notes-dark-mode;
 }
