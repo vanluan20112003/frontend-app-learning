@@ -3,8 +3,11 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { sendTrackEvent } from '@edx/frontend-platform/analytics';
 import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
+import { getConfig } from '@edx/frontend-platform';
+import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Button } from '@openedx/paragon';
+import { Alert, Button } from '@openedx/paragon';
+import { Info } from '@openedx/paragon/icons';
 import { AlertList } from '../../generic/user-messages';
 
 import CourseDates from './widgets/CourseDates';
@@ -33,6 +36,9 @@ const OutlineTab = ({ intl }) => {
     courseId,
     proctoringPanelStatus,
   } = useSelector(state => state.courseHome);
+
+  // State for maintenance mode check
+  const [isMaintenanceMode, setIsMaintenanceMode] = useState(false);
 
   const {
     isSelfPaced,
@@ -106,6 +112,27 @@ const OutlineTab = ({ intl }) => {
 
   const location = useLocation();
 
+  // Check course visibility status for maintenance mode
+  useEffect(() => {
+    const checkCourseVisibility = async () => {
+      try {
+        const client = getAuthenticatedHttpClient();
+        const url = `${getConfig().LMS_BASE_URL}/api/custom/v1/course-details/visibility-status/?course_id=${courseId}`;
+        const response = await client.get(url);
+        if (response.data?.success && response.data?.data?.visible_to_staff_only === true) {
+          setIsMaintenanceMode(true);
+        }
+      } catch (error) {
+        // Silently fail - don't block the page if API fails
+        console.error('Failed to check course visibility status:', error);
+      }
+    };
+
+    if (courseId) {
+      checkCourseVisibility();
+    }
+  }, [courseId]);
+
   useEffect(() => {
     const currentParams = new URLSearchParams(location.search);
     const startCourse = currentParams.get('start_course');
@@ -125,6 +152,16 @@ const OutlineTab = ({ intl }) => {
 
   return (
     <>
+      {/* Maintenance Mode Banner */}
+      {isMaintenanceMode && (
+        <Alert variant="warning" icon={Info} className="mb-3">
+          <Alert.Heading>Thông báo bảo trì</Alert.Heading>
+          <p className="mb-0">
+            Khóa học đang được bảo trì, hãy quay lại sau.
+          </p>
+        </Alert>
+      )}
+
       <div data-learner-type={learnerType} className="row w-100 mx-0 my-3 justify-content-between">
         <div className="col-12 col-sm-auto p-0">
           <div role="heading" aria-level="1" className="h2">{title}</div>
