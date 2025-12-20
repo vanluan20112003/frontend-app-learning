@@ -14,8 +14,11 @@ import {
   FullscreenExit,
   School,
   RateReview,
+  LightMode,
+  DarkMode,
 } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
+import { getConfig } from '@edx/frontend-platform';
 import { useToolsDrawer } from '../navigation-sidebar';
 import ModernCalculator from './ModernCalculator';
 import QuickNotes from './QuickNotes';
@@ -37,6 +40,27 @@ const ToolsPanel = () => {
   const [isMaximized, setIsMaximized] = useState(false);
   const [previousWidth, setPreviousWidth] = useState(400);
   const drawerRef = useRef(null);
+
+  // Dark mode toggle state (only for development)
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const saved = localStorage.getItem('devDarkMode');
+    return saved === 'true';
+  });
+  const isDevelopment = process.env.NODE_ENV === 'development';
+
+  // Apply dark mode class to document for testing
+  useEffect(() => {
+    if (isDevelopment) {
+      if (isDarkMode) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        document.documentElement.classList.add('dark-mode');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+        document.documentElement.classList.remove('dark-mode');
+      }
+      localStorage.setItem('devDarkMode', isDarkMode.toString());
+    }
+  }, [isDarkMode, isDevelopment]);
 
   // Use context to communicate with CourseLayout
   const { setIsDrawerOpen, setDrawerWidth } = useToolsDrawer();
@@ -249,6 +273,18 @@ const ToolsPanel = () => {
 
   return (
     <>
+      {/* Dark Mode Toggle - Only in Development */}
+      {isDevelopment && (
+        <button
+          type="button"
+          className={`dark-mode-toggle ${isDarkMode ? 'dark' : 'light'}`}
+          onClick={() => setIsDarkMode(!isDarkMode)}
+          title={isDarkMode ? 'Chuyển sang Light Mode' : 'Chuyển sang Dark Mode'}
+        >
+          <Icon src={isDarkMode ? LightMode : DarkMode} />
+        </button>
+      )}
+
       {/* Toggle Sidebar Button */}
       <button
         type="button"
