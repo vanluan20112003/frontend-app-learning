@@ -180,15 +180,30 @@ const VideoProgressPanel = () => {
 
   // Extract H5P content ID and fetch content detail when unit changes
   useEffect(() => {
-    // console.log("⚡ useEffect triggered - userData:", userData?.id, "unitId:", unitId);
+    // console.log("=".repeat(80));
+    // console.log("⚡⚡⚡ H5P EXTRACTION useEffect TRIGGERED");
+    // console.log("userData:", userData);
+    // console.log("userData.id:", userData?.id);
+    // console.log("unitId:", unitId);
+    // console.log("loading:", loading);
+    // console.log("=".repeat(80));
     
     const loadContentDetail = async () => {
+      // console.log("🔄 loadContentDetail called - checking conditions...");
+      
       if (!userData?.id) {
-        // console.log("❌ Skipping - no userData yet");
+        // console.log("❌ Skipping - no userData yet, userData:", userData);
+        setLoading(false);
         return undefined;
       }
 
-      // console.log("✅ Starting to load content detail...");
+      if (!unitId) {
+        // console.log("❌ Skipping - unitId is undefined (route not ready yet)");
+        setLoading(false);
+        return undefined;
+      }
+
+      // console.log("✅✅✅ Starting to load content detail for unitId:", unitId);
 
       // Reset state when unit changes
       setH5pContentId(null);
@@ -196,31 +211,54 @@ const VideoProgressPanel = () => {
       setContentDetail(null);
       setLoading(true);
 
-      // Try to extract H5P content ID after a delay (wait for iframe to load)
-      const timeoutId = setTimeout(async () => {
+      // Retry logic: Try multiple times with increasing delays
+      const tryExtractH5P = async (attemptNumber = 1, maxAttempts = 5) => {
+        // console.log(`🔍 Attempt ${attemptNumber}/${maxAttempts} to extract H5P content...`);
+        
         const contentId = await extractH5PContentId();
-        // console.log("VideoProgressPanel: Content id extracted:", contentId);
+        // console.log(`📌 Attempt ${attemptNumber} result:`, contentId);
+        
+        if (contentId) {
+          return contentId;
+        }
+        
+        // If no content found and we have more attempts, try again
+        if (attemptNumber < maxAttempts) {
+          const delay = attemptNumber * 1000; // 1s, 2s, 3s, 4s
+          // console.log(`⏳ Retrying in ${delay}ms...`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+          return tryExtractH5P(attemptNumber + 1, maxAttempts);
+        }
+        
+        return null;
+      };
+
+      // Start extraction after initial delay
+      const timeoutId = setTimeout(async () => {
+        const contentId = await tryExtractH5P();
+        // console.log("VideoProgressPanel: Final content id extracted:", contentId);
         // console.log("VideoProgressPanel: Unit ID:", unitId);
         
         if (contentId) {
           h5pContentIdRef.current = contentId;
           setH5pContentId(contentId);
-          // console.log("VideoProgressPanel: H5P content found, ID:", contentId);
+          // console.log("✅ VideoProgressPanel: H5P content found, ID:", contentId);
 
           // Fetch content detail
           fetchContentDetail(userData.id, contentId)
             .then(detail => {
-              // console.log("VideoProgressPanel: Content detail fetched:", detail);
+              // console.log("📊 VideoProgressPanel: Content detail fetched:", detail);
               setContentDetail(detail);
             })
-            .catch(() => {
+            .catch((err) => {
+              // console.log("❌ VideoProgressPanel: Failed to fetch content detail:", err);
               setContentDetail(null);
             })
             .finally(() => {
               setLoading(false);
             });
         } else {
-          // console.log("VideoProgressPanel: No H5P content detected - should hide panel");
+          // console.log("❌ VideoProgressPanel: No H5P content detected - should hide panel");
           h5pContentIdRef.current = null;
           setH5pContentId(null);
           setContentDetail(null);
@@ -228,10 +266,15 @@ const VideoProgressPanel = () => {
         }
       }, 2000); // Wait 2 seconds for iframe to load (same as VideoProgressTool)
 
-      return () => clearTimeout(timeoutId);
+      return () => {
+        // console.log("🧹 Cleaning up timeout for unitId:", unitId);
+        clearTimeout(timeoutId);
+      };
     };
 
-    return loadContentDetail();
+    const cleanup = loadContentDetail();
+    // console.log("🎬 loadContentDetail executed, cleanup:", cleanup);
+    return cleanup;
   }, [userData, unitId]); // Match VideoProgressTool dependencies
 
   // Polling for updates every 3 seconds
@@ -259,10 +302,13 @@ const VideoProgressPanel = () => {
 
   // Initial data load
   useEffect(() => {
-    // console.log("👤 Initial data load useEffect running");
+    // console.log("=".repeat(80));
+    // console.log("👤👤👤 INITIAL DATA LOAD useEffect running for courseId:", courseId);
+    // console.log("=".repeat(80));
     const loadInitialData = async () => {
       try {
         const user = await fetchUserData();
+        // console.log("✅ User data fetched successfully:", user?.id);
         setUserData(user);
       } catch (err) {
         console.error('Error loading user data:', err);
@@ -288,33 +334,35 @@ const VideoProgressPanel = () => {
   };
 
   // console.log("🔍 Render check - loading:", loading, "contentDetail:", !!contentDetail, "h5pContentId:", h5pContentId);
+  // console.log("📦 State details - userData:", !!userData, "unitId:", unitId);
+
+  // Don't render if unitId is not ready yet (route not initialized)
+  if (!unitId) {
+    // console.log("🚫 VideoProgressPanel: Not rendering - unitId undefined (waiting for route)");
+    return null;
+  }
 
   // Don't render if no H5P content detected AND loading is complete (no video in this unit)
-  // This matches the logic from VideoProgressTool.jsx
-  if (!loading && !contentDetail && !h5pContentId) {
-    // console.log("VideoProgressPanel: Not rendering - no H5P content found");
+  // This matches the logic from VideoProgressTool.jsx - use h5pContentId to determine if video exists
+  if (!loading && !h5pContentId) {
+    // console.log("🚫 VideoProgressPanel: Not rendering - no H5P content found");
     return null;
   }
 
-  // Use only real data from API, no fake data
-  // const hasRealVideoProgress = contentDetail?.video_progress?.has_progress && contentDetail.video_progress.progress_percent > 0;
-  // const hasRealScore = contentDetail?.score?.has_score && contentDetail.score.score > 0;
-  
-  // const videoProgress = hasRealVideoProgress
-  //   ? contentDetail.video_progress 
-  //   : { has_progress: true, progress_percent: 25, duration: 300, status: 'in_progress' };
-    
-  // const scoreData = hasRealScore
-  //   ? contentDetail.score 
-  //   : { has_score: true, score: 5, max_score: 20, score_percent: 25 };
+  // If h5pContentId exists, there IS a video/H5P content, even if progress hasn't loaded yet
+  // Show progress data if available, otherwise show 0% (not yet started)
+  const videoProgress = contentDetail?.video_progress?.has_progress
+    ? contentDetail.video_progress
+    : (h5pContentId ? { has_progress: true, progress_percent: 0, duration: 0, status: 'not_started' } : null);
 
-  const videoProgress = contentDetail?.video_progress;
-  const scoreData = contentDetail?.score;
+  // For score: if video exists but no score data, default to 0 (score won't contribute to hiding panel)
+  const scoreData = contentDetail?.score?.has_score
+    ? contentDetail.score
+    : (h5pContentId ? { has_score: true, score: 0, max_score: 0, score_percent: 0 } : null);
 
-  // Don't render panel if both video progress and score don't exist
-  if (!videoProgress?.has_progress && !scoreData?.has_score) {
-    return null;
-  }
+  // console.log("✅ VideoProgressPanel: Rendering panel");
+  // console.log("📊 Video Progress:", videoProgress);
+  // console.log("📊 Score Data:", scoreData);
 
   return (
     <>
