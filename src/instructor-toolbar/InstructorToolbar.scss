@@ -1,0 +1,43 @@
+.instructor-toolbar {
+  position: fixed;
+  top: var(--header-height, 60px);
+  left: 0;
+  right: 0;
+  z-index: 999;
+  background-color: $primary;
+
+  // Ensure dropdown menus appear above other fixed elements including header
+  .dropdown-menu {
+    z-index: 1002 !important;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  // Ensure dropdown toggle doesn't cause scroll issues
+  .dropdown {
+    position: relative;
+  }
+}
+
+// Use :has() selector - when #root has .instructor-toolbar, adjust navigation
+// This is supported in all modern browsers
+#root:has(.instructor-toolbar) {
+  .course-tabs-navigation {
+    top: calc(var(--header-height, 60px) + 70px) !important;
+  }
+
+  main#main-content {
+    margin-top: calc(var(--header-height, 60px) + var(--tabs-navigation-height, 60px) + 70px) !important;
+  }
+}
+
+// Fallback for browsers that don't support :has() - use the class-based approach
+#root.has-instructor-toolbar {
+  .course-tabs-navigation {
+    top: calc(var(--header-height, 60px) + 70px) !important;
+  }
+
+  main#main-content {
+    margin-top: calc(var(--header-height, 60px) + var(--tabs-navigation-height, 60px) + 70px) !important;
+  }
+}

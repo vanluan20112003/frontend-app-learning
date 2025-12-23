@@ -66,8 +66,8 @@ const InstructorToolbar = (props) => {
   const courseStartDateMasqueradeBanner = useCourseStartMasqueradeBanner(courseId, tab);
 
   return (!didMount ? null : (
-    <div data-testid="instructor-toolbar">
-      <div className="bg-primary text-white">
+    <div data-testid="instructor-toolbar" className="instructor-toolbar">
+      <div className="text-white">
         <div className="container-xl py-3 d-md-flex justify-content-end align-items-start">
           <div className="align-items-center flex-grow-1 d-md-flex mx-1 my-1">
             <MasqueradeWidget courseId={courseId} onError={showMasqueradeError} />

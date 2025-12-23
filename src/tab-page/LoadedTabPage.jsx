@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 
@@ -41,6 +41,19 @@ const LoadedTabPage = ({
   const streakLengthToCelebrate = celebrations && celebrations.streakLengthToCelebrate;
   const streakDiscountCouponEnabled = celebrations && celebrations.streakDiscountEnabled && verifiedMode;
   const [isStreakCelebrationOpen,, closeStreakCelebration] = useToggle(streakLengthToCelebrate);
+
+  // Add/remove class to #root when instructor toolbar is shown
+  useEffect(() => {
+    const root = document.getElementById('root');
+    if (originalUserIsStaff && root) {
+      root.classList.add('has-instructor-toolbar');
+    }
+    return () => {
+      if (root) {
+        root.classList.remove('has-instructor-toolbar');
+      }
+    };
+  }, [originalUserIsStaff]);
 
   return (
     <>
