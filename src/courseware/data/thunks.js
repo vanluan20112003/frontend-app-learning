@@ -171,6 +171,52 @@ export function fetchSequence(sequenceId) {
   };
 }
 
+/**
+ * Batch fetch nhiều sequences metadata cùng lúc để kiểm tra sequential learning
+ * KHÔNG thay đổi sequenceStatus hoặc sequenceId của courseware state
+ * Tối ưu: Fetch song song tất cả sequences thay vì từng cái một
+ */
+export function fetchSequencesForPrereqCheck(sequenceIds) {
+  return async (dispatch) => {
+    if (!sequenceIds || sequenceIds.length === 0) { return; }
+
+    try {
+      // Fetch tất cả sequences song song với Promise.allSettled
+      const results = await Promise.allSettled(
+        sequenceIds.map((seqId) => getSequenceMetadata(seqId)),
+      );
+
+      // Gom tất cả sequences và units để dispatch một lần
+      const allUnits = [];
+
+      results.forEach((result) => {
+        if (result.status === 'fulfilled') {
+          const { sequence, units } = result.value;
+          if (sequence.blockType === 'sequential') {
+            // Dispatch từng sequence vì updateModel chỉ nhận 1 model
+            dispatch(updateModel({
+              modelType: 'sequences',
+              model: sequence,
+            }));
+            allUnits.push(...units);
+          }
+        }
+      });
+
+      // Batch update tất cả units một lần
+      if (allUnits.length > 0) {
+        dispatch(updateModels({
+          modelType: 'units',
+          models: allUnits,
+        }));
+      }
+    } catch (error) {
+      // Silently fail - this is just for prereq check, not critical
+      logError(error);
+    }
+  };
+}
+
 export function checkBlockCompletion(courseId, sequenceId, unitId) {
   return async (dispatch, getState) => {
     const { models } = getState();

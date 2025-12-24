@@ -1,5 +1,7 @@
 /* eslint-disable no-use-before-define */
-import { useEffect, useState } from 'react';
+import {
+  useEffect, useState, useRef, useMemo, useCallback,
+} from 'react';
 import PropTypes from 'prop-types';
 
 import {
@@ -7,7 +9,7 @@ import {
   sendTrackingLogEvent,
 } from '@edx/frontend-platform/analytics';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import SequenceExamWrapper from '@edx/frontend-lib-special-exams';
 
 import PageLoading from '@src/generic/PageLoading';
@@ -16,6 +18,7 @@ import { useSequenceBannerTextAlert, useSequenceEntranceExamAlert } from '@src/a
 import SequenceContainerSlot from '../../../plugin-slots/SequenceContainerSlot';
 
 import { getCoursewareOutlineSidebarSettings } from '../../data/selectors';
+import { fetchSequencesForPrereqCheck } from '../../data/thunks';
 import CourseLicense from '../course-license';
 import Sidebar from '../sidebar/Sidebar';
 import NewSidebar from '../new-sidebar/Sidebar';
@@ -27,6 +30,13 @@ import messages from './messages';
 import HiddenAfterDue from './hidden-after-due';
 import { SequenceNavigation, UnitNavigation } from './sequence-navigation';
 import SequenceContent from './SequenceContent';
+import SequentialLock from './sequential-lock';
+
+// =====================================================
+// SEQUENTIAL LEARNING - Bắt buộc học tuần tự
+// Set true để bật, false để tắt
+// =====================================================
+const ENABLE_SEQUENTIAL_LEARNING = true;
 
 const Sequence = ({
   unitId,
@@ -37,6 +47,7 @@ const Sequence = ({
   previousSequenceHandler,
 }) => {
   const intl = useIntl();
+  const dispatch = useDispatch();
   const {
     canAccessProctoredExams,
     license,
@@ -51,6 +62,105 @@ const Sequence = ({
   const sequenceStatus = useSelector(state => state.courseware.sequenceStatus);
   const sequenceMightBeUnit = useSelector(state => state.courseware.sequenceMightBeUnit);
   const { enableNavigationSidebar: isEnabledOutlineSidebar } = useSelector(getCoursewareOutlineSidebarSettings);
+
+  // Lấy data từ models để kiểm tra sequential learning
+  const sectionsFromModels = useSelector(state => state.models.sections || {});
+  const sequencesFromModels = useSelector(state => state.models.sequences || {});
+  const unitsFromModels = useSelector(state => state.models.units || {});
+  const coursewareMeta = useModel('coursewareMeta', courseId);
+
+  // Ref để track đã fetch batch chưa (theo sequenceId đang xem)
+  const fetchedForSequenceRef = useRef(null);
+
+  // Tính toán danh sách tất cả sequences theo thứ tự (cached với useMemo)
+  const allSequenceIds = useMemo(() => {
+    if (!ENABLE_SEQUENTIAL_LEARNING || !sequenceId || isStaff || originalUserIsStaff) {
+      return [];
+    }
+    const sectionIds = coursewareMeta?.sectionIds || [];
+    if (sectionIds.length === 0) { return []; }
+
+    const result = [];
+    sectionIds.forEach((sectionId) => {
+      const section = sectionsFromModels[sectionId];
+      if (section?.sequenceIds) {
+        result.push(...section.sequenceIds);
+      }
+    });
+    return result;
+  }, [sequenceId, isStaff, originalUserIsStaff, coursewareMeta?.sectionIds, sectionsFromModels]);
+
+  const currentSequenceIndex = useMemo(
+    () => allSequenceIds.indexOf(sequenceId),
+    [allSequenceIds, sequenceId],
+  );
+
+  // Hàm kiểm tra sequence có hoàn thành chưa (cached với useCallback)
+  const isSequenceComplete = useCallback((seqId) => {
+    const seq = sequencesFromModels[seqId];
+    if (!seq?.unitIds) { return false; }
+    return seq.unitIds.every((uId) => {
+      const u = unitsFromModels[uId];
+      return u?.complete === true;
+    });
+  }, [sequencesFromModels, unitsFromModels]);
+
+  // Tính toán sequential lock info với useMemo để tránh re-calculate mỗi render
+  const sequentialLockResult = useMemo(() => {
+    if (!ENABLE_SEQUENTIAL_LEARNING || currentSequenceIndex <= 0 || isStaff || originalUserIsStaff) {
+      return { lockInfo: null, isChecking: false, sequencesToFetch: [] };
+    }
+
+    // Lấy danh sách sequences trước current cần kiểm tra
+    const previousSequenceIds = allSequenceIds.slice(0, currentSequenceIndex);
+
+    // Tìm sequences chưa có data (cần fetch)
+    const sequencesNeedFetch = previousSequenceIds.filter(
+      (seqId) => !sequencesFromModels[seqId]?.unitIds,
+    );
+
+    // Nếu còn sequences cần fetch -> đang loading
+    if (sequencesNeedFetch.length > 0) {
+      return {
+        lockInfo: null,
+        isChecking: true,
+        sequencesToFetch: sequencesNeedFetch,
+      };
+    }
+
+    // Tìm sequence ĐẦU TIÊN chưa hoàn thành
+    for (let i = 0; i < previousSequenceIds.length; i++) {
+      const seqId = previousSequenceIds[i];
+      if (!isSequenceComplete(seqId)) {
+        const incompleteSequence = sequencesFromModels[seqId];
+        return {
+          lockInfo: {
+            isLocked: true,
+            firstIncompleteSequenceId: seqId,
+            firstIncompleteSequenceTitle: incompleteSequence?.title || 'Previous Section',
+          },
+          isChecking: false,
+          sequencesToFetch: [],
+        };
+      }
+    }
+
+    // Tất cả đã hoàn thành
+    return { lockInfo: null, isChecking: false, sequencesToFetch: [] };
+  }, [
+    currentSequenceIndex, isStaff, originalUserIsStaff,
+    allSequenceIds, sequencesFromModels, isSequenceComplete,
+  ]);
+
+  const { lockInfo: sequentialLockInfo, isChecking: isCheckingSequentialLock, sequencesToFetch } = sequentialLockResult;
+
+  // Batch fetch tất cả sequences cần thiết cùng lúc (thay vì fetch từng cái)
+  useEffect(() => {
+    if (sequencesToFetch.length > 0 && fetchedForSequenceRef.current !== sequenceId) {
+      fetchedForSequenceRef.current = sequenceId;
+      dispatch(fetchSequencesForPrereqCheck(sequencesToFetch));
+    }
+  }, [sequencesToFetch, sequenceId, dispatch]);
 
   const handleNext = () => {
     const nextIndex = sequence.unitIds.indexOf(unitId) + 1;
@@ -138,10 +248,31 @@ const Sequence = ({
     );
   }
 
+  // Hiển thị loading khi đang kiểm tra sequential learning
+  if (isCheckingSequentialLock) {
+    return (
+      <PageLoading
+        srMessage={intl.formatMessage(messages.loadingSequence)}
+      />
+    );
+  }
+
   if (sequenceStatus === 'loaded' && sequence.isHiddenAfterDue) {
     // Shouldn't even be here - these sequences are normally stripped out of the navigation.
     // But we are here, so render a notice instead of the normal content.
     return <HiddenAfterDue courseId={courseId} />;
+  }
+
+  // Kiểm tra sequential learning lock - chặn nếu có sequence trước chưa complete
+  if (sequenceStatus === 'loaded' && sequentialLockInfo?.isLocked) {
+    return (
+      <SequentialLock
+        courseId={courseId}
+        previousSequenceId={sequentialLockInfo.firstIncompleteSequenceId}
+        previousSequenceTitle={sequentialLockInfo.firstIncompleteSequenceTitle}
+        currentSequenceTitle={sequence?.title || 'This Section'}
+      />
+    );
   }
 
   const gated = sequence && sequence.gatedContent !== undefined && sequence.gatedContent.gated;
