@@ -48,9 +48,19 @@ const InstructorToolbar = (props) => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
     setDidMount(true);
-    // Returning this function here will run setDidMount(false) when this component is unmounted
-    return () => setDidMount(false);
-  });
+    // Add class to #root for CSS fallback (browsers that don't support :has())
+    const rootElement = document.getElementById('root');
+    if (rootElement) {
+      rootElement.classList.add('has-instructor-toolbar');
+    }
+    // Returning this function here will run cleanup when this component is unmounted
+    return () => {
+      setDidMount(false);
+      if (rootElement) {
+        rootElement.classList.remove('has-instructor-toolbar');
+      }
+    };
+  }, []);
 
   const {
     courseId,

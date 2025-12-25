@@ -160,9 +160,9 @@ const CourseNavigationSidebar = ({
       <style jsx>{`
         .course-nav-sidebar {
           position: fixed;
-          top: 110px;
+          top: calc(var(--header-height, 60px) + var(--tabs-navigation-height, 60px) + var(--instructor-toolbar-height, 0px));
           left: 0;
-          height: calc(100vh - 110px);
+          height: calc(100vh - var(--header-height, 60px) - var(--tabs-navigation-height, 60px) - var(--instructor-toolbar-height, 0px));
           background: white;
           border-right: 1px solid #e5e5e5;
           transition: all 0.3s ease;
@@ -176,7 +176,16 @@ const CourseNavigationSidebar = ({
         }
 
         .course-nav-sidebar.collapsed {
-          width: 60px;
+          width: 48px;
+        }
+
+        .collapsed .sidebar-content {
+          display: none;
+        }
+
+        .collapsed .sidebar-header {
+          justify-content: center;
+          padding: 1rem 0.5rem;
         }
 
         .sidebar-header {
@@ -439,39 +448,6 @@ const CourseNavigationSidebar = ({
           text-overflow: ellipsis;
         }
 
-        .collapsed .sidebar-title,
-        .collapsed .section-info,
-        .collapsed .sequence-title,
-        .collapsed .unit-title,
-        .collapsed .section-expand-icon,
-        .collapsed .sequence-expand-icon {
-          display: none;
-        }
-
-        .collapsed .section-header {
-          justify-content: center;
-          padding: 0.75rem 0.5rem;
-        }
-
-        .collapsed .sequence-item {
-          padding: 0.625rem 0.5rem;
-          justify-content: center;
-          margin: 0.125rem 0.25rem;
-        }
-
-        .collapsed .unit-item {
-          padding: 0.5rem 0.5rem;
-          justify-content: center;
-          margin: 0.0625rem 0.25rem;
-        }
-
-        .collapsed .sequences-list {
-          padding-left: 0;
-        }
-
-        .collapsed .units-list {
-          padding-left: 0;
-        }
 
         @media (max-width: 768px) {
           .course-nav-sidebar.expanded {
@@ -644,6 +620,13 @@ const CourseNavigationSidebar = ({
 
         body.indigo-dark-theme .course-nav-sidebar::-webkit-scrollbar-thumb:hover {
           background: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Mobile - hide course navigation sidebar */
+        @media (max-width: 768px) {
+          .course-nav-sidebar {
+            display: none !important;
+          }
         }
       `}
       </style>

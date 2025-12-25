@@ -96,6 +96,10 @@ const CourseLayout = ({
             .course-content-area {
               max-width: calc(100% - 60px); /* Account for collapsed sidebar */
             }
+
+            .sidebar-overlay {
+              display: none !important; /* Hide overlay on desktop */
+            }
           }
 
           /* Dark mode support - indigo-dark-theme from header toggle */

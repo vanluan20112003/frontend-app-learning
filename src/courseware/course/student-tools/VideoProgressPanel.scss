@@ -47,7 +47,8 @@
 .video-progress-panel {
   position: fixed;
   right: 0;
-  top: 80px;
+  // Position below header + tabs navigation + instructor toolbar (if present)
+  top: calc(var(--header-height, 60px) + var(--tabs-navigation-height, 60px) + var(--instructor-toolbar-height, 0px));
   background: white;
   border-left: 1px solid #dee2e6;
   box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
@@ -56,10 +57,10 @@
   padding: 1rem;
   padding-left: 1.3rem;
   padding-top: 0.7rem;
-    height: 10px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  height: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
     &.panel-close{
         padding-left: 0;
@@ -98,8 +99,39 @@
     }
   }
 
+  // Tablet - smaller size
   @media (max-width: 1199px) {
-    display: none;
+    padding: 0.5rem 0.75rem;
+    padding-top: 0.4rem;
+
+    .progress-item .progress-text {
+      font-size: 0.8rem;
+    }
+  }
+
+  // Mobile - bottom fixed bar style
+  @media (max-width: 768px) {
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: 0;
+    border-left: none;
+    border-top: 1px solid #dee2e6;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.1);
+    padding: 0.75rem 1rem;
+    height: auto;
+    justify-content: center;
+    z-index: 1000;
+
+    .panel-body {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .progress-item .progress-text {
+      font-size: 0.85rem;
+    }
   }
 }
 
@@ -131,6 +163,12 @@
           color: #60a5fa;
         }
       }
+    }
+
+    // Mobile dark mode
+    @media (max-width: 768px) {
+      border-top-color: #374151;
+      box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.4);
     }
   }
 }

@@ -18,7 +18,6 @@ import {
   Search,
 } from '@openedx/paragon/icons';
 import { LearningHeader as Header } from '@edx/frontend-component-header';
-import FooterSlot from '@openedx/frontend-slot-footer';
 
 const AllMicroUnitsPage = () => {
   const navigate = useNavigate();
@@ -209,7 +208,6 @@ const AllMicroUnitsPage = () => {
             <p className="text-muted">Đang tìm kiếm tất cả micro units từ các khóa học của bạn...</p>
           </div>
         </Container>
-        <FooterSlot />
       </>
     );
   }
@@ -224,7 +222,6 @@ const AllMicroUnitsPage = () => {
             <p>{error}</p>
           </Alert>
         </Container>
-        <FooterSlot />
       </>
     );
   }
@@ -637,7 +634,6 @@ const AllMicroUnitsPage = () => {
           )}
         </Container>
       </div>
-      <FooterSlot />
     </>
   );
 };

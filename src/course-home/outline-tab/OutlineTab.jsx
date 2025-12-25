@@ -6,8 +6,8 @@ import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
 import { getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import { Alert, Button } from '@openedx/paragon';
-import { Info } from '@openedx/paragon/icons';
+import { Alert, Button, Hyperlink } from '@openedx/paragon';
+import { Info, InfoOutline } from '@openedx/paragon/icons';
 import { AlertList } from '../../generic/user-messages';
 
 import CourseDates from './widgets/CourseDates';
@@ -162,9 +162,42 @@ const OutlineTab = ({ intl }) => {
         </Alert>
       )}
 
-      <div data-learner-type={learnerType} className="row w-100 mx-0 my-3 justify-content-between">
-        <div className="col-12 col-sm-auto p-0">
-          <div role="heading" aria-level="1" className="h2">{title}</div>
+      <div data-learner-type={learnerType} className="row w-100 mx-0 my-3">
+        <div className="col-12 p-0">
+          <div className="d-flex align-items-center flex-wrap gap-2">
+            <div role="heading" aria-level="1" className="h2 mb-0 mr-3">{title}</div>
+            <Hyperlink
+              destination={`${getConfig().LMS_BASE_URL}/courses/${courseId}/about`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                padding: '6px 14px',
+                fontSize: '13px',
+                fontWeight: '500',
+                color: '#0d6efd',
+                backgroundColor: '#e7f1ff',
+                border: '1px solid #b6d4fe',
+                borderRadius: '20px',
+                textDecoration: 'none',
+                transition: 'all 0.2s ease',
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = '#0d6efd';
+                e.target.style.color = '#fff';
+                e.target.style.borderColor = '#0d6efd';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = '#e7f1ff';
+                e.target.style.color = '#0d6efd';
+                e.target.style.borderColor = '#b6d4fe';
+              }}
+            >
+              <InfoOutline style={{ width: '16px', height: '16px', marginRight: '6px' }} />
+              Giới thiệu
+            </Hyperlink>
+          </div>
         </div>
       </div>
       <div className="row course-outline-tab">

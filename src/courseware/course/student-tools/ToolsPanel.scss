@@ -11,15 +11,16 @@
   }
 }
 
-// Sidebar Toggle Button
+// Sidebar Toggle Button - positioned below video-progress-panel
 .sidebar-toggle-btn {
   position: fixed;
   right: 0;
-  top: calc(var(--header-height, 60px) + var(--tabs-navigation-height, 60px) + 20px); // Below header + tabs + margin
-  z-index: 997; // Same level as drawer
+  // Position below header + tabs + instructor toolbar + video-progress-panel (45px)
+  top: calc(var(--header-height, 60px) + var(--tabs-navigation-height, 60px) + var(--instructor-toolbar-height, 0px) + 45px);
+  z-index: 997;
   background: white;
   border: none;
-  border-radius: 8px 0 0 8px;
+  border-radius: 0 0 0 8px;
   padding: 12px 8px;
   cursor: pointer;
   box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
@@ -41,19 +42,19 @@
     height: 20px;
   }
 
-  // Mobile
+  // Mobile - hide toggle button
   @media (max-width: 768px) {
-    top: auto;
-    bottom: 160px;
-    border-radius: 8px 0 0 0;
+    display: none;
   }
 }
 
 // Tools Sidebar - Fixed position on right side
+// Positioned below toggle button (toggle button ~44px height)
 .tools-sidebar {
   position: fixed;
   right: 0;
-  top: calc(var(--header-height, 60px) + var(--tabs-navigation-height, 60px) + 70px); // Below header + tabs + toggle button
+  // Position below header + tabs + instructor toolbar + video-progress-panel (45px) + toggle button (44px)
+  top: calc(var(--header-height, 60px) + var(--tabs-navigation-height, 60px) + var(--instructor-toolbar-height, 0px) + 45px + 44px);
   z-index: 997; // Same level as drawer
   display: flex;
   flex-direction: column;
@@ -127,34 +128,9 @@
     }
   }
 
-  // Mobile
+  // Mobile - hide tools sidebar
   @media (max-width: 768px) {
-    top: auto;
-    bottom: 80px;
-    transform: none;
-    flex-direction: row;
-    border-radius: 8px 0 0 0;
-    padding: 0 8px;
-
-    &.hidden {
-      transform: translateX(100%);
-    }
-
-    .tool-button {
-      flex-direction: row;
-      padding: 8px 12px;
-      border-left: none;
-      border-top: 3px solid transparent;
-
-      &.active {
-        border-left: none;
-        border-top-color: #3b82f6;
-      }
-
-      .tool-name {
-        display: none;
-      }
-    }
+    display: none;
   }
 }
 
@@ -162,8 +138,10 @@
 .tools-drawer {
   position: fixed;
   right: 0;
-  top: calc(var(--header-height, 60px) + var(--tabs-navigation-height, 60px)); // Start below header AND tabs
-  height: calc(100vh - var(--header-height, 60px) - var(--tabs-navigation-height, 60px)); // Adjust height
+  // Position below header + tabs + instructor toolbar (if present)
+  top: calc(var(--header-height, 60px) + var(--tabs-navigation-height, 60px) + var(--instructor-toolbar-height, 0px));
+  // Full height to bottom of screen
+  height: calc(100vh - var(--header-height, 60px) - var(--tabs-navigation-height, 60px) - var(--instructor-toolbar-height, 0px));
   background: white;
   box-shadow: -4px 0 12px rgba(0, 0, 0, 0.1);
   z-index: 996; // Below header (1000) and course tabs (998), but above content
@@ -327,40 +305,15 @@
     }
   }
 
-  // Mobile
+  // Mobile - hide drawer completely
   @media (max-width: 768px) {
-    width: 100vw !important;
-
-    .resize-handle {
-      display: none;
-    }
+    display: none !important;
   }
 }
 
-// Overlay for mobile
+// Overlay - not used on mobile since drawer is hidden
 .drawer-overlay {
   display: none;
-
-  @media (max-width: 768px) {
-    display: block;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.3);
-    z-index: 998;
-    animation: fadeIn 0.3s ease;
-
-    @keyframes fadeIn {
-      from {
-        opacity: 0;
-      }
-      to {
-        opacity: 1;
-      }
-    }
-  }
 }
 
 // Dark mode toggle button (development only)

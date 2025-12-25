@@ -3,12 +3,9 @@ import { useLocation } from 'react-router-dom';
 
 import { Icon } from '@openedx/paragon';
 import {
-  Calculate,
-  Notes,
   ChevronLeft,
   ChevronRight,
   Help,
-  Report,
   ShowChart,
   Fullscreen,
   FullscreenExit,
@@ -20,8 +17,6 @@ import {
 import { useIntl } from '@edx/frontend-platform/i18n';
 import { getConfig } from '@edx/frontend-platform';
 import { useToolsDrawer } from '../navigation-sidebar';
-import ModernCalculator from './ModernCalculator';
-import QuickNotes from './QuickNotes';
 import SupportAndReportTabs from './SupportAndReportTabs';
 import VideoProgressTool from './VideoProgressTool';
 import MicroUnitsList from './MicroUnitsList';
@@ -33,7 +28,7 @@ const ToolsPanel = () => {
   const intl = useIntl();
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
-  const [activeTool, setActiveTool] = useState('calculator');
+  const [activeTool, setActiveTool] = useState('video-progress');
   const [localDrawerWidth, setLocalDrawerWidth] = useState(400);
   const [isResizing, setIsResizing] = useState(false);
   const [isSidebarVisible, setIsSidebarVisible] = useState(true);
@@ -80,18 +75,6 @@ const ToolsPanel = () => {
       shake: true, // Hiệu ứng rung lắc
     },
     {
-      id: 'calculator',
-      name: intl.formatMessage(messages.calculatorTitle),
-      icon: Calculate,
-      component: ModernCalculator,
-    },
-    {
-      id: 'notes',
-      name: intl.formatMessage(messages.notesTitle),
-      icon: Notes,
-      component: QuickNotes,
-    },
-    {
       id: 'feedback',
       name: intl.formatMessage(messages.feedbackTitle),
       icon: RateReview,
@@ -128,10 +111,7 @@ const ToolsPanel = () => {
       setActiveTool(toolId);
       setIsOpen(true);
       setIsDrawerOpen(true);
-      
-      // Auto-hide sidebar when a tool is selected
-      setIsSidebarVisible(false);
-      
+
       // Clamp width to max 450 for feedback tool
       if (toolId === 'feedback') {
         if (localDrawerWidth > 450) {
@@ -288,7 +268,7 @@ const ToolsPanel = () => {
         </button>
       )}
 
-      {/* Toggle Sidebar Button */}
+      {/* Toggle Sidebar Button - positioned below video progress panel */}
       <button
         type="button"
         className={`sidebar-toggle-btn ${!isSidebarVisible ? 'sidebar-hidden' : ''}`}
@@ -298,7 +278,7 @@ const ToolsPanel = () => {
         <Icon src={isSidebarVisible ? ChevronRight : ChevronLeft} />
       </button>
 
-      {/* Tools Sidebar Button */}
+      {/* Tools Sidebar - positioned below toggle button */}
       <div className={`tools-sidebar ${isOpen ? 'drawer-open' : ''} ${!isSidebarVisible ? 'hidden' : ''}`}>
         {tools.map((tool) => (
           <button

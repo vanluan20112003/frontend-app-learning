@@ -6,7 +6,8 @@ import { Navigate } from 'react-router-dom';
 
 import { Toast } from '@openedx/paragon';
 import { LearningHeader as Header } from '@edx/frontend-component-header';
-import FooterSlot from '@openedx/frontend-slot-footer';
+// Footer removed - sidebars now use full height
+// import FooterSlot from '@openedx/frontend-slot-footer';
 import PageLoading from '../generic/PageLoading';
 import { getAccessDeniedRedirectUrl } from '../shared/access';
 import { useModel } from '../generic/model-store';
@@ -80,7 +81,7 @@ const TabPage = ({ intl, ...props }) => {
           {intl.formatMessage(messages.failure)}
         </p>
       )}
-      <FooterSlot />
+      {/* Footer removed - sidebars now use full height */}
     </>
   );
 };

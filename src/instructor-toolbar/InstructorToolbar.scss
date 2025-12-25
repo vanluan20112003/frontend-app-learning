@@ -1,9 +1,12 @@
+// Instructor toolbar height variable (actual height ~70px including padding)
+$instructor-toolbar-height: 70px;
+
 .instructor-toolbar {
   position: fixed;
   top: var(--header-height, 60px);
   left: 0;
   right: 0;
-  z-index: 999;
+  z-index: 999; // Above course-tabs-navigation (998)
   background-color: $primary;
 
   // Ensure dropdown menus appear above other fixed elements including header
@@ -19,25 +22,58 @@
   }
 }
 
-// Use :has() selector - when #root has .instructor-toolbar, adjust navigation
+// Use :has() selector - when #root has .instructor-toolbar, set CSS variable
 // This is supported in all modern browsers
 #root:has(.instructor-toolbar) {
+  // Set CSS variable for instructor toolbar height
+  // All components now use this variable directly for positioning
+  --instructor-toolbar-height: #{$instructor-toolbar-height};
+
   .course-tabs-navigation {
-    top: calc(var(--header-height, 60px) + 70px) !important;
+    top: calc(var(--header-height, 60px) + #{$instructor-toolbar-height}) !important;
   }
 
   main#main-content {
-    margin-top: calc(var(--header-height, 60px) + var(--tabs-navigation-height, 60px) + 70px) !important;
+    margin-top: calc(var(--header-height, 60px) + var(--tabs-navigation-height, 60px) + #{$instructor-toolbar-height}) !important;
+  }
+
+  // Adjust course outline sidebar trigger (left side)
+  .outline-sidebar-heading-wrapper {
+    margin-top: 0 !important;
+  }
+
+  // Adjust course outline sidebar wrapper (left sidebar content)
+  .outline-sidebar-wrapper {
+    margin-top: 0 !important;
+  }
+
+  // Adjust sequence container to account for extra height
+  .sequence-container {
+    margin-top: 0 !important;
   }
 }
 
-// Fallback for browsers that don't support :has() - use the class-based approach
+// Fallback for browsers that don't support :has()
 #root.has-instructor-toolbar {
+  --instructor-toolbar-height: #{$instructor-toolbar-height};
+
   .course-tabs-navigation {
-    top: calc(var(--header-height, 60px) + 70px) !important;
+    top: calc(var(--header-height, 60px) + #{$instructor-toolbar-height}) !important;
   }
 
   main#main-content {
-    margin-top: calc(var(--header-height, 60px) + var(--tabs-navigation-height, 60px) + 70px) !important;
+    margin-top: calc(var(--header-height, 60px) + var(--tabs-navigation-height, 60px) + #{$instructor-toolbar-height}) !important;
+  }
+
+  .outline-sidebar-heading-wrapper {
+    margin-top: 0 !important;
+  }
+
+  .outline-sidebar-wrapper {
+    margin-top: 0 !important;
+  }
+
+  .sequence-container {
+    margin-top: 0 !important;
   }
 }
