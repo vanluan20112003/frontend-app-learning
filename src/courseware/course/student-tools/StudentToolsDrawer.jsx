@@ -10,12 +10,10 @@ import {
 } from '@openedx/paragon';
 import {
   Close,
-  Calculate,
   Build,
   Tv,
 } from '@openedx/paragon/icons';
 import { useIntl } from '@edx/frontend-platform/i18n';
-import SimpleCalculator from './SimpleCalculator';
 import VideoProgressTool from './VideoProgressTool';
 import messages from './messages';
 import './StudentToolsDrawer.scss';
@@ -39,21 +37,7 @@ const StudentToolsDrawer = () => {
       title: intl.formatMessage(messages.videoProgressTitle),
       icon: Tv,
       component: <VideoProgressTool />,
-      shake: true, // Thêm hiệu ứng rung lắc
     },
-    {
-      key: 'calculator',
-      title: intl.formatMessage(messages.calculatorTitle),
-      icon: Calculate,
-      component: <SimpleCalculator />,
-    },
-    // Có thể thêm các công cụ khác sau
-    // {
-    //   key: 'notes',
-    //   title: 'Ghi chú',
-    //   icon: Notes,
-    //   component: <NotesComponent />,
-    // },
   ];
 
   return (
