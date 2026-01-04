@@ -101,6 +101,11 @@ const Sequence = ({
     if (!seq?.unitIds) { return false; }
     return seq.unitIds.every((uId) => {
       const u = unitsFromModels[uId];
+      // Nếu unit là graded (bài tập/kiểm tra) thì bỏ qua kiểm tra complete
+      // Lý do: khi instructor đổi loại đề, complete bị reset nhưng student đã có điểm
+      if (u?.graded === true) {
+        return true;
+      }
       return u?.complete === true;
     });
   }, [sequencesFromModels, unitsFromModels]);
