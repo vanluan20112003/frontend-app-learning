@@ -99,6 +99,13 @@ const Sequence = ({
   const isSequenceComplete = useCallback((seqId) => {
     const seq = sequencesFromModels[seqId];
     if (!seq?.unitIds) { return false; }
+
+    // Kiểm tra timed/proctored exam đã submitted chưa
+    const hasSubmittedExam = seq?.specialExamInfo?.attempt?.attempt_status === 'submitted';
+    if (hasSubmittedExam) {
+      return true; // Đã submit exam → coi như hoàn thành
+    }
+
     return seq.unitIds.every((uId) => {
       const u = unitsFromModels[uId];
       // Nếu unit là graded (bài tập/kiểm tra) thì bỏ qua kiểm tra complete
