@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Helmet } from 'react-helmet';
 import { getConfig } from '@edx/frontend-platform';
 import { LearningHeader as Header } from '@edx/frontend-component-header';
-import FooterSlot from '@openedx/frontend-slot-footer';
+import { FooterSlot } from '@edx/frontend-component-footer';
 
 import { fetchMicroUnits, fetchMicroUnitBlocks, fetchMicroUnitDetail } from './data/thunks';
 import { getMicroUnits, getMicroUnitDetail } from './data/selectors';

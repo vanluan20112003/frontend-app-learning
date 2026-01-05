@@ -18,7 +18,7 @@ import {
   Search,
 } from '@openedx/paragon/icons';
 import { LearningHeader as Header } from '@edx/frontend-component-header';
-import FooterSlot from '@openedx/frontend-slot-footer';
+import { FooterSlot } from '@edx/frontend-component-footer';
 
 const AllMicroUnitsPage = () => {
   const navigate = useNavigate();

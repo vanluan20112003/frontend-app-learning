@@ -3,7 +3,7 @@ import { LearningHeader as Header } from '@edx/frontend-component-header';
 import { useParams, Navigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
-import FooterSlot from '@openedx/frontend-slot-footer';
+import { FooterSlot } from '@edx/frontend-component-footer';
 import useActiveEnterpriseAlert from '../alerts/active-enteprise-alert';
 import { AlertList } from './user-messages';
 import { fetchDiscussionTab } from '../course-home/data/thunks';
@@ -18,7 +18,7 @@ const CourseAccessErrorPage = ({ intl }) => {
   const activeEnterpriseAlert = useActiveEnterpriseAlert(courseId);
   useEffect(() => {
     dispatch(fetchDiscussionTab(courseId));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [courseId]);
 
   const {
