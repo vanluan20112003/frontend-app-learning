@@ -4,13 +4,13 @@ import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 /**
  * Check if the user is eligible to provide feedback for a course
  * (completion >= 85% and hasn't already submitted feedback)
- * 
+ *
  * @param {string} courseId - The course ID
  * @returns {Promise<Object>} Eligibility data including completion percentage
  */
 export async function checkFeedbackEligibility(courseId) {
   const url = `${getConfig().LMS_BASE_URL}/api/user_course_feedback/v1/eligibility/${courseId}/`;
-  
+
   try {
     const { data } = await getAuthenticatedHttpClient().get(url);
     return data;
@@ -22,7 +22,7 @@ export async function checkFeedbackEligibility(courseId) {
 
 /**
  * Submit course feedback
- * 
+ *
  * @param {string} courseId - The course ID
  * @param {number} rating - Rating from 1-5
  * @param {string} feedback - Optional text feedback
@@ -30,7 +30,7 @@ export async function checkFeedbackEligibility(courseId) {
  */
 export async function submitCourseFeedback(courseId, rating, feedback = '') {
   const url = `${getConfig().LMS_BASE_URL}/api/user_course_feedback/v1/feedback/`;
-  
+
   try {
     const { data } = await getAuthenticatedHttpClient().post(url, {
       course_id: courseId,
@@ -49,13 +49,13 @@ export async function submitCourseFeedback(courseId, rating, feedback = '') {
 
 /**
  * Get user's feedback for a specific course
- * 
+ *
  * @param {string} courseId - The course ID
  * @returns {Promise<Object|null>} The feedback object or null if not found
  */
 export async function getCourseFeedback(courseId) {
   const url = `${getConfig().LMS_BASE_URL}/api/user_course_feedback/v1/feedback/${courseId}/`;
-  
+
   try {
     const { data } = await getAuthenticatedHttpClient().get(url);
     return data;
@@ -70,7 +70,7 @@ export async function getCourseFeedback(courseId) {
 
 /**
  * Update existing course feedback
- * 
+ *
  * @param {string} courseId - The course ID
  * @param {number} rating - Rating from 1-5
  * @param {string} feedback - Optional text feedback
@@ -78,7 +78,7 @@ export async function getCourseFeedback(courseId) {
  */
 export async function updateCourseFeedback(courseId, rating, feedback = '') {
   const url = `${getConfig().LMS_BASE_URL}/api/user_course_feedback/v1/feedback/${courseId}/`;
-  
+
   try {
     const { data } = await getAuthenticatedHttpClient().patch(url, {
       rating,
@@ -93,13 +93,13 @@ export async function updateCourseFeedback(courseId, rating, feedback = '') {
 
 /**
  * Delete course feedback
- * 
+ *
  * @param {string} courseId - The course ID
  * @returns {Promise<void>}
  */
 export async function deleteCourseFeedback(courseId) {
   const url = `${getConfig().LMS_BASE_URL}/api/user_course_feedback/v1/feedback/${courseId}/`;
-  
+
   try {
     await getAuthenticatedHttpClient().delete(url);
   } catch (error) {
@@ -110,7 +110,7 @@ export async function deleteCourseFeedback(courseId) {
 
 /**
  * Get all feedback for a specific course (for viewing other users' feedback)
- * 
+ *
  * @param {string} courseId - The course ID
  * @param {string} sort - Sort order: 'rating_high', 'rating_low', 'date_new', 'date_old' (default: 'rating_high')
  * @param {number} page - Page number for pagination (default: 1)
@@ -119,19 +119,19 @@ export async function deleteCourseFeedback(courseId) {
  */
 export async function getAllCourseFeedback(courseId, sort = 'rating_high', page = 1, pageSize = 10) {
   const url = `${getConfig().LMS_BASE_URL}/api/user_course_feedback/v1/feedback/${courseId}/all/`;
-  
+
   try {
     const { data } = await getAuthenticatedHttpClient().get(url, {
-      params: { 
+      params: {
         sort,
         page,
         page_size: pageSize,
-      }
+      },
     });
-    
+
     // Backend returns pagination data in a nested structure
     const paginationData = data.pagination || {};
-    
+
     return {
       results: data.results || [],
       pagination: {
@@ -159,13 +159,13 @@ export async function getAllCourseFeedback(courseId, sort = 'rating_high', page 
 
 /**
  * Get average rating and statistics for a course
- * 
+ *
  * @param {string} courseId - The course ID
  * @returns {Promise<Object>} Average rating and statistics
  */
 export async function getCourseAverageRating(courseId) {
   const url = `${getConfig().LMS_BASE_URL}/api/user_course_feedback/v1/feedback/${courseId}/average/`;
-  
+
   try {
     const { data } = await getAuthenticatedHttpClient().get(url);
     return data;
@@ -175,12 +175,12 @@ export async function getCourseAverageRating(courseId) {
       average_rating: null,
       total_feedback_count: 0,
       rating_distribution: {
-        '5': 0,
-        '4': 0,
-        '3': 0,
-        '2': 0,
-        '1': 0,
-      }
+        5: 0,
+        4: 0,
+        3: 0,
+        2: 0,
+        1: 0,
+      },
     };
   }
 }

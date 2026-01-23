@@ -33,7 +33,7 @@ import './CourseFeedback.scss';
 const CourseFeedback = () => {
   const intl = useIntl();
   const courseId = useSelector(state => state.courseware?.courseId);
-  
+
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isEligible, setIsEligible] = useState(false);
@@ -63,7 +63,7 @@ const CourseFeedback = () => {
       // Check eligibility
       const eligibilityData = await checkFeedbackEligibility(courseId);
       const completionPct = eligibilityData.completion_percentage || 0;
-      
+
       // User is eligible based on completion percentage, not the is_eligible flag
       // (is_eligible becomes false after submitting feedback, but we still want to show the tool)
       const meetsThreshold = completionPct >= 85;
@@ -113,7 +113,7 @@ const CourseFeedback = () => {
     try {
       setDeletingFeedback(true);
       await deleteCourseFeedback(courseId);
-      
+
       sendTrackEvent('edx.ui.lms.course_feedback.deleted', {
         courseId,
       });
@@ -179,7 +179,7 @@ const CourseFeedback = () => {
             key={i}
             src={Star}
             className="star-filled"
-          />
+          />,
         );
       } else if (i === fullStars + 1 && hasPartialStar) {
         // Partial star (quarter, half, or three-quarter)
@@ -194,12 +194,12 @@ const CourseFeedback = () => {
                 left: 0,
                 width: `${partialPercent}%`,
                 overflow: 'hidden',
-                display: 'inline-block'
+                display: 'inline-block',
               }}
             >
               <Icon src={Star} className="star-filled" />
             </span>
-          </span>
+          </span>,
         );
       } else {
         // Empty star
@@ -208,7 +208,7 @@ const CourseFeedback = () => {
             key={i}
             src={StarBorder}
             className="star-empty"
-          />
+          />,
         );
       }
     }
@@ -267,8 +267,7 @@ const CourseFeedback = () => {
             <p className="text-muted mb-0">
               {totalFeedbackCount > 0
                 ? `Dựa trên ${totalFeedbackCount} đánh giá`
-                : 'Chưa có đánh giá nào'
-              }
+                : 'Chưa có đánh giá nào'}
             </p>
           </Card.Body>
         </Card>
@@ -300,35 +299,35 @@ const CourseFeedback = () => {
 
             {showAllFeedback && (
               <>
-              <div className="feedback-list">
-                {allFeedback.map((feedback, index) => (
-                  <Card key={index} className="feedback-item mb-3">
-                    <Card.Body>
-                      <div className="d-flex justify-content-between align-items-start px-2 py-1">
-                        <div className="flex-grow-1 w-100">
-                          <div className="d-flex align-items-center justify-content-between mb-1">
-                            <strong className="user-name">
-                              {feedback.user_full_name || feedback.username}
-                            </strong>
-                            <span className="text-muted" style={{ fontSize: '0.875rem' }}>
-                              {formatDate(feedback.created_at)}
-                            </span>
-                          </div>
-                          {renderStars(feedback.rating)}
-                          {/* {feedback.feedback_text && (
+                <div className="feedback-list">
+                  {allFeedback.map((feedback, index) => (
+                    <Card key={index} className="feedback-item mb-3">
+                      <Card.Body>
+                        <div className="d-flex justify-content-between align-items-start px-2 py-1">
+                          <div className="flex-grow-1 w-100">
+                            <div className="d-flex align-items-center justify-content-between mb-1">
+                              <strong className="user-name">
+                                {feedback.user_full_name || feedback.username}
+                              </strong>
+                              <span className="text-muted" style={{ fontSize: '0.875rem' }}>
+                                {formatDate(feedback.created_at)}
+                              </span>
+                            </div>
+                            {renderStars(feedback.rating)}
+                            {/* {feedback.feedback_text && (
                             <p className="feedback-text mt-2">{feedback.feedback_text}</p>
                           )} */}
-                        </div>
-                        {feedback.feedback_text && (
-                            <p className="feedback-text mt-1 mb-1">{feedback.feedback_text}</p>
+                          </div>
+                          {feedback.feedback_text && (
+                          <p className="feedback-text mt-1 mb-1">{feedback.feedback_text}</p>
                           )}
-                      </div>
-                    </Card.Body>
-                  </Card>
-                ))}
-              </div>
-              {/* Pagination */}
-              {feedbackPagination && feedbackPagination.num_pages > 1 && (
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  ))}
+                </div>
+                {/* Pagination */}
+                {feedbackPagination && feedbackPagination.num_pages > 1 && (
                 <div className="pagination-wrapper">
                   <Pagination
                     paginationLabel="Phân trang phản hồi"
@@ -339,7 +338,7 @@ const CourseFeedback = () => {
                     size="small"
                   />
                 </div>
-              )}
+                )}
               </>
             )}
           </div>
@@ -372,8 +371,7 @@ const CourseFeedback = () => {
             <p className="text-muted mb-0">
               {totalFeedbackCount > 0
                 ? `Dựa trên ${totalFeedbackCount} đánh giá`
-                : 'Chưa có đánh giá nào'
-              }
+                : 'Chưa có đánh giá nào'}
             </p>
           </Card.Body>
         </Card>
@@ -399,7 +397,6 @@ const CourseFeedback = () => {
           </p>
         </Alert>
 
-        
         {/* All Feedback Section */}
         {allFeedback.length > 0 && (
           <div className="all-feedback-section mt-4">
@@ -417,36 +414,36 @@ const CourseFeedback = () => {
 
             {showAllFeedback && (
               <>
-              <div className="feedback-list">
-                {allFeedback.map((feedback, index) => (
-                  <Card key={index} className="feedback-item mb-3">
-                    <Card.Body>
-                      <div className="d-flex justify-content-between align-items-start px-3 py-2">
-                        <div className="flex-grow-1 w-100">
-                          <div className="d-flex align-items-center justify-content-between mb-1">
-                            <strong className="user-name">
-                              {feedback.user_full_name || feedback.username}
-                            </strong>
-                            <span className="text-muted" style={{ fontSize: '0.875rem' }}>
-                              {formatDate(feedback.created_at)}
-                            </span>
-                          </div>
-                          {renderStars(feedback.rating)}
-                          {/* {feedback.feedback_text && (
+                <div className="feedback-list">
+                  {allFeedback.map((feedback, index) => (
+                    <Card key={index} className="feedback-item mb-3">
+                      <Card.Body>
+                        <div className="d-flex justify-content-between align-items-start px-3 py-2">
+                          <div className="flex-grow-1 w-100">
+                            <div className="d-flex align-items-center justify-content-between mb-1">
+                              <strong className="user-name">
+                                {feedback.user_full_name || feedback.username}
+                              </strong>
+                              <span className="text-muted" style={{ fontSize: '0.875rem' }}>
+                                {formatDate(feedback.created_at)}
+                              </span>
+                            </div>
+                            {renderStars(feedback.rating)}
+                            {/* {feedback.feedback_text && (
                             <p className="feedback-text mt-2">{feedback.feedback_text}</p>
                           )} */}
-                        </div>
-                        {feedback.feedback_text && (
-                            <p className="feedback-text mt-2 mb-2">{feedback.feedback_text}</p>
+                          </div>
+                          {feedback.feedback_text && (
+                          <p className="feedback-text mt-2 mb-2">{feedback.feedback_text}</p>
                           )}
-                      </div>
-                    </Card.Body>
-                  </Card>
-                ))}
-                
-              </div>
-              {/* Pagination */}
-              {feedbackPagination && feedbackPagination.num_pages > 1 && (
+                        </div>
+                      </Card.Body>
+                    </Card>
+                  ))}
+
+                </div>
+                {/* Pagination */}
+                {feedbackPagination && feedbackPagination.num_pages > 1 && (
                 <div className="pagination-wrapper">
                   <Pagination
                     paginationLabel="Phân trang phản hồi"
@@ -457,12 +454,12 @@ const CourseFeedback = () => {
                     size="small"
                   />
                 </div>
-              )}
+                )}
               </>
             )}
           </div>
         )}
-        
+
       </div>
     );
   }
@@ -490,10 +487,9 @@ const CourseFeedback = () => {
                 )}
               </div>
               <p className="text-muted mb-0">
-                {totalFeedbackCount > 0 
+                {totalFeedbackCount > 0
                   ? `Dựa trên ${totalFeedbackCount} đánh giá`
-                  : 'Chưa có đánh giá nào'
-                }
+                  : 'Chưa có đánh giá nào'}
               </p>
             </div>
           </div>
@@ -540,7 +536,7 @@ const CourseFeedback = () => {
           <Card.Body className="p-3">
             <h3>Chia sẻ phản hồi của bạn</h3>
             <p>
-              Bạn đã hoàn thành {completionPercentage.toFixed(1)}% khóa học. 
+              Bạn đã hoàn thành {completionPercentage.toFixed(1)}% khóa học.
               Hãy chia sẻ trải nghiệm của bạn!
             </p>
             <div className="d-flex justify-content-center">
@@ -575,28 +571,28 @@ const CourseFeedback = () => {
               <div className="feedback-list">
                 {allFeedback.map((feedback, index) => (
                   <Card key={index} className="feedback-item mb-3">
-                      <Card.Body>
-                        <div className="d-flex justify-content-between align-items-start px-3 py-2">
-                          <div className="flex-grow-1 w-100">
-                            <div className="d-flex align-items-center justify-content-between mb-1">
-                              <strong className="user-name">
-                                {feedback.user_full_name || feedback.username}
-                              </strong>
-                              <span className="text-muted" style={{ fontSize: '0.875rem' }}>
-                                {formatDate(feedback.created_at)}
-                              </span>
-                            </div>
-                            {renderStars(feedback.rating)}
-                            {/* {feedback.feedback_text && (
+                    <Card.Body>
+                      <div className="d-flex justify-content-between align-items-start px-3 py-2">
+                        <div className="flex-grow-1 w-100">
+                          <div className="d-flex align-items-center justify-content-between mb-1">
+                            <strong className="user-name">
+                              {feedback.user_full_name || feedback.username}
+                            </strong>
+                            <span className="text-muted" style={{ fontSize: '0.875rem' }}>
+                              {formatDate(feedback.created_at)}
+                            </span>
+                          </div>
+                          {renderStars(feedback.rating)}
+                          {/* {feedback.feedback_text && (
                               <p className="feedback-text mt-2">{feedback.feedback_text}</p>
                             )} */}
-                          </div>
-                          {feedback.feedback_text && (
-                              <p className="feedback-text mt-2 mb-2">{feedback.feedback_text}</p>
-                            )}
                         </div>
-                      </Card.Body>
-                    </Card>
+                        {feedback.feedback_text && (
+                          <p className="feedback-text mt-2 mb-2">{feedback.feedback_text}</p>
+                        )}
+                      </div>
+                    </Card.Body>
+                  </Card>
                 ))}
               </div>
 

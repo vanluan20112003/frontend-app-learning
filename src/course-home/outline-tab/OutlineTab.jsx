@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { sendTrackEvent } from '@edx/frontend-platform/analytics';
-import { getAuthenticatedUser } from '@edx/frontend-platform/auth';
+import { getAuthenticatedUser, getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { getConfig } from '@edx/frontend-platform';
-import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { injectIntl, intlShape } from '@edx/frontend-platform/i18n';
 import { Alert, Button, Hyperlink } from '@openedx/paragon';
 import { Info, InfoOutline } from '@openedx/paragon/icons';
@@ -30,6 +29,7 @@ import { useModel } from '../../generic/model-store';
 import WelcomeMessage from './widgets/WelcomeMessage';
 import ProctoringInfoPanel from './widgets/ProctoringInfoPanel';
 import AccountActivationAlert from '../../alerts/logistration-alert/AccountActivationAlert';
+import ProgressWarningBar from '../../courseware/course/student-tools/ProgressWarningBar';
 
 const OutlineTab = ({ intl }) => {
   const {
@@ -229,6 +229,7 @@ const OutlineTab = ({ intl }) => {
           )}
           <StartOrResumeCourseCard />
           <WelcomeMessage courseId={courseId} />
+          <ProgressWarningBar courseId={courseId} />
           {rootCourseId && (
             <>
               <div className="row w-100 m-0 mb-3 justify-content-end">

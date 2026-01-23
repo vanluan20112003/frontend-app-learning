@@ -7,6 +7,7 @@ import { breakpoints, useWindowSize } from '@openedx/paragon';
 
 import { AlertList } from '@src/generic/user-messages';
 import { useModel } from '@src/generic/model-store';
+import { CourseFeedbackModal, useCourseFeedback } from '@src/course-feedback';
 import { getCoursewareOutlineSidebarSettings } from '../data/selectors';
 import { Trigger as CourseOutlineTrigger } from './sidebar/sidebars/course-outline';
 import Chat from './chat/Chat';
@@ -20,7 +21,7 @@ import ContentTools from './content-tools';
 import Sequence from './sequence';
 import { CourseLayout } from './navigation-sidebar';
 import { ToolsPanel, VideoProgressPanel } from './student-tools';
-import { CourseFeedbackModal, useCourseFeedback } from '@src/course-feedback';
+import ProgressWarningBar from './student-tools/ProgressWarningBar';
 
 const Course = ({
   courseId,
@@ -59,7 +60,7 @@ const Course = ({
   );
   const shouldDisplayChat = windowWidth >= breakpoints.medium.minWidth;
   const daysPerWeek = course?.courseGoals?.selectedGoal?.daysPerWeek;
-  
+
   // Course feedback modal hook - pass sequenceId to trigger check on navigation
   const {
     isModalOpen: isFeedbackModalOpen,
@@ -148,6 +149,7 @@ const Course = ({
         />
         <ContentTools course={course} />
         <ToolsPanel />
+        <ProgressWarningBar courseId={courseId} />
         <VideoProgressPanel />
       </CourseLayout>
     </SidebarProviderComponent>

@@ -193,10 +193,10 @@ const VideoProgressPanel = () => {
     // console.log("unitId:", unitId);
     // console.log("loading:", loading);
     // console.log("=".repeat(80));
-    
+
     const loadContentDetail = async () => {
       // console.log("🔄 loadContentDetail called - checking conditions...");
-      
+
       if (!userData?.id) {
         // console.log("❌ Skipping - no userData yet, userData:", userData);
         setLoading(false);
@@ -220,14 +220,14 @@ const VideoProgressPanel = () => {
       // Retry logic: Try multiple times with increasing delays
       const tryExtractH5P = async (attemptNumber = 1, maxAttempts = 5) => {
         // console.log(`🔍 Attempt ${attemptNumber}/${maxAttempts} to extract H5P content...`);
-        
+
         const contentId = await extractH5PContentId();
         // console.log(`📌 Attempt ${attemptNumber} result:`, contentId);
-        
+
         if (contentId) {
           return contentId;
         }
-        
+
         // If no content found and we have more attempts, try again
         if (attemptNumber < maxAttempts) {
           const delay = attemptNumber * 1000; // 1s, 2s, 3s, 4s
@@ -235,7 +235,7 @@ const VideoProgressPanel = () => {
           await new Promise(resolve => setTimeout(resolve, delay));
           return tryExtractH5P(attemptNumber + 1, maxAttempts);
         }
-        
+
         return null;
       };
 
@@ -244,7 +244,7 @@ const VideoProgressPanel = () => {
         const contentId = await tryExtractH5P();
         // console.log("VideoProgressPanel: Final content id extracted:", contentId);
         // console.log("VideoProgressPanel: Unit ID:", unitId);
-        
+
         if (contentId) {
           h5pContentIdRef.current = contentId;
           setH5pContentId(contentId);
@@ -289,7 +289,7 @@ const VideoProgressPanel = () => {
     if (!userData?.id) {
       return undefined;
     }
-    
+
     const intervalId = setInterval(async () => {
       const currentContentId = h5pContentIdRef.current;
 
@@ -326,7 +326,7 @@ const VideoProgressPanel = () => {
 
   // Manual refresh
   const handleRefresh = async () => {
-    if (!userData?.id || !h5pContentId) return;
+    if (!userData?.id || !h5pContentId) { return; }
 
     try {
       setRefreshing(true);
@@ -359,12 +359,16 @@ const VideoProgressPanel = () => {
   // Show progress data if available, otherwise show 0% (not yet started)
   const videoProgress = contentDetail?.video_progress?.has_progress
     ? contentDetail.video_progress
-    : (h5pContentId ? { has_progress: true, progress_percent: 0, duration: 0, status: 'not_started' } : null);
+    : (h5pContentId ? {
+      has_progress: true, progress_percent: 0, duration: 0, status: 'not_started',
+    } : null);
 
   // For score: if video exists but no score data, default to 0 (score won't contribute to hiding panel)
   const scoreData = contentDetail?.score?.has_score
     ? contentDetail.score
-    : (h5pContentId ? { has_score: true, score: 0, max_score: 0, score_percent: 0 } : null);
+    : (h5pContentId ? {
+      has_score: true, score: 0, max_score: 0, score_percent: 0,
+    } : null);
 
   // console.log("✅ VideoProgressPanel: Rendering panel");
   // console.log("📊 Video Progress:", videoProgress);
@@ -381,11 +385,11 @@ const VideoProgressPanel = () => {
             className="video-progress-panel-toggle panel-open"
             onClick={() => setIsOpen(!isOpen)}
             title="Ẩn tiến độ"
-            style={{ 
-              position: 'absolute', 
-              left: 0, 
+            style={{
+              position: 'absolute',
+              left: 0,
               top: 0,
-              borderRadius: '0 8px 8px 0'
+              borderRadius: '0 8px 8px 0',
             }}
           >
             <Icon src={ChevronRight} />
@@ -420,14 +424,14 @@ const VideoProgressPanel = () => {
       {/* Toggle Button when closed */}
       {!isOpen && (
         <div className="video-progress-panel panel-close">
-            <button
+          <button
             type="button"
             className="video-progress-panel-toggle"
             onClick={() => setIsOpen(!isOpen)}
             title="Hiện tiến độ"
-            >
+          >
             <Icon src={ChevronLeft} />
-            </button>
+          </button>
         </div>
       )}
     </>

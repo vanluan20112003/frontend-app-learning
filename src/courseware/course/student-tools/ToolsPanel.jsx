@@ -149,7 +149,7 @@ const ToolsPanel = () => {
       // Maximize based on active tool
       setPreviousWidth(localDrawerWidth);
       let maxWidth;
-      
+
       if (activeTool === 'feedback') {
         // Feedback tool limited to 400px max
         maxWidth = 450;
@@ -157,7 +157,7 @@ const ToolsPanel = () => {
         // Other tools can use 80% of window width
         maxWidth = Math.floor(window.innerWidth * 0.8);
       }
-      
+
       setLocalDrawerWidth(maxWidth);
       setDrawerWidth(maxWidth);
       setIsMaximized(true);
@@ -167,12 +167,11 @@ const ToolsPanel = () => {
   // Resize functionality - Click to toggle between preset sizes
   const handleResizeClick = () => {
     // Different preset sizes based on active tool
-    const presetSizes = activeTool === 'feedback' 
+    const presetSizes = activeTool === 'feedback'
       ? [300, 350, 400, 450] // Limited sizes for feedback
       : [300, 400, 500, 600, 700]; // Full range for other tools
-    
 
-      //  const presetSizes = [300, 400, 500, 600, 700];
+    //  const presetSizes = [300, 400, 500, 600, 700];
     const currentIndex = presetSizes.findIndex(size => Math.abs(size - localDrawerWidth) < 50);
     const nextIndex = (currentIndex + 1) % presetSizes.length;
     const newWidth = presetSizes[nextIndex];
@@ -194,10 +193,10 @@ const ToolsPanel = () => {
 
       const newWidth = window.innerWidth - e.clientX;
       const minWidth = 300;
-      
+
       // Limit max width to 400px for feedback tool, otherwise 80% of window
-      const maxWidth = activeTool === 'feedback' 
-        ? 450 
+      const maxWidth = activeTool === 'feedback'
+        ? 450
         : window.innerWidth * 0.8;
       // const maxWidth = window.innerWidth * 0.8;
 

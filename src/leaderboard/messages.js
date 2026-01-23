@@ -4,58 +4,58 @@ const messages = defineMessages({
   // Page header
   leaderboardTitle: {
     id: 'leaderboard.title',
-    defaultMessage: 'Leaderboard',
+    defaultMessage: 'Bảng xếp hạng',
     description: 'Main title for the leaderboard page',
   },
   leaderboardDescription: {
     id: 'leaderboard.description',
-    defaultMessage: 'Discover the top performers in this course',
+    defaultMessage: 'Khám phá những học viên xuất sắc nhất trong khóa học này',
     description: 'Description text for the leaderboard page',
   },
 
   // Statistics cards
   totalStudents: {
     id: 'leaderboard.stats.totalStudents',
-    defaultMessage: 'Total Students',
+    defaultMessage: 'Tổng số học viên',
     description: 'Label for total students statistic',
   },
   averageGrade: {
     id: 'leaderboard.stats.averageGrade',
-    defaultMessage: 'Average Grade',
+    defaultMessage: 'Điểm trung bình',
     description: 'Label for average grade statistic',
   },
   highestGrade: {
     id: 'leaderboard.stats.highestGrade',
-    defaultMessage: 'Highest Grade',
+    defaultMessage: 'Điểm cao nhất',
     description: 'Label for highest grade statistic',
   },
   activeCompetitors: {
     id: 'leaderboard.stats.activeCompetitors',
-    defaultMessage: 'Competing',
+    defaultMessage: 'Đang thi đua',
     description: 'Label for active competitors statistic',
   },
 
   // Grades leaderboard
   gradesLeaderboardTitle: {
     id: 'leaderboard.grades.title',
-    defaultMessage: 'Top Students by Grade',
+    defaultMessage: 'Top học viên theo điểm',
     description: 'Title for grades leaderboard section',
   },
   progressLeaderboardTitle: {
     id: 'leaderboard.progress.title',
-    defaultMessage: 'Top Students by Progress',
+    defaultMessage: 'Top học viên theo tiến độ',
     description: 'Title for progress leaderboard section',
   },
 
   // Controls
   refreshButton: {
     id: 'leaderboard.refresh',
-    defaultMessage: 'Refresh',
+    defaultMessage: 'Làm mới',
     description: 'Label for refresh button',
   },
   displayLabel: {
     id: 'leaderboard.display',
-    defaultMessage: 'Display:',
+    defaultMessage: 'Hiển thị:',
     description: 'Label for display dropdown',
   },
   top10: {
@@ -82,147 +82,147 @@ const messages = defineMessages({
   // Period filters
   thisWeek: {
     id: 'leaderboard.period.week',
-    defaultMessage: 'This Week',
+    defaultMessage: 'Tuần này',
     description: 'Filter option for this week',
   },
   thisMonth: {
     id: 'leaderboard.period.month',
-    defaultMessage: 'This Month',
+    defaultMessage: 'Tháng này',
     description: 'Filter option for this month',
   },
   allTime: {
     id: 'leaderboard.period.allTime',
-    defaultMessage: 'All Time',
+    defaultMessage: 'Toàn bộ',
     description: 'Filter option for all time',
   },
 
   // Table headers
   rankColumn: {
     id: 'leaderboard.table.rank',
-    defaultMessage: 'Rank',
+    defaultMessage: 'Hạng',
     description: 'Column header for rank',
   },
   studentColumn: {
     id: 'leaderboard.table.student',
-    defaultMessage: 'Student',
+    defaultMessage: 'Học viên',
     description: 'Column header for student name',
   },
   gradeColumn: {
     id: 'leaderboard.table.grade',
-    defaultMessage: 'Grade',
+    defaultMessage: 'Điểm',
     description: 'Column header for grade',
   },
   progressColumn: {
     id: 'leaderboard.table.progress',
-    defaultMessage: 'Progress',
+    defaultMessage: 'Tiến độ',
     description: 'Column header for progress',
   },
 
   // Loading states
   loading: {
     id: 'leaderboard.loading',
-    defaultMessage: 'Loading leaderboard...',
+    defaultMessage: 'Đang tải bảng xếp hạng...',
     description: 'Loading message',
   },
 
   // Error states
   errorMessage: {
     id: 'leaderboard.error',
-    defaultMessage: 'Unable to load data. Please try again.',
+    defaultMessage: 'Không thể tải dữ liệu. Vui lòng thử lại.',
     description: 'Error message when data fails to load',
   },
 
   // Empty states
   noGradesData: {
     id: 'leaderboard.grades.empty',
-    defaultMessage: 'No grade data available yet',
+    defaultMessage: 'Chưa có dữ liệu điểm',
     description: 'Message when no grades data exists',
   },
   noGradesDescription: {
     id: 'leaderboard.grades.emptyDescription',
-    defaultMessage: 'The leaderboard will be updated when grades are available.',
+    defaultMessage: 'Bảng xếp hạng sẽ được cập nhật khi có điểm.',
     description: 'Description for empty grades state',
   },
   noProgressData: {
     id: 'leaderboard.progress.empty',
-    defaultMessage: 'No progress data available yet',
+    defaultMessage: 'Chưa có dữ liệu tiến độ',
     description: 'Message when no progress data exists',
   },
   noProgressDescription: {
     id: 'leaderboard.progress.emptyDescription',
-    defaultMessage: 'The leaderboard will be updated when learning progress is tracked.',
+    defaultMessage: 'Bảng xếp hạng sẽ được cập nhật khi có tiến độ học tập.',
     description: 'Description for empty progress state',
   },
 
   // Discussion Leaderboard
   discussionLeaderboardTitle: {
     id: 'leaderboard.discussion.title',
-    defaultMessage: 'Discussion Leaderboard',
+    defaultMessage: 'Bảng xếp hạng thảo luận',
     description: 'Title for discussion leaderboard section',
   },
   discussionRankingAll: {
     id: 'leaderboard.discussion.ranking.all',
-    defaultMessage: 'All Interactions',
+    defaultMessage: 'Tất cả tương tác',
     description: 'Filter for all discussion interactions',
   },
   discussionRankingThreads: {
     id: 'leaderboard.discussion.ranking.threads',
-    defaultMessage: 'Topics',
+    defaultMessage: 'Chủ đề',
     description: 'Filter for discussion topics',
   },
   discussionRankingComments: {
     id: 'leaderboard.discussion.ranking.comments',
-    defaultMessage: 'Comments',
+    defaultMessage: 'Bình luận',
     description: 'Filter for discussion comments',
   },
   discussionRankingQuestions: {
     id: 'leaderboard.discussion.ranking.questions',
-    defaultMessage: 'Questions',
+    defaultMessage: 'Câu hỏi',
     description: 'Filter for discussion questions',
   },
   discussionRankingVotes: {
     id: 'leaderboard.discussion.ranking.votes',
-    defaultMessage: 'Upvotes',
+    defaultMessage: 'Lượt thích',
     description: 'Filter for discussion upvotes',
   },
   discussionColumnAll: {
     id: 'leaderboard.discussion.column.all',
-    defaultMessage: 'Total Interactions',
+    defaultMessage: 'Tổng tương tác',
     description: 'Column header for total interactions',
   },
   discussionColumnThreads: {
     id: 'leaderboard.discussion.column.threads',
-    defaultMessage: 'Topics Created',
+    defaultMessage: 'Chủ đề đã tạo',
     description: 'Column header for topics created',
   },
   discussionColumnComments: {
     id: 'leaderboard.discussion.column.comments',
-    defaultMessage: 'Comments Posted',
+    defaultMessage: 'Bình luận đã đăng',
     description: 'Column header for comments posted',
   },
   discussionColumnQuestions: {
     id: 'leaderboard.discussion.column.questions',
-    defaultMessage: 'Questions Asked',
+    defaultMessage: 'Câu hỏi đã đặt',
     description: 'Column header for questions asked',
   },
   discussionColumnVotes: {
     id: 'leaderboard.discussion.column.votes',
-    defaultMessage: 'Upvotes Received',
+    defaultMessage: 'Lượt thích nhận được',
     description: 'Column header for upvotes received',
   },
   userColumn: {
     id: 'leaderboard.table.user',
-    defaultMessage: 'User',
+    defaultMessage: 'Người dùng',
     description: 'Column header for user name',
   },
   noDiscussionData: {
     id: 'leaderboard.discussion.empty',
-    defaultMessage: 'No discussion data available yet',
+    defaultMessage: 'Chưa có dữ liệu thảo luận',
     description: 'Message when no discussion data exists',
   },
   noDiscussionDescription: {
     id: 'leaderboard.discussion.emptyDescription',
-    defaultMessage: 'The leaderboard will be updated when users participate in discussions.',
+    defaultMessage: 'Bảng xếp hạng sẽ được cập nhật khi có hoạt động thảo luận.',
     description: 'Description for empty discussion state',
   },
 });

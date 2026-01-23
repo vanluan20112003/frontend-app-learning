@@ -3,7 +3,7 @@ import { defineMessages } from '@edx/frontend-platform/i18n';
 const messages = defineMessages({
   upgradeNow: {
     id: 'learning.accessExpiration.upgradeNow',
-    defaultMessage: 'Upgrade now',
+    defaultMessage: 'Nâng cấp ngay',
     description: 'The anchor text for the upgrading link',
   },
 });
