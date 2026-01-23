@@ -113,6 +113,11 @@ const Sequence = ({
       if (u?.graded === true) {
         return true;
       }
+      // Nếu unit là problem (bài tập tự luận/trắc nghiệm) thì bỏ qua kiểm tra complete
+      // Lý do: bài tự luận cần chờ giáo viên chấm, không thể tự complete
+      if (u?.type === 'problem') {
+        return true;
+      }
       return u?.complete === true;
     });
   }, [sequencesFromModels, unitsFromModels]);
