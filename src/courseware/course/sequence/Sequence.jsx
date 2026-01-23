@@ -36,7 +36,7 @@ import SequentialLock from './sequential-lock';
 // SEQUENTIAL LEARNING - Bắt buộc học tuần tự
 // Set true để bật, false để tắt
 // =====================================================
-const ENABLE_SEQUENTIAL_LEARNING = true;
+const ENABLE_SEQUENTIAL_LEARNING = false;
 
 const Sequence = ({
   unitId,
