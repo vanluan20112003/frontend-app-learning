@@ -3,82 +3,82 @@ import { defineMessages } from '@edx/frontend-platform/i18n';
 const messages = defineMessages({
   modalTitle: {
     id: 'courseFeedback.modalTitle',
-    defaultMessage: 'Trải nghiệm khóa học của bạn thế nào?',
+    defaultMessage: 'How was your course experience?',
     description: 'Title of the course feedback modal',
   },
   modalDescription: {
     id: 'courseFeedback.modalDescription',
-    defaultMessage: 'Chúc mừng bạn đã hoàn thành 85% khóa học! Chúng tôi rất mong được nghe ý kiến của bạn về khóa học này.',
+    defaultMessage: 'Congratulations on completing 85% of the course! We would love to hear your thoughts about this course.',
     description: 'Description text in the course feedback modal',
   },
   ratingLabel: {
     id: 'courseFeedback.ratingLabel',
-    defaultMessage: 'Đánh giá trải nghiệm của bạn',
+    defaultMessage: 'Rate your experience',
     description: 'Label for the star rating field',
   },
   starRatingAriaLabel: {
     id: 'courseFeedback.starRatingAriaLabel',
-    defaultMessage: 'Đánh giá {rating} sao',
+    defaultMessage: '{rating} star rating',
     description: 'Aria label for star rating buttons',
   },
   ratingRequired: {
     id: 'courseFeedback.ratingRequired',
-    defaultMessage: 'Vui lòng chọn số sao trước khi gửi.',
+    defaultMessage: 'Please select a star rating before submitting.',
     description: 'Error message when rating is not selected',
   },
   feedbackLabel: {
     id: 'courseFeedback.feedbackLabel',
-    defaultMessage: 'Chia sẻ suy nghĩ của bạn',
+    defaultMessage: 'Share your thoughts',
     description: 'Label for the feedback text area',
   },
   feedbackPlaceholder: {
     id: 'courseFeedback.feedbackPlaceholder',
-    defaultMessage: 'Hãy cho chúng tôi biết bạn thích điều gì hoặc điều gì có thể cải thiện...',
+    defaultMessage: 'Tell us what you liked or what could be improved...',
     description: 'Placeholder text for the feedback text area',
   },
   optional: {
     id: 'courseFeedback.optional',
-    defaultMessage: 'Tùy chọn',
+    defaultMessage: 'Optional',
     description: 'Label indicating a field is optional',
   },
   characters: {
     id: 'courseFeedback.characters',
-    defaultMessage: 'ký tự',
+    defaultMessage: 'characters',
     description: 'Character count label',
   },
   privacyNote: {
     id: 'courseFeedback.privacyNote',
-    defaultMessage: 'Phản hồi của bạn giúp chúng tôi cải thiện trải nghiệm học tập. Nó sẽ được chia sẻ với đội ngũ khóa học.',
+    defaultMessage: 'Your feedback helps us improve the learning experience. It will be shared with the course team.',
     description: 'Privacy note about how feedback will be used',
   },
   skipButton: {
     id: 'courseFeedback.skipButton',
-    defaultMessage: 'Bỏ qua',
+    defaultMessage: 'Skip',
     description: 'Button text to skip providing feedback',
   },
   submitButton: {
     id: 'courseFeedback.submitButton',
-    defaultMessage: 'Gửi phản hồi',
+    defaultMessage: 'Submit feedback',
     description: 'Button text to submit feedback',
   },
   submittingButton: {
     id: 'courseFeedback.submittingButton',
-    defaultMessage: 'Đang gửi...',
+    defaultMessage: 'Submitting...',
     description: 'Button text while submitting feedback',
   },
   submitError: {
     id: 'courseFeedback.submitError',
-    defaultMessage: 'Đã xảy ra lỗi khi gửi phản hồi của bạn. Vui lòng thử lại.',
+    defaultMessage: 'An error occurred while submitting your feedback. Please try again.',
     description: 'Error message when feedback submission fails',
   },
   successTitle: {
     id: 'courseFeedback.successTitle',
-    defaultMessage: 'Cảm ơn bạn đã phản hồi!',
+    defaultMessage: 'Thank you for your feedback!',
     description: 'Success message title',
   },
   successMessage: {
     id: 'courseFeedback.successMessage',
-    defaultMessage: 'Phản hồi của bạn đã được gửi thành công.',
+    defaultMessage: 'Your feedback has been submitted successfully.',
     description: 'Success message text',
   },
 });

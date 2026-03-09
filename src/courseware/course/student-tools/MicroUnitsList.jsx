@@ -14,7 +14,7 @@ import {
   School,
   Schedule,
   Search,
-  LightbulbOutline,
+  Lightbulb,
   CheckCircle,
   ExpandMore,
   ExpandLess,
@@ -312,7 +312,7 @@ const MicroUnitsList = () => {
       </div>
 
       <div className="micro-units-banner">
-        <Icon src={LightbulbOutline} className="banner-icon" />
+        <Icon src={Lightbulb} className="banner-icon" />
         <div className="banner-content">
           <h6>{intl.formatMessage(messages.microUnitsBannerTitle)}</h6>
           <p>{intl.formatMessage(messages.microUnitsBannerDescription)}</p>
@@ -412,113 +412,113 @@ const MicroUnitsList = () => {
                         <div className="micro-unit-title-row">
                           <h5 className="micro-unit-title">{microUnit.title}</h5>
                           {hasBlocks && (
-                          <button
-                            type="button"
-                            className="expand-button"
-                            onClick={(e) => toggleExpand(microUnit.id, e)}
-                            aria-label={isExpanded ? 'Collapse units list' : 'Expand units list'}
-                          >
-                            <Icon src={isExpanded ? ExpandLess : ExpandMore} />
-                          </button>
+                            <button
+                              type="button"
+                              className="expand-button"
+                              onClick={(e) => toggleExpand(microUnit.id, e)}
+                              aria-label={isExpanded ? 'Collapse units list' : 'Expand units list'}
+                            >
+                              <Icon src={isExpanded ? ExpandLess : ExpandMore} />
+                            </button>
                           )}
                         </div>
 
                         {microUnit.description && (
-                        <div className="micro-unit-description-wrapper">
-                          <p className={`micro-unit-description ${isDescriptionExpanded ? 'expanded' : ''}`}>
-                            {microUnit.description}
-                          </p>
-                          {hasLongDescription && (
-                          <button
-                            type="button"
-                            className="description-toggle"
-                            onClick={(e) => toggleDescription(microUnit.id, e)}
-                          >
-                            {isDescriptionExpanded ? 'Thu gọn' : 'Xem thêm'}
-                          </button>
-                          )}
-                        </div>
+                          <div className="micro-unit-description-wrapper">
+                            <p className={`micro-unit-description ${isDescriptionExpanded ? 'expanded' : ''}`}>
+                              {microUnit.description}
+                            </p>
+                            {hasLongDescription && (
+                              <button
+                                type="button"
+                                className="description-toggle"
+                                onClick={(e) => toggleDescription(microUnit.id, e)}
+                              >
+                                {isDescriptionExpanded ? 'Thu gọn' : 'Xem thêm'}
+                              </button>
+                            )}
+                          </div>
                         )}
 
                         <div className="micro-unit-meta">
                           {microUnit.estimated_duration && (
-                          <span className="meta-item">
-                            <Icon src={Schedule} className="meta-icon" />
-                            {microUnit.estimated_duration} {intl.formatMessage(messages.microUnitsMinutes)}
-                          </span>
+                            <span className="meta-item">
+                              <Icon src={Schedule} className="meta-icon" />
+                              {microUnit.estimated_duration} {intl.formatMessage(messages.microUnitsMinutes)}
+                            </span>
                           )}
                           {microUnit.total_blocks > 0 && (
-                          <span className="meta-item">
-                            {microUnit.total_blocks} {intl.formatMessage(messages.microUnitsBlocks)}
-                          </span>
+                            <span className="meta-item">
+                              {microUnit.total_blocks} {intl.formatMessage(messages.microUnitsBlocks)}
+                            </span>
                           )}
                         </div>
 
                         {/* Completion Progress */}
                         {completion.total > 0 && (
-                        <div className="micro-unit-progress">
-                          <div className="progress-header">
-                            <span className="progress-text">
-                              {intl.formatMessage(messages.microUnitsProgressLabel, {
-                                completed: completion.completed,
-                                total: completion.total,
-                              })}
-                            </span>
-                            <span className="progress-percentage">
-                              {completion.percentage}%
-                            </span>
+                          <div className="micro-unit-progress">
+                            <div className="progress-header">
+                              <span className="progress-text">
+                                {intl.formatMessage(messages.microUnitsProgressLabel, {
+                                  completed: completion.completed,
+                                  total: completion.total,
+                                })}
+                              </span>
+                              <span className="progress-percentage">
+                                {completion.percentage}%
+                              </span>
+                            </div>
+                            <ProgressBar
+                              now={completion.percentage}
+                              variant={completion.percentage === 100 ? 'success' : 'info'}
+                              className="micro-unit-progress-bar"
+                            />
                           </div>
-                          <ProgressBar
-                            now={completion.percentage}
-                            variant={completion.percentage === 100 ? 'success' : 'info'}
-                            className="micro-unit-progress-bar"
-                          />
-                        </div>
                         )}
                       </div>
 
                       <div className="micro-unit-badges">
                         {completion.percentage === 100 && (
-                        <Badge variant="success" className="completion-badge">
-                          <Icon src={CheckCircle} className="badge-icon" />
-                          {intl.formatMessage(messages.microUnitsCompleted)}
-                        </Badge>
+                          <Badge variant="success" className="completion-badge">
+                            <Icon src={CheckCircle} className="badge-icon" />
+                            {intl.formatMessage(messages.microUnitsCompleted)}
+                          </Badge>
                         )}
                         {microUnit.difficulty_level && (
-                        <Badge variant={getDifficultyColor(microUnit.difficulty_level)}>
-                          {getDifficultyLabel(microUnit.difficulty_level)}
-                        </Badge>
+                          <Badge variant={getDifficultyColor(microUnit.difficulty_level)}>
+                            {getDifficultyLabel(microUnit.difficulty_level)}
+                          </Badge>
                         )}
                       </div>
                     </div>
 
                     {/* Dropdown list of units */}
                     {isExpanded && hasBlocks && (
-                    <div className="micro-unit-dropdown">
-                      <div className="dropdown-header">
-                        Danh sách bài học ({microUnit.blocks.length})
+                      <div className="micro-unit-dropdown">
+                        <div className="dropdown-header">
+                          Danh sách bài học ({microUnit.blocks.length})
+                        </div>
+                        <ul className="units-list">
+                          {microUnit.blocks.map((block, index) => {
+                            const isCompleted = completedUnits.has(block.block_usage_key);
+                            return (
+                              <li key={block.id || index} className="unit-item">
+                                <button
+                                  type="button"
+                                  className={`unit-button ${isCompleted ? 'completed' : ''}`}
+                                  onClick={(e) => handleUnitClick(microUnit, block, e)}
+                                >
+                                  <Icon
+                                    src={isCompleted ? CheckCircle : Schedule}
+                                    className="unit-icon"
+                                  />
+                                  <span className="unit-name">{block.display_name}</span>
+                                </button>
+                              </li>
+                            );
+                          })}
+                        </ul>
                       </div>
-                      <ul className="units-list">
-                        {microUnit.blocks.map((block, index) => {
-                          const isCompleted = completedUnits.has(block.block_usage_key);
-                          return (
-                            <li key={block.id || index} className="unit-item">
-                              <button
-                                type="button"
-                                className={`unit-button ${isCompleted ? 'completed' : ''}`}
-                                onClick={(e) => handleUnitClick(microUnit, block, e)}
-                              >
-                                <Icon
-                                  src={isCompleted ? CheckCircle : Schedule}
-                                  className="unit-icon"
-                                />
-                                <span className="unit-name">{block.display_name}</span>
-                              </button>
-                            </li>
-                          );
-                        })}
-                      </ul>
-                    </div>
                     )}
                   </Card.Body>
                 </Card>

@@ -15,6 +15,15 @@ import {
 } from './data/api';
 import messages from './messages';
 
+const widgetMessages = {
+  ...messages,
+  viewCourseAs: {
+    id: 'masquerade-widget.viewCourseAs',
+    defaultMessage: 'View this course as:',
+    description: 'Label for the dropdown to select which user role to view the course as',
+  },
+};
+
 class MasqueradeWidget extends Component {
   constructor(props) {
     super(props);
@@ -120,7 +129,7 @@ class MasqueradeWidget extends Component {
     return (
       <div className="flex-grow-1">
         <div className="row">
-          <span className="col-auto col-form-label pl-3">View this course as:</span>
+          <span className="col-auto col-form-label pl-3">{this.props.intl.formatMessage(widgetMessages.viewCourseAs)}</span>
           <Dropdown className="flex-shrink-1 mx-1">
             <Dropdown.Toggle id="masquerade-widget-toggle" variant="inverse-outline-primary">
               {masquerade}

@@ -17,6 +17,7 @@ import DiscussionTab from './course-home/discussion-tab/DiscussionTab';
 
 import messages from './i18n';
 import { UserMessagesProvider } from './generic/user-messages';
+import ChatbotWidget from './chatbot';
 
 import './index.scss';
 import OutlineTab from './course-home/outline-tab';
@@ -61,6 +62,7 @@ subscribe(APP_READY, () => {
       <PathFixesProvider>
         <NoticesProvider>
           <UserMessagesProvider>
+            <ChatbotWidget />
             <Routes>
               <Route path={ROUTES.UNSUBSCRIBE} element={<PageWrap><GoalUnsubscribe /></PageWrap>} />
               <Route path={ROUTES.REDIRECT} element={<PageWrap><CoursewareRedirectLandingPage /></PageWrap>} />
@@ -210,6 +212,12 @@ initialize({
         PROCTORED_EXAM_RULES_URL: process.env.PROCTORED_EXAM_RULES_URL || null,
         CHAT_RESPONSE_URL: process.env.CHAT_RESPONSE_URL || null,
         PRIVACY_POLICY_URL: process.env.PRIVACY_POLICY_URL || null,
+        CHATBOT_API_URL: process.env.CHATBOT_API_URL || null,
+        CHATBOT_BUTTON_TEXT: process.env.CHATBOT_BUTTON_TEXT || '💬',
+        CHATBOT_PRIMARY_COLOR: process.env.CHATBOT_PRIMARY_COLOR || '#4CAF50',
+        CHATBOT_WELCOME_MESSAGE: process.env.CHATBOT_WELCOME_MESSAGE || 'Xin chào! Tôi là chatbot MOOC 🤖',
+        CHATBOT_PLACEHOLDER: process.env.CHATBOT_PLACEHOLDER || 'Hỏi tôi về tài liệu PDF...',
+        CHATBOT_POSITION: process.env.CHATBOT_POSITION || 'bottom-right',
       }, 'LearnerAppConfig');
     },
   },
