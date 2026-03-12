@@ -24,12 +24,6 @@ const ProgressWarningBar = ({ courseId }) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    if (courseId) {
-      fetchProgressWarning();
-    }
-  }, [courseId]);
-
   const fetchProgressWarning = async () => {
     try {
       setLoading(true);
@@ -39,10 +33,12 @@ const ProgressWarningBar = ({ courseId }) => {
       // Use the student-specific endpoint (no staff permission required)
       const url = `${config.LMS_BASE_URL}/api/custom/v1/progress-warning/student/${encodeURIComponent(courseId)}/`;
 
+      // eslint-disable-next-line no-console
       console.log('📊 ProgressWarningBar: Fetching from', url);
 
       const { data } = await getAuthenticatedHttpClient().get(url);
 
+      // eslint-disable-next-line no-console
       console.log('📊 ProgressWarningBar: API response', data);
 
       if (data.success && data.feature_enabled) {
@@ -56,16 +52,24 @@ const ProgressWarningBar = ({ courseId }) => {
           message: data.message,
         });
       } else {
+        // eslint-disable-next-line no-console
         console.log('📊 ProgressWarningBar: Feature disabled or API failed', data);
         setError(data.message || 'Feature not enabled');
       }
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error('📊 ProgressWarningBar: Error fetching progress warning:', err);
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (courseId) {
+      fetchProgressWarning();
+    }
+  }, [courseId]);
 
   // Don't render if loading, error, or no data
   if (loading || error || !warningData) {

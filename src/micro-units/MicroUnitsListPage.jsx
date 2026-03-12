@@ -48,6 +48,7 @@ const MicroUnitsListPage = ({ courseId }) => {
           setCompletedUnits(completed);
         }
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error('Error fetching completion status:', err);
       }
     };
@@ -85,6 +86,7 @@ const MicroUnitsListPage = ({ courseId }) => {
         const activeMicroUnits = allMicroUnits.filter(unit => unit.is_active === true);
         setMicroUnits(activeMicroUnits);
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error('Error fetching micro units:', err);
         setError(err.message || 'Failed to load micro units');
         setMicroUnits([]);

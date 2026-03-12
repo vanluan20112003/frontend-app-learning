@@ -16,22 +16,18 @@ import {
   Delete,
   Visibility,
 } from '@openedx/paragon/icons';
-import { useIntl } from '@edx/frontend-platform/i18n';
 import { sendTrackEvent } from '@edx/frontend-platform/analytics';
 import {
   checkFeedbackEligibility,
   getCourseFeedback,
   getAllCourseFeedback,
   getCourseAverageRating,
-  updateCourseFeedback,
   deleteCourseFeedback,
 } from '../../../course-feedback/data/api';
 import CourseFeedbackModal from '../../../course-feedback/CourseFeedbackModal';
-import messages from './messages';
 import './CourseFeedback.scss';
 
 const CourseFeedback = () => {
-  const intl = useIntl();
   const courseId = useSelector(state => state.courseware?.courseId);
 
   const [loading, setLoading] = useState(true);
@@ -48,12 +44,6 @@ const CourseFeedback = () => {
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deletingFeedback, setDeletingFeedback] = useState(false);
-
-  useEffect(() => {
-    if (courseId) {
-      loadFeedbackData();
-    }
-  }, [courseId]);
 
   const loadFeedbackData = async () => {
     try {
@@ -103,11 +93,18 @@ const CourseFeedback = () => {
 
       setLoading(false);
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error('Error loading feedback data:', err);
       setError('Không thể tải dữ liệu phản hồi');
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (courseId) {
+      loadFeedbackData();
+    }
+  }, [courseId]);
 
   const handleDeleteFeedback = async () => {
     try {
@@ -122,7 +119,9 @@ const CourseFeedback = () => {
       setMyFeedback(null);
       await loadFeedbackData(); // Reload to get all feedback
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error('Error deleting feedback:', err);
+      // eslint-disable-next-line no-alert
       alert('Không thể xóa phản hồi. Vui lòng thử lại.');
     } finally {
       setDeletingFeedback(false);
@@ -141,6 +140,7 @@ const CourseFeedback = () => {
       setAllFeedback(feedbackResponse.results || []);
       setFeedbackPagination(feedbackResponse.pagination);
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.error('Error loading page:', err);
     }
   };
@@ -300,8 +300,8 @@ const CourseFeedback = () => {
             {showAllFeedback && (
               <>
                 <div className="feedback-list">
-                  {allFeedback.map((feedback, index) => (
-                    <Card key={index} className="feedback-item mb-3">
+                  {allFeedback.map((feedback) => (
+                    <Card key={feedback.username} className="feedback-item mb-3">
                       <Card.Body>
                         <div className="d-flex justify-content-between align-items-start px-2 py-1">
                           <div className="flex-grow-1 w-100">
@@ -415,8 +415,8 @@ const CourseFeedback = () => {
             {showAllFeedback && (
               <>
                 <div className="feedback-list">
-                  {allFeedback.map((feedback, index) => (
-                    <Card key={index} className="feedback-item mb-3">
+                  {allFeedback.map((feedback) => (
+                    <Card key={feedback.username} className="feedback-item mb-3">
                       <Card.Body>
                         <div className="d-flex justify-content-between align-items-start px-3 py-2">
                           <div className="flex-grow-1 w-100">
@@ -569,9 +569,10 @@ const CourseFeedback = () => {
           {showAllFeedback && (
             <>
               <div className="feedback-list">
-                {allFeedback.map((feedback, index) => (
-                  <Card key={index} className="feedback-item mb-3">
+                {allFeedback.map((feedback) => (
+                  <Card key={feedback.username} className="feedback-item mb-3">
                     <Card.Body>
+
                       <div className="d-flex justify-content-between align-items-start px-3 py-2">
                         <div className="flex-grow-1 w-100">
                           <div className="d-flex align-items-center justify-content-between mb-1">

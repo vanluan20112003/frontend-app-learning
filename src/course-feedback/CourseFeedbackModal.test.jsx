@@ -186,7 +186,7 @@ describe('CourseFeedbackModal', () => {
   });
 
   it('shows loading state during submission', async () => {
-    mockSubmitCourseFeedback.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
+    mockSubmitCourseFeedback.mockImplementation(() => new Promise(resolve => { setTimeout(resolve, 100); }));
 
     renderModal();
 

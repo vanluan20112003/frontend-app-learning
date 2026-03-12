@@ -11,7 +11,7 @@ import {
   Spinner,
   Alert,
 } from '@openedx/paragon';
-import { Close, Star, StarOutline } from '@openedx/paragon/icons';
+import { Star, StarOutline } from '@openedx/paragon/icons';
 
 import messages from './messages';
 import { submitCourseFeedback } from './data/api';

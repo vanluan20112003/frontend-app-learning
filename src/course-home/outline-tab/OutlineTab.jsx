@@ -124,6 +124,7 @@ const OutlineTab = ({ intl }) => {
         }
       } catch (error) {
         // Silently fail - don't block the page if API fails
+        // eslint-disable-next-line no-console
         console.error('Failed to check course visibility status:', error);
       }
     };

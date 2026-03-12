@@ -13,6 +13,7 @@ config.module.rules.forEach((rule) => {
   if (rule.test && rule.test.toString().includes('scss')) {
     rule.use.forEach((loader) => {
       if (loader.loader && loader.loader.includes('sass-loader')) {
+        // eslint-disable-next-line no-param-reassign
         loader.options = {
           ...loader.options,
           sassOptions: {

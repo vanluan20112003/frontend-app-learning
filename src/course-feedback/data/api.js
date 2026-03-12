@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 

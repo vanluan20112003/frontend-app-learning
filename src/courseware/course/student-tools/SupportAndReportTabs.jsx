@@ -47,11 +47,11 @@ const SupportAndReportTabs = () => {
 
     // Use ResizeObserver to detect container size changes in real-time
     const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
+      entries.forEach((entry) => {
         if (entry.target === containerRef.current) {
           checkWidth.current();
         }
-      }
+      });
     });
 
     if (containerRef.current) {

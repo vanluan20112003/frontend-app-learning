@@ -80,6 +80,7 @@ const AllMicroUnitsPage = () => {
                 );
               }
             } catch (err) {
+              // eslint-disable-next-line no-console
               console.error(`Error fetching completion for ${courseId}:`, err);
             }
 
@@ -91,6 +92,7 @@ const AllMicroUnitsPage = () => {
               completedUnits,
             }));
           } catch (err) {
+            // eslint-disable-next-line no-console
             console.error(`Error fetching micro units for ${courseId}:`, err);
             return [];
           }
@@ -104,6 +106,7 @@ const AllMicroUnitsPage = () => {
 
         setAllMicroUnits(flattenedMicroUnits);
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error('Error fetching micro units:', err);
         setError(err.message || 'Failed to load micro units');
       } finally {
@@ -555,13 +558,13 @@ const AllMicroUnitsPage = () => {
             </div>
           ) : (
             <div className="micro-units-grid">
-              {filteredMicroUnits.map((microUnit, index) => {
+              {filteredMicroUnits.map((microUnit) => {
                 const thumbnailUrl = getThumbnailUrl(microUnit);
                 const completion = calculateCompletion(microUnit);
 
                 return (
                   <Card
-                    key={`${microUnit.courseId}-${microUnit.id}-${index}`}
+                    key={`${microUnit.courseId}-${microUnit.id}`}
                     className="micro-unit-card"
                     onClick={() => handleMicroUnitClick(microUnit)}
                   >
