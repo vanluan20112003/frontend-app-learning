@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { getConfig } from '@edx/frontend-platform';
+import { useIntl, defineMessages } from '@edx/frontend-platform/i18n';
 
 import { ALERT_TYPES, AlertList } from '../generic/user-messages';
 import Alert from '../generic/user-messages/Alert';
@@ -36,6 +37,14 @@ function getStudioUrl(courseId, unitId) {
   return urlFull;
 }
 
+const toolbarMessages = defineMessages({
+  viewCourseIn: {
+    id: 'learning.instructor-toolbar.viewCourseIn',
+    defaultMessage: 'View course in:',
+    description: 'Label for links to view the course in Studio or Insights',
+  },
+});
+
 const InstructorToolbar = (props) => {
   // This didMount logic became necessary once we had a page that does a redirect on a quick exit.
   // As a result, it unmounts the InstructorToolbar (which will be remounted by the new component),
@@ -70,6 +79,7 @@ const InstructorToolbar = (props) => {
 
   const urlInsights = getInsightsUrl(courseId);
   const urlStudio = getStudioUrl(courseId, unitId);
+  const intl = useIntl();
   const [masqueradeErrorMessage, showMasqueradeError] = useState(null);
 
   const accessExpirationMasqueradeBanner = useAccessExpirationMasqueradeBanner(courseId, tab);
@@ -85,7 +95,7 @@ const InstructorToolbar = (props) => {
           {(urlStudio || urlInsights) && (
             <>
               <hr className="border-light" />
-              <span className="mr-2 mt-1 col-form-label">View course in:</span>
+              <span className="mr-2 mt-1 col-form-label">{intl.formatMessage(toolbarMessages.viewCourseIn)}</span>
             </>
           )}
           {urlStudio && (

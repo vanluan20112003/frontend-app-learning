@@ -9,41 +9,41 @@ const messages = defineMessages({
   },
   leaderboardDescription: {
     id: 'leaderboard.description',
-    defaultMessage: 'Discover the top performers in this course',
+    defaultMessage: 'Discover the top-performing learners in this course',
     description: 'Description text for the leaderboard page',
   },
 
   // Statistics cards
   totalStudents: {
     id: 'leaderboard.stats.totalStudents',
-    defaultMessage: 'Total Students',
+    defaultMessage: 'Total students',
     description: 'Label for total students statistic',
   },
   averageGrade: {
     id: 'leaderboard.stats.averageGrade',
-    defaultMessage: 'Average Grade',
+    defaultMessage: 'Average grade',
     description: 'Label for average grade statistic',
   },
   highestGrade: {
     id: 'leaderboard.stats.highestGrade',
-    defaultMessage: 'Highest Grade',
+    defaultMessage: 'Highest grade',
     description: 'Label for highest grade statistic',
   },
   activeCompetitors: {
     id: 'leaderboard.stats.activeCompetitors',
-    defaultMessage: 'Competing',
+    defaultMessage: 'Active competitors',
     description: 'Label for active competitors statistic',
   },
 
   // Grades leaderboard
   gradesLeaderboardTitle: {
     id: 'leaderboard.grades.title',
-    defaultMessage: 'Top Students by Grade',
+    defaultMessage: 'Top learners by grade',
     description: 'Title for grades leaderboard section',
   },
   progressLeaderboardTitle: {
     id: 'leaderboard.progress.title',
-    defaultMessage: 'Top Students by Progress',
+    defaultMessage: 'Top learners by progress',
     description: 'Title for progress leaderboard section',
   },
 
@@ -82,17 +82,17 @@ const messages = defineMessages({
   // Period filters
   thisWeek: {
     id: 'leaderboard.period.week',
-    defaultMessage: 'This Week',
+    defaultMessage: 'This week',
     description: 'Filter option for this week',
   },
   thisMonth: {
     id: 'leaderboard.period.month',
-    defaultMessage: 'This Month',
+    defaultMessage: 'This month',
     description: 'Filter option for this month',
   },
   allTime: {
     id: 'leaderboard.period.allTime',
-    defaultMessage: 'All Time',
+    defaultMessage: 'All time',
     description: 'Filter option for all time',
   },
 
@@ -135,7 +135,7 @@ const messages = defineMessages({
   // Empty states
   noGradesData: {
     id: 'leaderboard.grades.empty',
-    defaultMessage: 'No grade data available yet',
+    defaultMessage: 'No grades data yet',
     description: 'Message when no grades data exists',
   },
   noGradesDescription: {
@@ -145,29 +145,29 @@ const messages = defineMessages({
   },
   noProgressData: {
     id: 'leaderboard.progress.empty',
-    defaultMessage: 'No progress data available yet',
+    defaultMessage: 'No progress data yet',
     description: 'Message when no progress data exists',
   },
   noProgressDescription: {
     id: 'leaderboard.progress.emptyDescription',
-    defaultMessage: 'The leaderboard will be updated when learning progress is tracked.',
+    defaultMessage: 'The leaderboard will be updated when learning progress is available.',
     description: 'Description for empty progress state',
   },
 
   // Discussion Leaderboard
   discussionLeaderboardTitle: {
     id: 'leaderboard.discussion.title',
-    defaultMessage: 'Discussion Leaderboard',
+    defaultMessage: 'Discussion leaderboard',
     description: 'Title for discussion leaderboard section',
   },
   discussionRankingAll: {
     id: 'leaderboard.discussion.ranking.all',
-    defaultMessage: 'All Interactions',
+    defaultMessage: 'All interactions',
     description: 'Filter for all discussion interactions',
   },
   discussionRankingThreads: {
     id: 'leaderboard.discussion.ranking.threads',
-    defaultMessage: 'Topics',
+    defaultMessage: 'Threads',
     description: 'Filter for discussion topics',
   },
   discussionRankingComments: {
@@ -187,27 +187,27 @@ const messages = defineMessages({
   },
   discussionColumnAll: {
     id: 'leaderboard.discussion.column.all',
-    defaultMessage: 'Total Interactions',
+    defaultMessage: 'Total interactions',
     description: 'Column header for total interactions',
   },
   discussionColumnThreads: {
     id: 'leaderboard.discussion.column.threads',
-    defaultMessage: 'Topics Created',
+    defaultMessage: 'Threads created',
     description: 'Column header for topics created',
   },
   discussionColumnComments: {
     id: 'leaderboard.discussion.column.comments',
-    defaultMessage: 'Comments Posted',
+    defaultMessage: 'Comments posted',
     description: 'Column header for comments posted',
   },
   discussionColumnQuestions: {
     id: 'leaderboard.discussion.column.questions',
-    defaultMessage: 'Questions Asked',
+    defaultMessage: 'Questions asked',
     description: 'Column header for questions asked',
   },
   discussionColumnVotes: {
     id: 'leaderboard.discussion.column.votes',
-    defaultMessage: 'Upvotes Received',
+    defaultMessage: 'Upvotes received',
     description: 'Column header for upvotes received',
   },
   userColumn: {
@@ -217,12 +217,12 @@ const messages = defineMessages({
   },
   noDiscussionData: {
     id: 'leaderboard.discussion.empty',
-    defaultMessage: 'No discussion data available yet',
+    defaultMessage: 'No discussion data yet',
     description: 'Message when no discussion data exists',
   },
   noDiscussionDescription: {
     id: 'leaderboard.discussion.emptyDescription',
-    defaultMessage: 'The leaderboard will be updated when users participate in discussions.',
+    defaultMessage: 'The leaderboard will be updated when there is discussion activity.',
     description: 'Description for empty discussion state',
   },
 });

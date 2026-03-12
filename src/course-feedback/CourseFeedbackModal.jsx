@@ -11,7 +11,7 @@ import {
   Spinner,
   Alert,
 } from '@openedx/paragon';
-import { Close, Star, StarOutline } from '@openedx/paragon/icons';
+import { Star, StarOutline } from '@openedx/paragon/icons';
 
 import messages from './messages';
 import { submitCourseFeedback } from './data/api';
@@ -46,7 +46,7 @@ const CourseFeedbackModal = ({
 
     try {
       await submitCourseFeedback(courseId, rating, feedback);
-      
+
       // Track the feedback submission
       sendTrackEvent('edx.ui.lms.course_feedback.submitted', {
         course_id: courseId,
@@ -55,7 +55,7 @@ const CourseFeedbackModal = ({
       });
 
       setSuccess(true);
-      
+
       // Close modal after a short delay to show success message
       setTimeout(() => {
         onClose();

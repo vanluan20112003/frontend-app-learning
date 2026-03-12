@@ -1,5 +1,7 @@
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import {
+  render, screen, fireEvent, waitFor,
+} from '@testing-library/react';
 import { IntlProvider } from '@edx/frontend-platform/i18n';
 import { sendTrackEvent } from '@edx/frontend-platform/analytics';
 import CourseFeedbackModal from './CourseFeedbackModal';
@@ -18,13 +20,11 @@ describe('CourseFeedbackModal', () => {
     onClose: jest.fn(),
   };
 
-  const renderModal = (props = {}) => {
-    return render(
-      <IntlProvider locale="en">
-        <CourseFeedbackModal {...defaultProps} {...props} />
-      </IntlProvider>
-    );
-  };
+  const renderModal = (props = {}) => render(
+    <IntlProvider locale="en">
+      <CourseFeedbackModal {...defaultProps} {...props} />
+    </IntlProvider>,
+  );
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -116,7 +116,7 @@ describe('CourseFeedbackModal', () => {
       expect(mockSubmitCourseFeedback).toHaveBeenCalledWith(
         'course-v1:edX+DemoX+Demo_Course',
         4,
-        'Great course!'
+        'Great course!',
       );
     });
 
@@ -186,7 +186,7 @@ describe('CourseFeedbackModal', () => {
   });
 
   it('shows loading state during submission', async () => {
-    mockSubmitCourseFeedback.mockImplementation(() => new Promise(resolve => setTimeout(resolve, 100)));
+    mockSubmitCourseFeedback.mockImplementation(() => new Promise(resolve => { setTimeout(resolve, 100); }));
 
     renderModal();
 
@@ -230,9 +230,9 @@ describe('CourseFeedbackModal', () => {
     renderModal();
     const textarea = screen.getByLabelText(/Share your thoughts/i);
     const longText = 'a'.repeat(1001);
-    
+
     fireEvent.change(textarea, { target: { value: longText } });
-    
+
     // The textarea should limit to 1000 characters
     expect(textarea.value.length).toBeLessThanOrEqual(1000);
   });

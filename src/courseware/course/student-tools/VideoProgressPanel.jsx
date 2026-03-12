@@ -1,27 +1,22 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useIntl } from '@edx/frontend-platform/i18n';
 import {
-  Icon, IconButton, Spinner,
+  Icon,
 } from '@openedx/paragon';
 import {
   ChevronLeft,
   ChevronRight,
-  VideoLibrary,
-  Assessment,
-  Refresh,
 } from '@openedx/paragon/icons';
 import { getConfig } from '@edx/frontend-platform';
 import { getAuthenticatedHttpClient } from '@edx/frontend-platform/auth';
 import { useParams } from 'react-router-dom';
-import { useModel } from '../../../generic/model-store';
 import './VideoProgressPanel.scss';
 
 const VideoProgressPanel = () => {
   // console.log("🔵 VideoProgressPanel component is rendering");
 
-  const intl = useIntl();
+  // const intl = useIntl();
   const { courseId, unitId } = useParams();
-  const course = useModel('coursewareMeta', courseId);
+  // const course = useModel('coursewareMeta', courseId);
 
   // Initialize isOpen from sessionStorage, default to true if not set
   const [isOpen, setIsOpen] = useState(() => {
@@ -32,7 +27,7 @@ const VideoProgressPanel = () => {
   const [userData, setUserData] = useState(null);
   const [contentDetail, setContentDetail] = useState(null);
   const [h5pContentId, setH5pContentId] = useState(null);
-  const [refreshing, setRefreshing] = useState(false);
+  // const [refreshing, setRefreshing] = useState(false);
   const h5pContentIdRef = useRef(null);
 
   // Save isOpen state to sessionStorage whenever it changes
@@ -193,10 +188,10 @@ const VideoProgressPanel = () => {
     // console.log("unitId:", unitId);
     // console.log("loading:", loading);
     // console.log("=".repeat(80));
-    
+
     const loadContentDetail = async () => {
       // console.log("🔄 loadContentDetail called - checking conditions...");
-      
+
       if (!userData?.id) {
         // console.log("❌ Skipping - no userData yet, userData:", userData);
         setLoading(false);
@@ -220,22 +215,22 @@ const VideoProgressPanel = () => {
       // Retry logic: Try multiple times with increasing delays
       const tryExtractH5P = async (attemptNumber = 1, maxAttempts = 5) => {
         // console.log(`🔍 Attempt ${attemptNumber}/${maxAttempts} to extract H5P content...`);
-        
+
         const contentId = await extractH5PContentId();
         // console.log(`📌 Attempt ${attemptNumber} result:`, contentId);
-        
+
         if (contentId) {
           return contentId;
         }
-        
+
         // If no content found and we have more attempts, try again
         if (attemptNumber < maxAttempts) {
           const delay = attemptNumber * 1000; // 1s, 2s, 3s, 4s
           // console.log(`⏳ Retrying in ${delay}ms...`);
-          await new Promise(resolve => setTimeout(resolve, delay));
+          await new Promise(resolve => { setTimeout(resolve, delay); });
           return tryExtractH5P(attemptNumber + 1, maxAttempts);
         }
-        
+
         return null;
       };
 
@@ -244,7 +239,7 @@ const VideoProgressPanel = () => {
         const contentId = await tryExtractH5P();
         // console.log("VideoProgressPanel: Final content id extracted:", contentId);
         // console.log("VideoProgressPanel: Unit ID:", unitId);
-        
+
         if (contentId) {
           h5pContentIdRef.current = contentId;
           setH5pContentId(contentId);
@@ -256,7 +251,7 @@ const VideoProgressPanel = () => {
               // console.log("📊 VideoProgressPanel: Content detail fetched:", detail);
               setContentDetail(detail);
             })
-            .catch((err) => {
+            .catch(() => {
               // console.log("❌ VideoProgressPanel: Failed to fetch content detail:", err);
               setContentDetail(null);
             })
@@ -289,7 +284,7 @@ const VideoProgressPanel = () => {
     if (!userData?.id) {
       return undefined;
     }
-    
+
     const intervalId = setInterval(async () => {
       const currentContentId = h5pContentIdRef.current;
 
@@ -298,6 +293,7 @@ const VideoProgressPanel = () => {
           const detail = await fetchContentDetail(userData.id, currentContentId);
           setContentDetail(detail);
         } catch (err) {
+          // eslint-disable-next-line no-console
           console.error('Error refreshing content detail:', err);
         }
       }
@@ -314,9 +310,9 @@ const VideoProgressPanel = () => {
     const loadInitialData = async () => {
       try {
         const user = await fetchUserData();
-        // console.log("✅ User data fetched successfully:", user?.id);
         setUserData(user);
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.error('Error loading user data:', err);
       }
     };
@@ -324,22 +320,24 @@ const VideoProgressPanel = () => {
     loadInitialData();
   }, [courseId]);
 
-  // Manual refresh
+  /*
+  // lint-disable-next-line no-unused-vars
   const handleRefresh = async () => {
-    if (!userData?.id || !h5pContentId) return;
+    if (!userData?.id || !h5pContentId) { return; }
 
     try {
-      setRefreshing(true);
+      // setRefreshing(true);
       const detail = await fetchContentDetail(userData.id, h5pContentId);
       setContentDetail(detail);
     } catch (err) {
       // console.error('Error refreshing:', err);
     } finally {
-      setRefreshing(false);
+      // setRefreshing(false);
     }
   };
+  */
 
-  // console.log("🔍 Render check - loading:", loading, "contentDetail:", !!contentDetail, "h5pContentId:", h5pContentId);
+  // console.log("🔍 Render check - loading:", loading, "contentDetail:", !!contentDetail);
   // console.log("📦 State details - userData:", !!userData, "unitId:", unitId);
 
   // Don't render if unitId is not ready yet (route not initialized)
@@ -351,20 +349,29 @@ const VideoProgressPanel = () => {
   // Don't render if no H5P content detected AND loading is complete (no video in this unit)
   // This matches the logic from VideoProgressTool.jsx - use h5pContentId to determine if video exists
   if (!loading && !h5pContentId) {
-    // console.log("🚫 VideoProgressPanel: Not rendering - no H5P content found");
     return null;
   }
 
   // If h5pContentId exists, there IS a video/H5P content, even if progress hasn't loaded yet
   // Show progress data if available, otherwise show 0% (not yet started)
-  const videoProgress = contentDetail?.video_progress?.has_progress
-    ? contentDetail.video_progress
-    : (h5pContentId ? { has_progress: true, progress_percent: 0, duration: 0, status: 'not_started' } : null);
+  let videoProgress = null;
+  if (contentDetail?.video_progress?.has_progress) {
+    videoProgress = contentDetail.video_progress;
+  } else if (h5pContentId) {
+    videoProgress = {
+      has_progress: true, progress_percent: 0, duration: 0, status: 'not_started',
+    };
+  }
 
-  // For score: if video exists but no score data, default to 0 (score won't contribute to hiding panel)
-  const scoreData = contentDetail?.score?.has_score
-    ? contentDetail.score
-    : (h5pContentId ? { has_score: true, score: 0, max_score: 0, score_percent: 0 } : null);
+  // For score: if video exists but no score data, default to 0
+  let scoreData = null;
+  if (contentDetail?.score?.has_score) {
+    scoreData = contentDetail.score;
+  } else if (h5pContentId) {
+    scoreData = {
+      has_score: true, score: 0, max_score: 0, score_percent: 0,
+    };
+  }
 
   // console.log("✅ VideoProgressPanel: Rendering panel");
   // console.log("📊 Video Progress:", videoProgress);
@@ -381,11 +388,11 @@ const VideoProgressPanel = () => {
             className="video-progress-panel-toggle panel-open"
             onClick={() => setIsOpen(!isOpen)}
             title="Ẩn tiến độ"
-            style={{ 
-              position: 'absolute', 
-              left: 0, 
+            style={{
+              position: 'absolute',
+              left: 0,
               top: 0,
-              borderRadius: '0 8px 8px 0'
+              borderRadius: '0 8px 8px 0',
             }}
           >
             <Icon src={ChevronRight} />
@@ -420,14 +427,14 @@ const VideoProgressPanel = () => {
       {/* Toggle Button when closed */}
       {!isOpen && (
         <div className="video-progress-panel panel-close">
-            <button
+          <button
             type="button"
             className="video-progress-panel-toggle"
             onClick={() => setIsOpen(!isOpen)}
             title="Hiện tiến độ"
-            >
+          >
             <Icon src={ChevronLeft} />
-            </button>
+          </button>
         </div>
       )}
     </>

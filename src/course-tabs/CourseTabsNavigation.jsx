@@ -14,6 +14,18 @@ const CourseTabsNavigation = ({
 }) => {
   const { show } = useCoursewareSearchState();
 
+  // Translation map for tab slugs to their Vietnamese titles
+  const translateTabTitle = (slug, originalTitle) => {
+    const translations = {
+      outline: intl.formatMessage(messages.tabCourse),
+      courseware: intl.formatMessage(messages.tabCourse),
+      progress: intl.formatMessage(messages.tabProgress),
+      dates: intl.formatMessage(messages.tabDates),
+      discussion: intl.formatMessage(messages.tabDiscussion),
+    };
+    return translations[slug] || originalTitle;
+  };
+
   // Add leaderboard tab if not already present
   const enhancedTabs = useMemo(() => {
     const hasLeaderboard = tabs.some((tab) => tab.slug === 'leaderboard');
@@ -67,7 +79,7 @@ const CourseTabsNavigation = ({
               className={classNames('nav-item flex-shrink-0 nav-link', { active: slug === activeTabSlug })}
               href={url}
             >
-              {title}
+              {translateTabTitle(slug, title)}
             </a>
           ))}
         </Tabs>

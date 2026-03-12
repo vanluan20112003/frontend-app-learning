@@ -39,7 +39,14 @@ const MicroUnitsContainer = ({
         fetchMicroUnitsAction(routeCourseId);
       }
     }
-  }, [routeCourseId, routeMicroUnitId, fetchCourseAction, fetchMicroUnitsAction, fetchMicroUnitBlocksAction, fetchMicroUnitDetailAction]);
+  }, [
+    routeCourseId,
+    routeMicroUnitId,
+    fetchCourseAction,
+    fetchMicroUnitsAction,
+    fetchMicroUnitBlocksAction,
+    fetchMicroUnitDetailAction,
+  ]);
 
   // Use routeCourseId as fallback if courseId is not yet in Redux
   const activeCourseId = courseId || routeCourseId;

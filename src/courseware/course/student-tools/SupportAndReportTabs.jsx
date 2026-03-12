@@ -31,10 +31,10 @@ const SupportAndReportTabs = () => {
 
   // Check if we should use dropdown mode based on container width
   const checkWidth = useRef(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current) { return; }
 
     const containerWidth = containerRef.current.offsetWidth;
-    
+
     // If container is narrow (< 400px), use dropdown mode
     // This threshold can be adjusted based on tab title lengths
     const shouldUseDropdown = containerWidth < 400;
@@ -47,11 +47,11 @@ const SupportAndReportTabs = () => {
 
     // Use ResizeObserver to detect container size changes in real-time
     const resizeObserver = new ResizeObserver((entries) => {
-      for (const entry of entries) {
+      entries.forEach((entry) => {
         if (entry.target === containerRef.current) {
           checkWidth.current();
         }
-      }
+      });
     });
 
     if (containerRef.current) {
@@ -66,9 +66,9 @@ const SupportAndReportTabs = () => {
         checkWidth.current();
       }, 100);
     };
-    
+
     window.addEventListener('resize', handleResize);
-    
+
     return () => {
       if (containerRef.current) {
         resizeObserver.unobserve(containerRef.current);
@@ -111,7 +111,7 @@ const SupportAndReportTabs = () => {
               </Dropdown.Menu>
             </Dropdown>
           </div>
-          
+
           {/* Display active tab content */}
           <div className="tab-content-dropdown">
             <div className="active-tab-body">
